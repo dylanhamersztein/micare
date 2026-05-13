@@ -1,0 +1,3 @@
+# Reviews deferred to Phase 2
+
+Phase 1 ships verification-only: no reviews, ratings, or consumer-generated content. Healthcare-specific risks make a half-built reviews system actively harmful — UK defamation liability attaches at publication (a feature flag can't unring a published review), reviews like "missed my glaucoma" drift into fitness-to-practise complaints territory the regulator already handles with formal due process, and the moderation/dispute/anti-abuse infrastructure required to ship reviews safely is a multi-week build whose payoff doesn't arrive at a 10-Practitioner Phase 1 ceiling. Reviews are therefore deferred to a deliberate Phase 2 build with legal sign-off, not a Phase 1 layer to be flagged off if things go wrong.
