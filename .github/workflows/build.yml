@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm check
+
+      - run: pnpm lint
+
+      - run: pnpm test:unit
+
+      - run: pnpm build
+        env:
+          # env.server.ts validates these at module load. Dummy values are
+          # safe at build time: nothing in CI talks to a real Supabase or DB.
+          SUPABASE_PROJECT_REF: ci-build
+          SUPABASE_SERVICE_ROLE_KEY: ci-build-service-role-key
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
