@@ -12,7 +12,10 @@
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier --write . && eslint --fix",
-    "check": "prettier --check ."
+    "check": "prettier --check .",
+    "setup:local": "docker compose -f docker/compose.yml up -d --wait && pnpm db:migrate && pnpm db:seed",
+    "db:migrate": "bash scripts/db-migrate.sh",
+    "db:seed": "bash scripts/db-seed.sh"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
