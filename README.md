@@ -9,6 +9,10 @@ pnpm install
 pnpm dev
 ```
 
+## Environment variables
+
+Copy `.env.example` to `.env.local` and fill in the values. See [`docs/env.md`](docs/env.md) for the convention and what each var does.
+
 # Building For Production
 
 To build this application for production:
