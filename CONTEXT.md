@@ -22,6 +22,7 @@ _Avoid_: validation, accreditation, certification.
 
 **Verification Status**:
 A Practitioner's current standing with their regulator, as known to MiCare. One of:
+
 - `pending` — signup scrape timed out; not yet confirmed. Rare. Not visible to consumers.
 - `verified` — confirmed present and active on the regulator's register. The only consumer-visible status.
 - `rejected` — signup scrape ran and the Practitioner was not on the register. Signup blocked, no charge.
