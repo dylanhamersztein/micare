@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  isVisible,
-  type SubscriptionStatus,
-  type VerificationStatus,
+import { isVisible } from '../../src/visibility'
+import type {
+  SubscriptionStatus,
+  VerificationStatus,
 } from '../../src/visibility'
 
 const VERIFICATION_STATUSES: ReadonlyArray<VerificationStatus> = [
@@ -51,8 +51,8 @@ describe('isVisible', () => {
   }
 
   it('is exhaustive: covers 4 × 6 × 2 = 48 combinations', () => {
-    expect(VERIFICATION_STATUSES.length * SUBSCRIPTION_STATUSES.length * 2).toBe(
-      48,
-    )
+    expect(
+      VERIFICATION_STATUSES.length * SUBSCRIPTION_STATUSES.length * 2,
+    ).toBe(48)
   })
 })

@@ -3,16 +3,10 @@
 // tests call it directly, and `src/server/search.ts` wraps it in a thin
 // createServerFn shim for the route loader.
 
-import {
-  searchInputSchema,
-  type SearchInput,
-  type SearchResult,
-} from '../search-input'
-import {
-  isVisible,
-  type SubscriptionStatus,
-  type VerificationStatus,
-} from '../visibility'
+import { searchInputSchema } from '../search-input'
+import type { SearchInput, SearchResult } from '../search-input'
+import { isVisible } from '../visibility'
+import type { SubscriptionStatus, VerificationStatus } from '../visibility'
 import { db } from './db'
 import { geocodePostcode } from './geocode'
 
@@ -36,10 +30,10 @@ type PractitionerRow = {
 function hasMinFields(row: PractitionerRow): boolean {
   return Boolean(
     row.full_name &&
-      row.practice_name &&
-      row.practice_address_line1 &&
-      row.practice_postcode &&
-      row.booking_link_url,
+    row.practice_name &&
+    row.practice_address_line1 &&
+    row.practice_postcode &&
+    row.booking_link_url,
   )
 }
 

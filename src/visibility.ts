@@ -6,11 +6,7 @@
 //   2. their Stripe subscription is in an active dunning-tolerant state, AND
 //   3. the minimum profile fields required for a useful listing are filled.
 
-export type VerificationStatus =
-  | 'pending'
-  | 'verified'
-  | 'rejected'
-  | 'revoked'
+export type VerificationStatus = 'pending' | 'verified' | 'rejected' | 'revoked'
 
 export type SubscriptionStatus =
   | 'incomplete'

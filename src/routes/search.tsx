@@ -2,10 +2,8 @@ import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { z } from 'zod'
 
-import {
-  ALLOWED_RADII_MILES,
-  type AllowedRadiusMiles,
-} from '../search-input'
+import { ALLOWED_RADII_MILES } from '../search-input'
+import type { AllowedRadiusMiles } from '../search-input'
 import { search } from '../server/search'
 
 const searchSchema = z.object({
