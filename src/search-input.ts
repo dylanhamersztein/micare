@@ -8,7 +8,7 @@ export const ALLOWED_RADII_MILES = [5, 10, 15] as const
 export type AllowedRadiusMiles = (typeof ALLOWED_RADII_MILES)[number]
 
 export const searchInputSchema = z.object({
-  postcode: z.string().min(1),
+  postcodeOrCity: z.string().trim().min(1),
   radiusMiles: z.union([z.literal(5), z.literal(10), z.literal(15)]),
 })
 

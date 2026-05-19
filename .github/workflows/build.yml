@@ -28,6 +28,15 @@ jobs:
 
       - run: pnpm test:unit
 
+      - name: Start Postgres for integration tests
+        run: docker compose -f docker/compose.yml up -d postgres --wait
+
+      - run: pnpm db:migrate
+
+      - run: pnpm db:seed
+
+      - run: pnpm test:integration
+
       - run: pnpm build
         env:
           # env.server.ts validates these at module load. Dummy values are

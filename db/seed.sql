@@ -177,6 +177,42 @@ values (
 )
 on conflict (goc_number) do nothing;
 
+-- Slice 3 fixture: a visible Practitioner in Norwich (~1.293°E, 52.629°N).
+-- Used by integration and e2e tests that search by city name "Norwich".
+insert into public.practitioners (
+  short_id,
+  full_name,
+  goc_number,
+  profession_code,
+  email,
+  practice_name,
+  practice_address_line1,
+  practice_postcode,
+  practice_town,
+  practice_point,
+  booking_link_url,
+  verification_status,
+  subscription_status,
+  visible
+)
+values (
+  'n0r1w2c3',
+  'Eleanor Hughes',
+  '01-555555',
+  'optician',
+  'eleanor@castleeye.example.co.uk',
+  'Castle Eye Care',
+  '4 Castle Meadow',
+  'NR1 3DD',
+  'Norwich',
+  extensions.st_setsrid(extensions.st_makepoint(1.2933, 52.6289), 4326)::extensions.geography,
+  'https://castleeye.example.co.uk/book',
+  'verified',
+  'active',
+  true
+)
+on conflict (goc_number) do nothing;
+
 insert into public.notify_subscriptions (
   email,
   postcode,
