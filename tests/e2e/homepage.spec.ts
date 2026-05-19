@@ -8,8 +8,9 @@ test('homepage lists the seeded visible practitioner', async ({ page }) => {
   // The visible seed fixture (Jane Smith, London) is the canonical smoke
   // assertion: a server function round-tripped to the seeded DB and the
   // result reached the rendered HTML.
-  await expect(page.getByText('Jane Smith')).toBeVisible()
-  await expect(page.getByText('London')).toBeVisible()
+  const janeRow = page.getByTestId('practitioner-a1b2c3d4')
+  await expect(janeRow).toContainText('Jane Smith')
+  await expect(janeRow).toContainText('London')
 
   // The hidden seed fixture must not leak through visible-only filters.
   await expect(page.getByText('John Doe')).toHaveCount(0)
