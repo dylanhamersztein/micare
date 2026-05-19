@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { searchPractitioners } from '../../src/server/search'
+import { searchPractitioners } from '../../src/server/search-impl'
 
 type GeocodeResponse = {
   status: number
