@@ -7,25 +7,30 @@ import type { AllowedRadiusMiles } from '../search-input'
 import { search } from '../server/search'
 
 const searchSchema = z.object({
-  postcode: z.string().trim().min(1).optional(),
+  q: z.string().trim().min(1).optional(),
   radius: z.union([z.literal(5), z.literal(10), z.literal(15)]).optional(),
 })
 
 export const Route = createFileRoute('/search')({
   validateSearch: (raw) => searchSchema.parse(raw),
-  loaderDeps: ({ search: s }) => ({ postcode: s.postcode, radius: s.radius }),
+  loaderDeps: ({ search: s }) => ({ q: s.q, radius: s.radius }),
   loader: async ({ deps }) => {
-    if (!deps.postcode || !deps.radius) {
+    if (!deps.q || !deps.radius) {
       return { kind: 'idle' as const }
     }
     try {
       const results = await search({
-        data: { postcode: deps.postcode, radiusMiles: deps.radius },
+        data: { postcodeOrCity: deps.q, radiusMiles: deps.radius },
       })
       return { kind: 'ok' as const, results }
     } catch (error) {
-      if ((error as Error).name === 'PostcodeNotFoundError') {
-        return { kind: 'postcode-not-found' as const }
+      const name = (error as Error).name
+      if (
+        name === 'LocationNotFoundError' ||
+        name === 'PostcodeNotFoundError' ||
+        name === 'PlaceNotFoundError'
+      ) {
+        return { kind: 'location-not-found' as const }
       }
       return { kind: 'error' as const }
     }
@@ -38,13 +43,13 @@ function SearchPage() {
   const params = Route.useSearch()
   const loaderData = Route.useLoaderData()
 
-  const [postcode, setPostcode] = useState(params.postcode ?? '')
+  const [query, setQuery] = useState(params.q ?? '')
   const [radius, setRadius] = useState<AllowedRadiusMiles>(params.radius ?? 5)
 
   function onSubmit(event: React.FormEvent) {
     event.preventDefault()
     void navigate({
-      search: { postcode: postcode.trim(), radius },
+      search: { q: query.trim(), radius },
     })
   }
 
@@ -56,8 +61,8 @@ function SearchPage() {
         </Link>
         <h1 className="mt-2 text-3xl font-bold">Find a Practitioner</h1>
         <p className="mt-1 text-sm text-gray-600">
-          Enter a UK postcode and a radius to see verified Practitioners near
-          you, ordered by distance from your search.
+          Enter a UK postcode or a city/town name and a radius to see verified
+          Practitioners near you, ordered by distance from your search.
         </p>
       </header>
 
@@ -67,15 +72,15 @@ function SearchPage() {
         data-testid="search-form"
       >
         <label className="flex flex-col text-sm">
-          Postcode
+          Postcode or city
           <input
             type="text"
-            name="postcode"
-            value={postcode}
-            onChange={(e) => setPostcode(e.target.value)}
+            name="q"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             required
             className="mt-1 rounded border px-2 py-1"
-            data-testid="search-postcode"
+            data-testid="search-query"
           />
         </label>
         <label className="flex flex-col text-sm">
@@ -108,12 +113,13 @@ function SearchPage() {
       <section className="mt-8" data-testid="search-results">
         {loaderData.kind === 'idle' && (
           <p className="text-sm text-gray-600">
-            Enter a postcode above to start searching.
+            Enter a postcode or city above to start searching.
           </p>
         )}
-        {loaderData.kind === 'postcode-not-found' && (
-          <p className="text-sm text-red-600" data-testid="search-no-postcode">
-            We couldn&apos;t find that postcode. Please check it and try again.
+        {loaderData.kind === 'location-not-found' && (
+          <p className="text-sm text-red-600" data-testid="search-no-location">
+            We couldn&apos;t find that location. Please check the spelling and
+            try again.
           </p>
         )}
         {loaderData.kind === 'error' && (
@@ -123,8 +129,8 @@ function SearchPage() {
         )}
         {loaderData.kind === 'ok' && loaderData.results.length === 0 && (
           <p className="text-sm text-gray-600" data-testid="search-empty">
-            No verified Practitioners within {params.radius} miles of{' '}
-            {params.postcode}.
+            No verified Practitioners within {params.radius} miles of {params.q}
+            .
           </p>
         )}
         {loaderData.kind === 'ok' && loaderData.results.length > 0 && (

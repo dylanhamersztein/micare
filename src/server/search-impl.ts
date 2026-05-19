@@ -8,7 +8,7 @@ import type { SearchInput, SearchResult } from '../search-input'
 import { isVisible } from '../visibility'
 import type { SubscriptionStatus, VerificationStatus } from '../visibility'
 import { db } from './db'
-import { geocodePostcode } from './geocode'
+import { geocodeLocation } from './geocode'
 
 const METERS_PER_MILE = 1609.344
 
@@ -40,8 +40,8 @@ function hasMinFields(row: PractitionerRow): boolean {
 export async function searchPractitioners(
   input: SearchInput,
 ): Promise<Array<SearchResult>> {
-  const { postcode, radiusMiles } = searchInputSchema.parse(input)
-  const point = await geocodePostcode(postcode)
+  const { postcodeOrCity, radiusMiles } = searchInputSchema.parse(input)
+  const point = await geocodeLocation(postcodeOrCity)
   const radiusMeters = radiusMiles * METERS_PER_MILE
 
   const result = await db.query<PractitionerRow>(

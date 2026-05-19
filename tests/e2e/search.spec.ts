@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test('search by postcode + radius lists visible Practitioners ordered by distance', async ({
   page,
 }) => {
-  await page.goto('/search?postcode=EC2V%206AA&radius=5')
+  await page.goto('/search?q=EC2V%206AA&radius=5')
 
   await expect(
     page.getByRole('heading', { name: 'Find a Practitioner' }),
@@ -24,9 +24,28 @@ test('search by postcode + radius lists visible Practitioners ordered by distanc
   await expect(page.getByText('Hidden Practitioner')).toHaveCount(0)
 })
 
-test('search shows a friendly message for an unknown postcode', async ({
+test('search by city name resolves through the places lookup', async ({
   page,
 }) => {
-  await page.goto('/search?postcode=ZZ1%201ZZ&radius=5')
-  await expect(page.getByTestId('search-no-postcode')).toBeVisible()
+  await page.goto('/search?q=Norwich&radius=5')
+
+  const results = page.getByTestId('search-results').locator('li')
+  await expect(results).toHaveCount(1)
+  await expect(results.nth(0)).toContainText('Eleanor Hughes')
+  await expect(results.nth(0)).toContainText('Castle Eye Care')
+  await expect(results.nth(0)).toContainText('Norwich')
+})
+
+test('search shows the no-location message for an unknown postcode', async ({
+  page,
+}) => {
+  await page.goto('/search?q=ZZ1%201ZZ&radius=5')
+  await expect(page.getByTestId('search-no-location')).toBeVisible()
+})
+
+test('search shows the no-location message for an unresolvable city name', async ({
+  page,
+}) => {
+  await page.goto('/search?q=Atlantisburg&radius=5')
+  await expect(page.getByTestId('search-no-location')).toBeVisible()
 })
