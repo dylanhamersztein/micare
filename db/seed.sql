@@ -109,7 +109,7 @@ values (
 )
 on conflict (goc_number) do nothing;
 
--- Within 15 mi of EC2V 6AA but outside 5 mi: Greenwich, ~5.5 mi.
+-- Within 15 mi of EC2V 6AA but outside 5 mi: Twickenham, ~9 mi.
 insert into public.practitioners (
   short_id,
   full_name,
@@ -133,10 +133,10 @@ values (
   'optician',
   'marcus@meridianvision.example.co.uk',
   'Meridian Vision',
-  '5 Greenwich High Road',
-  'SE10 8JA',
-  'London',
-  extensions.st_setsrid(extensions.st_makepoint(-0.0098, 51.4779), 4326)::extensions.geography,
+  '12 King Street',
+  'TW1 3SN',
+  'Twickenham',
+  extensions.st_setsrid(extensions.st_makepoint(-0.3270, 51.4480), 4326)::extensions.geography,
   'https://meridianvision.example.co.uk/book',
   'verified',
   'active',
