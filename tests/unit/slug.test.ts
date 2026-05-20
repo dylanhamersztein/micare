@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   generateProfileSlug,
   generateProfileUrl,
+  generateShortId,
   slugify,
 } from '../../src/slug'
 
@@ -75,5 +76,15 @@ describe('generateProfileUrl', () => {
         practiceTown: 'London',
       }),
     ).toBe('/p/a1b2c3d4/jane-smith-smith-optical-london')
+  })
+})
+
+describe('generateShortId', () => {
+  it('returns an 8-character base62 string by default', () => {
+    expect(generateShortId()).toMatch(/^[0-9A-Za-z]{8}$/)
+  })
+
+  it('honours a requested length', () => {
+    expect(generateShortId(10)).toMatch(/^[0-9A-Za-z]{10}$/)
   })
 })

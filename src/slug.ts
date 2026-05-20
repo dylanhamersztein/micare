@@ -39,3 +39,21 @@ export function generateProfileUrl(
 ): string {
   return `/p/${profile.shortId}/${generateProfileSlug(profile)}`
 }
+
+// base62 alphabet for short_id allocation. short_id is deliberately distinct
+// from the practitioners table's uuid primary key (ADR-0005): it is the
+// canonical, link-stable identifier exposed in URLs. The signup slice will
+// retry on collision against the DB unique constraint; this is the generator.
+const BASE62 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+export function generateShortId(length = 8): string {
+  // Reject bytes >= 248 (the largest multiple of 62 <= 256) so that
+  // `byte % 62` maps every base62 character with equal probability.
+  const LIMIT = 248
+  let id = ''
+  while (id.length < length) {
+    const byte = crypto.getRandomValues(new Uint8Array(1))[0]
+    if (byte < LIMIT) id += BASE62[byte % 62]
+  }
+  return id
+}
