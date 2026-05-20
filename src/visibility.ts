@@ -37,3 +37,30 @@ export function isVisible({
   if (!VISIBLE_SUBSCRIPTION_STATUSES.has(subscriptionStatus)) return false
   return minFieldsFilled
 }
+
+export type MinFieldsInput = {
+  fullName: string | null
+  practiceName: string | null
+  practiceAddressLine1: string | null
+  practicePostcode: string | null
+  bookingLinkUrl: string | null
+}
+
+// The minimum profile fields a Practitioner must fill before their listing
+// is useful to a consumer. Shared by the search filter and the public
+// profile resolver so both agree on what "complete enough to show" means.
+export function hasMinFields({
+  fullName,
+  practiceName,
+  practiceAddressLine1,
+  practicePostcode,
+  bookingLinkUrl,
+}: MinFieldsInput): boolean {
+  return Boolean(
+    fullName &&
+    practiceName &&
+    practiceAddressLine1 &&
+    practicePostcode &&
+    bookingLinkUrl,
+  )
+}

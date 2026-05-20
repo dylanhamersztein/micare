@@ -5,7 +5,7 @@
 
 import { searchInputSchema } from '../search-input'
 import type { SearchInput, SearchResult } from '../search-input'
-import { isVisible } from '../visibility'
+import { hasMinFields, isVisible } from '../visibility'
 import type { SubscriptionStatus, VerificationStatus } from '../visibility'
 import { db } from './db'
 import { geocodeLocation } from './geocode'
@@ -25,16 +25,6 @@ type PractitionerRow = {
   verification_status: VerificationStatus
   subscription_status: SubscriptionStatus
   distance_meters: number | string
-}
-
-function hasMinFields(row: PractitionerRow): boolean {
-  return Boolean(
-    row.full_name &&
-    row.practice_name &&
-    row.practice_address_line1 &&
-    row.practice_postcode &&
-    row.booking_link_url,
-  )
 }
 
 export async function searchPractitioners(
@@ -77,7 +67,13 @@ export async function searchPractitioners(
       isVisible({
         verificationStatus: row.verification_status,
         subscriptionStatus: row.subscription_status,
-        minFieldsFilled: hasMinFields(row),
+        minFieldsFilled: hasMinFields({
+          fullName: row.full_name,
+          practiceName: row.practice_name,
+          practiceAddressLine1: row.practice_address_line1,
+          practicePostcode: row.practice_postcode,
+          bookingLinkUrl: row.booking_link_url,
+        }),
       }),
     )
     .map((row) => ({
