@@ -6,6 +6,9 @@
 // these types and helpers without dragging server code into the browser
 // bundle. The DB-backed resolver lives in src/server/profile-impl.ts.
 
+import { hasMinFields, isVisible } from './visibility'
+import type { SubscriptionStatus, VerificationStatus } from './visibility'
+
 type SluggableProfile = {
   fullName: string
   practiceName: string | null
@@ -56,4 +59,122 @@ export function generateShortId(length = 8): string {
     if (byte < LIMIT) id += BASE62[byte % 62]
   }
   return id
+}
+
+export type OpeningHours = Record<string, string>
+
+// A Practitioner row reshaped into camelCase, carrying every field the
+// resolver and the profile page need. Built by src/server/profile-impl.ts.
+export type ProfileRecord = {
+  shortId: string
+  fullName: string
+  photoUrl: string | null
+  bio: string | null
+  services: Array<string> | null
+  languages: Array<string> | null
+  accessibilityNotes: string | null
+  acceptingNewPatients: boolean
+  practiceName: string | null
+  practiceAddressLine1: string | null
+  practiceAddressLine2: string | null
+  practiceAddressLine3: string | null
+  practicePostcode: string | null
+  practiceTown: string | null
+  openingHours: OpeningHours | null
+  byAppointmentOnly: boolean
+  bookingLinkUrl: string | null
+  verificationStatus: VerificationStatus
+  subscriptionStatus: SubscriptionStatus
+}
+
+// What the public profile page renders: a ProfileRecord minus the internal
+// verification/subscription status, plus the canonical slug. Array fields are
+// normalised to non-null so the component never branches on null.
+export type PublicProfile = {
+  shortId: string
+  slug: string
+  fullName: string
+  photoUrl: string | null
+  bio: string | null
+  services: Array<string>
+  languages: Array<string>
+  accessibilityNotes: string | null
+  acceptingNewPatients: boolean
+  practiceName: string | null
+  practiceAddressLine1: string | null
+  practiceAddressLine2: string | null
+  practiceAddressLine3: string | null
+  practicePostcode: string | null
+  practiceTown: string | null
+  openingHours: OpeningHours | null
+  byAppointmentOnly: boolean
+  bookingLinkUrl: string | null
+}
+
+export type ProfileResolution =
+  | { kind: 'canonical'; profile: PublicProfile }
+  | { kind: 'stale'; canonicalUrl: string }
+  | { kind: 'not-visible' }
+  | { kind: 'unknown' }
+
+function toPublicProfile(record: ProfileRecord, slug: string): PublicProfile {
+  return {
+    shortId: record.shortId,
+    slug,
+    fullName: record.fullName,
+    photoUrl: record.photoUrl,
+    bio: record.bio,
+    services: record.services ?? [],
+    languages: record.languages ?? [],
+    accessibilityNotes: record.accessibilityNotes,
+    acceptingNewPatients: record.acceptingNewPatients,
+    practiceName: record.practiceName,
+    practiceAddressLine1: record.practiceAddressLine1,
+    practiceAddressLine2: record.practiceAddressLine2,
+    practiceAddressLine3: record.practiceAddressLine3,
+    practicePostcode: record.practicePostcode,
+    practiceTown: record.practiceTown,
+    openingHours: record.openingHours,
+    byAppointmentOnly: record.byAppointmentOnly,
+    bookingLinkUrl: record.bookingLinkUrl,
+  }
+}
+
+// Pure resolution core for /p/<short_id>/<slug>. Given a Practitioner record
+// (or null when the short_id is unknown) and the slug from the URL, returns
+// the outcome the route loader acts on. Evaluation order is deliberate:
+// unknown short_id, then visibility (ADR-0002 + ADR-0004), then stale-slug
+// (ADR-0005) — there is no point redirecting toward a hidden profile.
+export function resolveProfile(
+  record: ProfileRecord | null,
+  requestedSlug: string,
+): ProfileResolution {
+  if (!record) {
+    return { kind: 'unknown' }
+  }
+
+  const visible = isVisible({
+    verificationStatus: record.verificationStatus,
+    subscriptionStatus: record.subscriptionStatus,
+    minFieldsFilled: hasMinFields({
+      fullName: record.fullName,
+      practiceName: record.practiceName,
+      practiceAddressLine1: record.practiceAddressLine1,
+      practicePostcode: record.practicePostcode,
+      bookingLinkUrl: record.bookingLinkUrl,
+    }),
+  })
+  if (!visible) {
+    return { kind: 'not-visible' }
+  }
+
+  const canonicalSlug = generateProfileSlug(record)
+  if (requestedSlug !== canonicalSlug) {
+    return {
+      kind: 'stale',
+      canonicalUrl: `/p/${record.shortId}/${canonicalSlug}`,
+    }
+  }
+
+  return { kind: 'canonical', profile: toPublicProfile(record, canonicalSlug) }
 }

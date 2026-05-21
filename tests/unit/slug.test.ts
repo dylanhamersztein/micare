@@ -4,8 +4,10 @@ import {
   generateProfileSlug,
   generateProfileUrl,
   generateShortId,
+  resolveProfile,
   slugify,
 } from '../../src/slug'
+import type { ProfileRecord } from '../../src/slug'
 
 describe('slugify', () => {
   it('lowercases and hyphenates multi-word text', () => {
@@ -86,5 +88,79 @@ describe('generateShortId', () => {
 
   it('honours a requested length', () => {
     expect(generateShortId(10)).toMatch(/^[0-9A-Za-z]{10}$/)
+  })
+})
+
+const baseRecord: ProfileRecord = {
+  shortId: 's4l5u6g7',
+  fullName: 'Sophie Clarke',
+  photoUrl: null,
+  bio: null,
+  services: null,
+  languages: null,
+  accessibilityNotes: null,
+  acceptingNewPatients: true,
+  practiceName: 'Clarke Vision',
+  practiceAddressLine1: '8 Park Street',
+  practiceAddressLine2: null,
+  practiceAddressLine3: null,
+  practicePostcode: 'BS1 5HX',
+  practiceTown: 'Bristol',
+  openingHours: null,
+  byAppointmentOnly: false,
+  bookingLinkUrl: 'https://clarkevision.example.co.uk/book',
+  verificationStatus: 'verified',
+  subscriptionStatus: 'active',
+}
+
+function makeRecord(overrides: Partial<ProfileRecord> = {}): ProfileRecord {
+  return { ...baseRecord, ...overrides }
+}
+
+describe('resolveProfile', () => {
+  const canonicalSlug = 'sophie-clarke-clarke-vision-bristol'
+
+  it('returns unknown when the record is null', () => {
+    expect(resolveProfile(null, 'anything')).toEqual({ kind: 'unknown' })
+  })
+
+  it('returns not-visible for a revoked Practitioner', () => {
+    expect(
+      resolveProfile(
+        makeRecord({ verificationStatus: 'revoked' }),
+        canonicalSlug,
+      ),
+    ).toEqual({ kind: 'not-visible' })
+  })
+
+  it('returns not-visible for a canceled subscription', () => {
+    expect(
+      resolveProfile(
+        makeRecord({ subscriptionStatus: 'canceled' }),
+        canonicalSlug,
+      ),
+    ).toEqual({ kind: 'not-visible' })
+  })
+
+  it('returns not-visible when the minimum fields are missing', () => {
+    expect(
+      resolveProfile(makeRecord({ bookingLinkUrl: null }), canonicalSlug),
+    ).toEqual({ kind: 'not-visible' })
+  })
+
+  it('returns stale with the canonical URL when the slug does not match', () => {
+    expect(resolveProfile(makeRecord(), 'an-old-slug')).toEqual({
+      kind: 'stale',
+      canonicalUrl: `/p/s4l5u6g7/${canonicalSlug}`,
+    })
+  })
+
+  it('returns the canonical profile when the slug matches', () => {
+    const result = resolveProfile(makeRecord(), canonicalSlug)
+    expect(result.kind).toBe('canonical')
+    if (result.kind !== 'canonical') throw new Error('expected canonical')
+    expect(result.profile.slug).toBe(canonicalSlug)
+    expect(result.profile.fullName).toBe('Sophie Clarke')
+    expect(result.profile.services).toEqual([])
   })
 })
