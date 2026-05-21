@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { isVisible } from '../../src/visibility'
+import { hasMinFields, isVisible } from '../../src/visibility'
 import type {
   SubscriptionStatus,
   VerificationStatus,
@@ -54,5 +54,28 @@ describe('isVisible', () => {
     expect(
       VERIFICATION_STATUSES.length * SUBSCRIPTION_STATUSES.length * 2,
     ).toBe(48)
+  })
+})
+
+describe('hasMinFields', () => {
+  const complete = {
+    fullName: 'Jane Smith',
+    practiceName: 'Smith Optical',
+    practiceAddressLine1: '12 Cheapside',
+    practicePostcode: 'EC2V 6AA',
+    bookingLinkUrl: 'https://example.test/book',
+  }
+
+  it('is true when every required field is present', () => {
+    expect(hasMinFields(complete)).toBe(true)
+  })
+
+  it('is false when any required field is null', () => {
+    expect(hasMinFields({ ...complete, practiceName: null })).toBe(false)
+    expect(hasMinFields({ ...complete, bookingLinkUrl: null })).toBe(false)
+  })
+
+  it('is false when a required field is an empty string', () => {
+    expect(hasMinFields({ ...complete, practicePostcode: '' })).toBe(false)
   })
 })

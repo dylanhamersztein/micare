@@ -213,6 +213,92 @@ values (
 )
 on conflict (goc_number) do nothing;
 
+-- Slice 4 fixture: a fully-populated visible Practitioner in Bristol
+-- (~ -2.588°E, 51.454°N). Exercises every field of the public profile page:
+-- photo, bio, services, languages, accessibility notes, opening hours.
+insert into public.practitioners (
+  short_id,
+  full_name,
+  goc_number,
+  profession_code,
+  email,
+  photo_url,
+  bio,
+  services,
+  languages,
+  accessibility_notes,
+  practice_name,
+  practice_address_line1,
+  practice_postcode,
+  practice_town,
+  practice_point,
+  opening_hours,
+  booking_link_url,
+  verification_status,
+  subscription_status,
+  visible
+)
+values (
+  's4l5u6g7',
+  'Sophie Clarke',
+  '01-666666',
+  'optician',
+  'sophie@clarkevision.example.co.uk',
+  'https://clarkevision.example.co.uk/sophie.jpg',
+  'Sophie has practised optometry in Bristol for over a decade, with a special interest in paediatric eye care.',
+  array['Eye examinations', 'Contact lens fitting', 'Children''s eye care'],
+  array['English', 'French'],
+  'Step-free access; hearing loop available at reception.',
+  'Clarke Vision',
+  '8 Park Street',
+  'BS1 5HX',
+  'Bristol',
+  extensions.st_setsrid(extensions.st_makepoint(-2.5879, 51.4545), 4326)::extensions.geography,
+  '{"Monday":"9:00-17:30","Tuesday":"9:00-17:30","Wednesday":"9:00-17:30","Thursday":"9:00-19:00","Friday":"9:00-17:30","Saturday":"9:00-13:00","Sunday":"Closed"}',
+  'https://clarkevision.example.co.uk/book',
+  'verified',
+  'active',
+  true
+)
+on conflict (goc_number) do nothing;
+
+-- Slice 4 fixture: a revoked Practitioner (struck off the GOC register).
+-- ADR-0004 preserves the row but hides the profile; the page must show the
+-- friendly "not currently listed" page, distinct from a generic 404.
+insert into public.practitioners (
+  short_id,
+  full_name,
+  goc_number,
+  profession_code,
+  email,
+  practice_name,
+  practice_address_line1,
+  practice_postcode,
+  practice_town,
+  practice_point,
+  booking_link_url,
+  verification_status,
+  subscription_status,
+  visible
+)
+values (
+  'r4v5o6k7',
+  'Daniel Reed',
+  '01-777777',
+  'optician',
+  'daniel@reedeyecare.example.co.uk',
+  'Reed Eye Care',
+  '20 Queen Street',
+  'LS1 2TW',
+  'Leeds',
+  extensions.st_setsrid(extensions.st_makepoint(-1.5491, 53.7965), 4326)::extensions.geography,
+  'https://reedeyecare.example.co.uk/book',
+  'revoked',
+  'canceled',
+  false
+)
+on conflict (goc_number) do nothing;
+
 insert into public.notify_subscriptions (
   email,
   postcode,
