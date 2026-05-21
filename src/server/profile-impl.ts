@@ -85,6 +85,8 @@ export async function resolveProfileUrl(
     [shortId],
   )
 
-  const row = result.rows[0]
+  // `.at(0)` (vs `[0]`) types the absent-row case as `undefined`, so the
+  // unknown-short_id branch below is a real conditional, not dead code.
+  const row = result.rows.at(0)
   return resolveProfile(row ? mapRow(row) : null, requestedSlug)
 }
