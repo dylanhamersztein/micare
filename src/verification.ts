@@ -45,3 +45,34 @@ export function verificationOutcome(
       return 'pending'
   }
 }
+
+// Deterministic fixtures for GOC_MOCK=true. Keyed by GOC number so tests and
+// local dev can drive any outcome by choosing a number. The 99-0000NN numbers
+// are reserved for the e2e and integration suites.
+const GOC_MOCK_FIXTURES: Record<string, VerificationResult> = {
+  '99-000001': {
+    kind: 'found-active',
+    registrationNumber: '99-000001',
+    registrantName: 'Mock Verified Optician',
+  },
+  '99-000002': { kind: 'not-found', registrationNumber: '99-000002' },
+  '99-000003': { kind: 'ambiguous', registrationNumber: '99-000003' },
+  '99-000004': {
+    kind: 'error',
+    registrationNumber: '99-000004',
+    reason: 'mock error fixture',
+  },
+}
+
+// The GOC_MOCK=true verification path: a deterministic result, no network
+// call. An unrecognised number defaults to found-active so a developer
+// signing up locally with an arbitrary number lands on the verified flow.
+export function mockVerify(regNumber: string): VerificationResult {
+  return (
+    GOC_MOCK_FIXTURES[regNumber] ?? {
+      kind: 'found-active',
+      registrationNumber: regNumber,
+      registrantName: 'Mock Optician',
+    }
+  )
+}
