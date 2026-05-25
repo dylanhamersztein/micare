@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en-GB" class="Site">
+  <head>
+    <meta charset="utf-8" />
+    <title>Search Register | GeneralOpticalCouncil</title>
+  </head>
+  <body>
+    <!--
+        Hand-crafted fixture for the "search ran cleanly but no registrant
+        matched" case. Modelled on the GOC public-register UI (str.optical.org):
+        the live page exposes an empty #list container that ROLSearch.js
+        populates with the contents of #hiddenNoResultsTextDiv when the
+        /registrant/list AJAX response is empty. We collapse that into a single
+        static fragment so the parser can be tested without a browser.
+    -->
+    <div id="heroBanner" class="HeroBanner">
+      <div class="container">
+        <h1 class="m-0">Public Register Search</h1>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7 col-sm-12">
+          <div id="list">
+            <div class="no-results-message">
+              <b>Sorry no results match your search</b><br /><br />
+              Please check that you have entered the details of your search
+              correctly. If you are still unable to find a registrant or
+              business, or have a query about a registration status, please
+              contact
+              <a href="mailto:registration@optical.org"
+                >registration@optical.org</a
+              ><br /><br />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

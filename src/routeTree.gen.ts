@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PShortIdSlugRouteImport } from './routes/p.$shortId.$slug'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -32,35 +38,46 @@ const PShortIdSlugRoute = PShortIdSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/signup': typeof SignupRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/signup': typeof SignupRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/signup': typeof SignupRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/search' | '/p/$shortId/$slug'
+  fullPaths: '/' | '/search' | '/signup' | '/p/$shortId/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/search' | '/p/$shortId/$slug'
-  id: '__root__' | '/' | '/search' | '/p/$shortId/$slug'
+  to: '/' | '/search' | '/signup' | '/p/$shortId/$slug'
+  id: '__root__' | '/' | '/search' | '/signup' | '/p/$shortId/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SearchRoute: typeof SearchRoute
+  SignupRoute: typeof SignupRoute
   PShortIdSlugRoute: typeof PShortIdSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SearchRoute: SearchRoute,
+  SignupRoute: SignupRoute,
   PShortIdSlugRoute: PShortIdSlugRoute,
 }
 export const routeTree = rootRouteImport
