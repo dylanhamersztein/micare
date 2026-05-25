@@ -63,12 +63,65 @@ async function recordVerification(input: {
   )
 }
 
-// Implemented in Task 6. The GOC_MOCK=true path used by local dev and the
-// integration suite never reaches this branch.
+// Scrapes the GOC public register for one registration number. Every retry
+// shares a single 10s deadline via one AbortController; a timeout or an
+// exhausted retry budget resolves to an `error` result (never throws) so the
+// signup flow can show the reassuring "system issue" message (user story 19).
 async function scrapeGocRegister(
   regNumber: string,
 ): Promise<{ result: VerificationResult; rawHtml: string | null }> {
-  throw new Error(`GOC register scrape not yet implemented (${regNumber})`)
+  const controller = new AbortController()
+  const deadline = setTimeout(() => controller.abort(), VERIFY_BUDGET_MS)
+  const url = `${GOC_REGISTER_SEARCH_URL}?registrant_number=${encodeURIComponent(regNumber)}`
+
+  try {
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        const response = await fetch(url, {
+          signal: controller.signal,
+          headers: { accept: 'text/html' },
+        })
+        if (!response.ok) {
+          throw new Error(`GOC register HTTP ${response.status}`)
+        }
+        const html = await response.text()
+        return { result: parseGocRegisterPage(html, regNumber), rawHtml: html }
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return {
+            result: {
+              kind: 'error',
+              registrationNumber: regNumber,
+              reason: 'GOC register lookup timed out',
+            },
+            rawHtml: null,
+          }
+        }
+        if (attempt === MAX_ATTEMPTS) {
+          return {
+            result: {
+              kind: 'error',
+              registrationNumber: regNumber,
+              reason: (error as Error).message,
+            },
+            rawHtml: null,
+          }
+        }
+        // Fall through to the next attempt. The AbortController bounds total
+        // wall-clock time, so retries cannot exceed the 10s budget.
+      }
+    }
+    return {
+      result: {
+        kind: 'error',
+        registrationNumber: regNumber,
+        reason: 'GOC register retries exhausted',
+      },
+      rawHtml: null,
+    }
+  } finally {
+    clearTimeout(deadline)
+  }
 }
 
 export async function verify(
