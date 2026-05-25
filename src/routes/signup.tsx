@@ -22,7 +22,8 @@ const PROFESSION_LABELS: Record<ProfessionCode, string> = {
 
 function SignupPage() {
   const [fullName, setFullName] = useState('')
-  const [professionCode, setProfessionCode] = useState<ProfessionCode>('optician')
+  const [professionCode, setProfessionCode] =
+    useState<ProfessionCode>('optician')
   const [gocNumber, setGocNumber] = useState('')
   const [email, setEmail] = useState('')
   const [state, setState] = useState<FormState>({ kind: 'idle' })
@@ -49,7 +50,8 @@ function SignupPage() {
     if (!parsed.success) {
       setState({
         kind: 'invalid',
-        message: parsed.error.issues[0]?.message ?? 'Please check your details.',
+        message:
+          parsed.error.issues[0]?.message ?? 'Please check your details.',
       })
       return
     }
@@ -100,7 +102,9 @@ function SignupPage() {
           Profession
           <select
             value={professionCode}
-            onChange={(e) => setProfessionCode(e.target.value as ProfessionCode)}
+            onChange={(e) =>
+              setProfessionCode(e.target.value as ProfessionCode)
+            }
             className="mt-1 rounded border px-2 py-1"
             data-testid="signup-profession"
           >
@@ -176,10 +180,9 @@ function ResultPanel({ outcome }: { outcome: VerificationOutcome }) {
           We couldn&apos;t find you on the GOC register
         </h1>
         <p className="mt-2 text-gray-700">
-          MiCare only lists currently-registered professionals, so we
-          can&apos;t continue your signup — and there is no charge. If you
-          believe this is a mistake, check the GOC number you entered and try
-          again.
+          MiCare only lists currently-registered professionals, so we can&apos;t
+          continue your signup — and there is no charge. If you believe this is
+          a mistake, check the GOC number you entered and try again.
         </p>
       </div>
     )

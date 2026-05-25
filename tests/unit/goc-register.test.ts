@@ -35,7 +35,10 @@ describe('parseGocRegisterPage', () => {
   })
 
   it('returns not-found for the no-results page', () => {
-    const result = parseGocRegisterPage(fixture('not-found.html'), ABSENT_NUMBER)
+    const result = parseGocRegisterPage(
+      fixture('not-found.html'),
+      ABSENT_NUMBER,
+    )
 
     expect(result).toEqual({
       kind: 'not-found',
@@ -46,7 +49,10 @@ describe('parseGocRegisterPage', () => {
   it('returns not-found when the card shows a different registrant', () => {
     // The fixture is for D-17909; querying with a different number must not
     // mistakenly resolve to "found".
-    const result = parseGocRegisterPage(fixture('found-active.html'), ABSENT_NUMBER)
+    const result = parseGocRegisterPage(
+      fixture('found-active.html'),
+      ABSENT_NUMBER,
+    )
 
     expect(result).toEqual({
       kind: 'not-found',

@@ -15,14 +15,15 @@ describe('signupInputSchema', () => {
   })
 
   it('trims surrounding whitespace from the full name', () => {
-    expect(signupInputSchema.parse({ ...valid, fullName: '  Jane Smith  ' }))
-      .toMatchObject({ fullName: 'Jane Smith' })
+    expect(
+      signupInputSchema.parse({ ...valid, fullName: '  Jane Smith  ' }),
+    ).toMatchObject({ fullName: 'Jane Smith' })
   })
 
   it('rejects an empty full name', () => {
-    expect(signupInputSchema.safeParse({ ...valid, fullName: '' }).success).toBe(
-      false,
-    )
+    expect(
+      signupInputSchema.safeParse({ ...valid, fullName: '' }).success,
+    ).toBe(false)
   })
 
   it('accepts a letter-prefix GOC number (e.g. dispensing optician)', () => {
@@ -32,8 +33,9 @@ describe('signupInputSchema', () => {
   })
 
   it('rejects a GOC number that does not match the prefix-hyphen-digits shape', () => {
-    expect(signupInputSchema.safeParse({ ...valid, gocNumber: '12345' }).success)
-      .toBe(false)
+    expect(
+      signupInputSchema.safeParse({ ...valid, gocNumber: '12345' }).success,
+    ).toBe(false)
     expect(
       signupInputSchema.safeParse({ ...valid, gocNumber: '01_123456' }).success,
     ).toBe(false)
@@ -47,7 +49,8 @@ describe('signupInputSchema', () => {
 
   it('rejects an unknown profession code', () => {
     expect(
-      signupInputSchema.safeParse({ ...valid, professionCode: 'physio' }).success,
+      signupInputSchema.safeParse({ ...valid, professionCode: 'physio' })
+        .success,
     ).toBe(false)
   })
 })

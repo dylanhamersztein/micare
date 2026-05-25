@@ -15,13 +15,19 @@ describe('verificationOutcome', () => {
 
   it('maps not-found to rejected', () => {
     expect(
-      verificationOutcome({ kind: 'not-found', registrationNumber: '01-000000' }),
+      verificationOutcome({
+        kind: 'not-found',
+        registrationNumber: '01-000000',
+      }),
     ).toBe('rejected')
   })
 
   it('maps ambiguous to pending', () => {
     expect(
-      verificationOutcome({ kind: 'ambiguous', registrationNumber: '01-123456' }),
+      verificationOutcome({
+        kind: 'ambiguous',
+        registrationNumber: '01-123456',
+      }),
     ).toBe('pending')
   })
 

@@ -1,10 +1,9 @@
 import { expect, test } from '@playwright/test'
+import type { Page } from '@playwright/test'
 
 // The dev server runs with GOC_MOCK unset (defaults true), so these reserved
 // numbers map to deterministic GOC_MOCK_FIXTURES outcomes.
-async function gotoHydrated(
-  page: import('@playwright/test').Page,
-): Promise<void> {
+async function gotoHydrated(page: Page): Promise<void> {
   await page.goto('/signup')
   // Wait until React has attached its onSubmit handler before any input —
   // without this the click can race the native form submit and reload the
@@ -14,10 +13,7 @@ async function gotoHydrated(
     .waitFor()
 }
 
-async function fillAndSubmit(
-  page: import('@playwright/test').Page,
-  gocNumber: string,
-): Promise<void> {
+async function fillAndSubmit(page: Page, gocNumber: string): Promise<void> {
   await gotoHydrated(page)
   await page.getByTestId('signup-full-name').fill('Test Optician')
   await page.getByTestId('signup-goc-number').fill(gocNumber)
@@ -39,9 +35,7 @@ test('a GOC number not on the register shows the rejected panel', async ({
   await fillAndSubmit(page, '99-000002')
 
   await expect(page.getByTestId('signup-rejected')).toBeVisible()
-  await expect(page.getByTestId('signup-rejected')).toContainText(
-    'no charge',
-  )
+  await expect(page.getByTestId('signup-rejected')).toContainText('no charge')
 })
 
 test('an unreadable register result shows the pending panel', async ({
@@ -50,9 +44,7 @@ test('an unreadable register result shows the pending panel', async ({
   await fillAndSubmit(page, '99-000003')
 
   await expect(page.getByTestId('signup-pending')).toBeVisible()
-  await expect(page.getByTestId('signup-pending')).toContainText(
-    'follow up',
-  )
+  await expect(page.getByTestId('signup-pending')).toContainText('follow up')
 })
 
 test('an invalid GOC number is rejected before submitting', async ({

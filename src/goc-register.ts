@@ -35,10 +35,7 @@ function normalizeNumber(value: string): string {
 }
 
 // Reads the <span> value paired with an aria-labelled media-body block.
-function readFieldValue(
-  card: ParsedElement,
-  ariaLabel: string,
-): string | null {
+function readFieldValue(card: ParsedElement, ariaLabel: string): string | null {
   const block = card.querySelector(`[aria-label="${ariaLabel}"]`)
   if (!block) return null
   const span = block.querySelector('span.d-block')
@@ -87,7 +84,9 @@ export function parseGocRegisterPage(
     card
       .querySelectorAll('#detail-title strong, h1 strong')
       .map((node) => node.text.trim())
-      .find((text) => text.length > 0 && !normalizeNumber(text).includes(target)) ?? ''
+      .find(
+        (text) => text.length > 0 && !normalizeNumber(text).includes(target),
+      ) ?? ''
 
   return {
     kind: 'found-active',

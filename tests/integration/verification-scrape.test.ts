@@ -1,7 +1,18 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
+
+import type { db as dbApi } from '../../src/server/db'
+import type { verify as verifyFn } from '../../src/server/verification-impl'
 
 // This file exercises the GOC_MOCK=false path. env.server.ts reads GOC_MOCK
 // once, at first import — so the flag is set BEFORE the dynamic import of
@@ -19,8 +30,8 @@ const foundActiveHtml = readFileSync(
 // Prerequisites note and tests/unit/goc-register.test.ts).
 const FOUND_ACTIVE_NUMBER = 'D-17909'
 
-let verify: typeof import('../../src/server/verification-impl').verify
-let db: typeof import('../../src/server/db').db
+let verify: typeof verifyFn
+let db: typeof dbApi
 
 function htmlResponse(body: string): Response {
   return new Response(body, {

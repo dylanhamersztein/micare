@@ -6,7 +6,9 @@ import { verify } from '../../src/server/verification-impl'
 // All test numbers use the reserved 99- prefix; clearing them keeps the test
 // deterministic against the persistent local database and the 24h cache.
 async function clearTestVerifications(): Promise<void> {
-  await db.query("delete from public.verifications where goc_number like '99-%'")
+  await db.query(
+    "delete from public.verifications where goc_number like '99-%'",
+  )
 }
 
 async function countRows(gocNumber: string): Promise<number> {
@@ -21,7 +23,11 @@ describe('verify (GOC_MOCK path)', () => {
   beforeEach(clearTestVerifications)
 
   it('writes a verifications row for a found-active mock attempt', async () => {
-    const result = await verify('optician', 'Mock Verified Optician', '99-000001')
+    const result = await verify(
+      'optician',
+      'Mock Verified Optician',
+      '99-000001',
+    )
 
     expect(result.kind).toBe('found-active')
     expect(await countRows('99-000001')).toBe(1)
@@ -51,8 +57,16 @@ describe('verify (GOC_MOCK path)', () => {
   })
 
   it('serves a second call within 24h from cache without a new row', async () => {
-    const first = await verify('optician', 'Mock Verified Optician', '99-000001')
-    const second = await verify('optician', 'Mock Verified Optician', '99-000001')
+    const first = await verify(
+      'optician',
+      'Mock Verified Optician',
+      '99-000001',
+    )
+    const second = await verify(
+      'optician',
+      'Mock Verified Optician',
+      '99-000001',
+    )
 
     expect(second).toEqual(first)
     expect(await countRows('99-000001')).toBe(1)
