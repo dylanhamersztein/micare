@@ -34,3 +34,5 @@ playwright/.cache
 
 # Supabase CLI local state
 .supabase
+docs
+graphify-out
