@@ -1,11 +1,9 @@
-import {
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest'
+import type Stripe from 'stripe'
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+
+import type { handleStripeWebhook as handleFn } from '../../src/server/webhook-handler'
+import type { db as dbApi } from '../../src/server/db'
+import type { getStripe as getStripeFn } from '../../src/server/stripe'
 
 // env.server.ts reads VITE_STRIPE_MOCK once at first import. Force the real
 // path before any dynamic import below.
@@ -15,13 +13,9 @@ process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_dummy_for_signing'
 process.env.STRIPE_PRICE_ID = 'price_test_29gbp'
 process.env.APP_URL = 'http://localhost:3000'
 
-import type Stripe from 'stripe'
-import type { handleStripeWebhook as handleFn } from '../../src/server/webhook-handler'
-import type { db as dbApi } from '../../src/server/db'
-
 let handleStripeWebhook: typeof handleFn
 let db: typeof dbApi
-let getStripe: typeof import('../../src/server/stripe').getStripe
+let getStripe: typeof getStripeFn
 
 const CUSTOMER_ID = 'cus_webhook_test'
 const SUBSCRIPTION_ID = 'sub_webhook_test'

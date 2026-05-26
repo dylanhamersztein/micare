@@ -1,4 +1,17 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import type Stripe from 'stripe'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
+
+import type { db as dbApi } from '../../src/server/db'
+import type { startCheckoutImpl as startCheckoutImplFn } from '../../src/server/checkout-impl'
+import type * as stripeModuleNs from '../../src/server/stripe'
 
 // env.server.ts reads VITE_STRIPE_MOCK once at first import. Force the real
 // path before any dynamic import below.
@@ -8,26 +21,27 @@ process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_dummy'
 process.env.STRIPE_PRICE_ID = 'price_test_29gbp'
 process.env.APP_URL = 'http://localhost:3000'
 
-import type { db as dbApi } from '../../src/server/db'
-import type { startCheckoutImpl as startCheckoutImplFn } from '../../src/server/checkout-impl'
-import type Stripe from 'stripe'
-
 let startCheckoutImpl: typeof startCheckoutImplFn
 let db: typeof dbApi
-let stripeModule: typeof import('../../src/server/stripe')
+let stripeModule: typeof stripeModuleNs
 
 const STRIPE_GOC_NUMBER = '99-000001'
 const STRIPE_EMAIL = 'real-checkout@example.co.uk'
 
 beforeAll(async () => {
-  startCheckoutImpl = (await import('../../src/server/checkout-impl')).startCheckoutImpl
+  startCheckoutImpl = (await import('../../src/server/checkout-impl'))
+    .startCheckoutImpl
   db = (await import('../../src/server/db')).db
   stripeModule = await import('../../src/server/stripe')
 })
 
 beforeEach(async () => {
-  await db.query("delete from public.verifications where goc_number like '99-%'")
-  await db.query("delete from public.practitioners where email like '%@example.co.uk'")
+  await db.query(
+    "delete from public.verifications where goc_number like '99-%'",
+  )
+  await db.query(
+    "delete from public.practitioners where email like '%@example.co.uk'",
+  )
 })
 
 afterEach(() => {

@@ -26,7 +26,7 @@ export type SubscriptionStateChange = {
 function asId(field: unknown): string | null {
   if (typeof field === 'string') return field
   if (field && typeof field === 'object' && 'id' in field) {
-    const id = (field as { id: unknown }).id
+    const id = field.id
     return typeof id === 'string' ? id : null
   }
   return null
@@ -37,7 +37,7 @@ export function mapStripeEvent(
 ): SubscriptionStateChange | null {
   switch (event.type) {
     case 'customer.subscription.created': {
-      const sub = event.data.object as Stripe.Subscription
+      const sub = event.data.object
       if (sub.status !== 'active') return null
       const customer = asId(sub.customer)
       if (!customer) return null

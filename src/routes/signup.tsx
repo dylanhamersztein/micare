@@ -76,7 +76,8 @@ function SignupPage() {
     } catch (error) {
       setState({
         kind: 'checkout-error',
-        message: (error as Error).message ?? 'Could not start checkout.',
+        message:
+          error instanceof Error ? error.message : 'Could not start checkout.',
         input,
       })
     }
