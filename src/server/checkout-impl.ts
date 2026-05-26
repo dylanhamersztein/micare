@@ -13,6 +13,7 @@ import type { SignupInput } from '../signup-input'
 import { generateShortId } from '../slug'
 import { verify } from './verification-impl'
 import { db } from './db'
+import { getStripe } from './stripe'
 
 export type StartCheckoutResult =
   | { kind: 'stripe'; checkoutUrl: string }
@@ -107,6 +108,33 @@ export async function startCheckoutImpl(
     }
   }
 
-  // Real Stripe Checkout path lands in Task 6.
-  throw new Error('Stripe checkout path not yet implemented')
+  const stripe = getStripe()
+  const customer = await stripe.customers.create({
+    email: data.email,
+    name: data.fullName,
+    metadata: { goc_number: data.gocNumber },
+  })
+
+  const practitioner = await insertPractitioner({
+    input: data,
+    stripeCustomerId: customer.id,
+    stripeSubscriptionId: null,
+    subscriptionStatus: 'incomplete',
+  })
+  await backfillVerificationPractitionerId(data.gocNumber, practitioner.id)
+
+  const session = await stripe.checkout.sessions.create({
+    mode: 'subscription',
+    customer: customer.id,
+    client_reference_id: practitioner.id,
+    line_items: [{ price: env.STRIPE_PRICE_ID!, quantity: 1 }],
+    success_url: `${env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${env.APP_URL}/checkout/cancel`,
+  })
+
+  if (!session.url) {
+    throw new Error('Stripe Checkout Session created without a url')
+  }
+
+  return { kind: 'stripe', checkoutUrl: session.url }
 }
