@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PractitionerProfileEditorRouteImport } from './routes/practitioner/profile-editor'
+import { Route as CheckoutSuccessRouteImport } from './routes/checkout/success'
+import { Route as CheckoutCancelRouteImport } from './routes/checkout/cancel'
 import { Route as PShortIdSlugRouteImport } from './routes/p.$shortId.$slug'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 
@@ -30,6 +33,22 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PractitionerProfileEditorRoute =
+  PractitionerProfileEditorRouteImport.update({
+    id: '/practitioner/profile-editor',
+    path: '/practitioner/profile-editor',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
+  id: '/checkout/success',
+  path: '/checkout/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutCancelRoute = CheckoutCancelRouteImport.update({
+  id: '/checkout/cancel',
+  path: '/checkout/cancel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PShortIdSlugRoute = PShortIdSlugRouteImport.update({
   id: '/p/$shortId/$slug',
   path: '/p/$shortId/$slug',
@@ -45,6 +64,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/checkout/cancel': typeof CheckoutCancelRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
+  '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
@@ -52,6 +74,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/checkout/cancel': typeof CheckoutCancelRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
+  '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
@@ -60,6 +85,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/checkout/cancel': typeof CheckoutCancelRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
+  '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
@@ -69,15 +97,29 @@ export interface FileRouteTypes {
     | '/'
     | '/search'
     | '/signup'
+    | '/checkout/cancel'
+    | '/checkout/success'
+    | '/practitioner/profile-editor'
     | '/api/stripe/webhook'
     | '/p/$shortId/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/search' | '/signup' | '/api/stripe/webhook' | '/p/$shortId/$slug'
+  to:
+    | '/'
+    | '/search'
+    | '/signup'
+    | '/checkout/cancel'
+    | '/checkout/success'
+    | '/practitioner/profile-editor'
+    | '/api/stripe/webhook'
+    | '/p/$shortId/$slug'
   id:
     | '__root__'
     | '/'
     | '/search'
     | '/signup'
+    | '/checkout/cancel'
+    | '/checkout/success'
+    | '/practitioner/profile-editor'
     | '/api/stripe/webhook'
     | '/p/$shortId/$slug'
   fileRoutesById: FileRoutesById
@@ -86,6 +128,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
+  CheckoutCancelRoute: typeof CheckoutCancelRoute
+  CheckoutSuccessRoute: typeof CheckoutSuccessRoute
+  PractitionerProfileEditorRoute: typeof PractitionerProfileEditorRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   PShortIdSlugRoute: typeof PShortIdSlugRoute
 }
@@ -113,6 +158,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/practitioner/profile-editor': {
+      id: '/practitioner/profile-editor'
+      path: '/practitioner/profile-editor'
+      fullPath: '/practitioner/profile-editor'
+      preLoaderRoute: typeof PractitionerProfileEditorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/success': {
+      id: '/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof CheckoutSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/cancel': {
+      id: '/checkout/cancel'
+      path: '/checkout/cancel'
+      fullPath: '/checkout/cancel'
+      preLoaderRoute: typeof CheckoutCancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/$shortId/$slug': {
       id: '/p/$shortId/$slug'
       path: '/p/$shortId/$slug'
@@ -134,6 +200,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
+  CheckoutCancelRoute: CheckoutCancelRoute,
+  CheckoutSuccessRoute: CheckoutSuccessRoute,
+  PractitionerProfileEditorRoute: PractitionerProfileEditorRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   PShortIdSlugRoute: PShortIdSlugRoute,
 }
