@@ -31,6 +31,10 @@ export default defineConfig({
           setupFiles: ['tests/integration/setup.ts'],
           testTimeout: 20_000,
           hookTimeout: 20_000,
+          // Integration tests all share the local Compose database; running
+          // their files in parallel races on row clean-up between tests that
+          // happen to touch the same reserved GOC number or email.
+          fileParallelism: false,
         },
       },
     ],
