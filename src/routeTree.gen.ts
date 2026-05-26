@@ -13,6 +13,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PShortIdSlugRouteImport } from './routes/p.$shortId.$slug'
+import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -34,17 +35,24 @@ const PShortIdSlugRoute = PShortIdSlugRouteImport.update({
   path: '/p/$shortId/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
+  id: '/api/stripe/webhook',
+  path: '/api/stripe/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,33 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/search' | '/signup' | '/p/$shortId/$slug'
+  fullPaths:
+    | '/'
+    | '/search'
+    | '/signup'
+    | '/api/stripe/webhook'
+    | '/p/$shortId/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/search' | '/signup' | '/p/$shortId/$slug'
-  id: '__root__' | '/' | '/search' | '/signup' | '/p/$shortId/$slug'
+  to: '/' | '/search' | '/signup' | '/api/stripe/webhook' | '/p/$shortId/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/search'
+    | '/signup'
+    | '/api/stripe/webhook'
+    | '/p/$shortId/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
+  ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   PShortIdSlugRoute: typeof PShortIdSlugRoute
 }
 
@@ -99,6 +120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PShortIdSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/stripe/webhook': {
+      id: '/api/stripe/webhook'
+      path: '/api/stripe/webhook'
+      fullPath: '/api/stripe/webhook'
+      preLoaderRoute: typeof ApiStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,6 +134,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
+  ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   PShortIdSlugRoute: PShortIdSlugRoute,
 }
 export const routeTree = rootRouteImport
