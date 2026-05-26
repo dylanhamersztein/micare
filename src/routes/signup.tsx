@@ -1,8 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 
+import { startCheckout } from '../server/checkout'
 import { submitSignup } from '../server/signup'
 import { signupInputSchema } from '../signup-input'
+import type { SignupInput } from '../signup-input'
 import { PROFESSION_CODES } from '../verification'
 import type { ProfessionCode, VerificationOutcome } from '../verification'
 
@@ -14,13 +16,15 @@ type FormState =
   | { kind: 'idle' }
   | { kind: 'submitting' }
   | { kind: 'invalid'; message: string }
-  | { kind: 'result'; outcome: VerificationOutcome }
+  | { kind: 'result'; outcome: VerificationOutcome; input: SignupInput | null }
+  | { kind: 'checkout-error'; message: string; input: SignupInput }
 
 const PROFESSION_LABELS: Record<ProfessionCode, string> = {
   optician: 'Optician',
 }
 
 function SignupPage() {
+  const router = useRouter()
   const [fullName, setFullName] = useState('')
   const [professionCode, setProfessionCode] =
     useState<ProfessionCode>('optician')
@@ -29,11 +33,6 @@ function SignupPage() {
   const [state, setState] = useState<FormState>({ kind: 'idle' })
   const [hydrated, setHydrated] = useState(false)
 
-  // Set a hydration sentinel after the first client render so the e2e tests
-  // can wait until React has attached event handlers before interacting with
-  // the form. Without this the test can click submit before hydration, the
-  // browser then submits the form natively (GET to /signup), and the page
-  // reloads with state wiped.
   useEffect(() => {
     setHydrated(true)
   }, [])
@@ -59,15 +58,56 @@ function SignupPage() {
     setState({ kind: 'submitting' })
     try {
       const { outcome } = await submitSignup({ data: parsed.data })
-      setState({ kind: 'result', outcome })
+      setState({ kind: 'result', outcome, input: parsed.data })
     } catch {
-      // An unexpected failure is a system issue, not a rejection (story 19).
-      setState({ kind: 'result', outcome: 'pending' })
+      setState({ kind: 'result', outcome: 'pending', input: null })
     }
   }
 
+  async function onContinueToPayment(input: SignupInput) {
+    setState({ kind: 'submitting' })
+    try {
+      const result = await startCheckout({ data: input })
+      if (result.kind === 'stripe') {
+        window.location.href = result.checkoutUrl
+        return
+      }
+      await router.navigate({ to: result.redirectTo })
+    } catch (error) {
+      setState({
+        kind: 'checkout-error',
+        message:
+          error instanceof Error ? error.message : 'Could not start checkout.',
+        input,
+      })
+    }
+  }
+
+  if (state.kind === 'checkout-error') {
+    return (
+      <div className="mx-auto max-w-2xl p-8" data-testid="checkout-error">
+        <h1 className="text-2xl font-bold">We couldn&apos;t start payment</h1>
+        <p className="mt-2 text-gray-700">{state.message}</p>
+        <button
+          type="button"
+          className="mt-4 rounded bg-black px-4 py-2 text-white"
+          onClick={() => onContinueToPayment(state.input)}
+          data-testid="checkout-retry"
+        >
+          Try again
+        </button>
+      </div>
+    )
+  }
+
   if (state.kind === 'result') {
-    return <ResultPanel outcome={state.outcome} />
+    return (
+      <ResultPanel
+        outcome={state.outcome}
+        input={state.input}
+        onContinue={onContinueToPayment}
+      />
+    )
   }
 
   return (
@@ -160,15 +200,37 @@ function SignupPage() {
   )
 }
 
-function ResultPanel({ outcome }: { outcome: VerificationOutcome }) {
+function ResultPanel({
+  outcome,
+  input,
+  onContinue,
+}: {
+  outcome: VerificationOutcome
+  input: SignupInput | null
+  onContinue: (input: SignupInput) => Promise<void>
+}) {
   if (outcome === 'verified') {
     return (
       <div className="mx-auto max-w-2xl p-8" data-testid="signup-verified">
         <h1 className="text-2xl font-bold">You&apos;re verified ✓</h1>
         <p className="mt-2 text-gray-700">
           We confirmed your registration on the GOC register. The next step is
-          to set up your £29/month subscription — payment is coming shortly.
+          your £29/month subscription.
         </p>
+        {input ? (
+          <button
+            type="button"
+            className="mt-4 rounded bg-black px-4 py-2 text-white"
+            onClick={() => onContinue(input)}
+            data-testid="signup-continue-to-payment"
+          >
+            Continue to payment
+          </button>
+        ) : (
+          <p className="mt-4 text-sm text-gray-500">
+            Refresh and re-enter your details to continue to payment.
+          </p>
+        )}
       </div>
     )
   }
@@ -183,6 +245,11 @@ function ResultPanel({ outcome }: { outcome: VerificationOutcome }) {
           MiCare only lists currently-registered professionals, so we can&apos;t
           continue your signup — and there is no charge. If you believe this is
           a mistake, check the GOC number you entered and try again.
+        </p>
+        <p className="mt-4">
+          <Link to="/signup" className="underline">
+            Back to signup
+          </Link>
         </p>
       </div>
     )
