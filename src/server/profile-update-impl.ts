@@ -4,7 +4,7 @@
 // which feeds `/`) is recomputed and persisted here so callers that lean on
 // the column stay consistent with the isVisible() predicate.
 
-import { z } from 'zod'
+import type { z } from 'zod'
 
 import { profileEditorInputSchema } from '../profile-editor-input'
 import type { ProfileEditorInput } from '../profile-editor-input'
