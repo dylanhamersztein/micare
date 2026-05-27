@@ -35,7 +35,10 @@ async function signupVerifiedAndCheckout(
     .locator('[data-testid="signup-form"][data-hydrated="true"]')
     .waitFor()
 
-  const suffix = String(Date.now()).slice(-6)
+  // Combine timestamp + random so two tests starting in the same millisecond
+  // (under `fullyParallel: true`) cannot collide on the unique email / GOC
+  // constraints in public.practitioners.
+  const suffix = `${String(Date.now()).slice(-5)}${Math.floor(Math.random() * 10)}`
   const gocNumber = `99-${suffix}`
   const email = `slice8-${suffix}@example.co.uk`
 
@@ -116,4 +119,34 @@ test('by-appointment-only is mutually exclusive with explicit opening hours', as
   // observable rejection path here is the form not flipping to "saved-visible"
   // — assert by absence.
   await expect(page.getByTestId('profile-saved-visible')).toHaveCount(0)
+})
+
+test('saving with required fields missing shows field errors and keeps the Practitioner hidden', async ({
+  page,
+}) => {
+  await signupVerifiedAndCheckout(page)
+
+  // Submit immediately — every required field is empty.
+  await page.getByTestId('profile-save').click()
+
+  await expect(
+    page.getByTestId('profile-practice-name-error'),
+  ).toBeVisible()
+  await expect(
+    page.getByTestId('profile-address-line1-error'),
+  ).toBeVisible()
+  await expect(page.getByTestId('profile-postcode-error')).toBeVisible()
+  await expect(page.getByTestId('profile-town-error')).toBeVisible()
+  await expect(
+    page.getByTestId('profile-booking-link-error'),
+  ).toBeVisible()
+
+  // The success banner must NOT appear, and the practitioner must still be
+  // hidden — searching the area returns no result for "Editor Optician".
+  await expect(page.getByTestId('profile-saved-visible')).toHaveCount(0)
+
+  await page.goto('/search?q=EC2V%206AA&radius=5')
+  await expect(
+    page.getByTestId('search-results').getByText('Editor Optician'),
+  ).toHaveCount(0)
 })
