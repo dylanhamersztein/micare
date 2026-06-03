@@ -31,6 +31,10 @@ export default defineConfig({
       DATABASE_URL:
         process.env.DATABASE_URL ??
         'postgresql://postgres:postgres@localhost:54322/postgres',
+      VITE_STRIPE_MOCK: process.env.VITE_STRIPE_MOCK ?? 'true',
+      GOC_MOCK: process.env.GOC_MOCK ?? 'true',
+      PHOTO_CHECK_MOCK: process.env.PHOTO_CHECK_MOCK ?? 'true',
+      SUPABASE_STORAGE_MOCK: process.env.SUPABASE_STORAGE_MOCK ?? 'true',
     },
   },
 })
