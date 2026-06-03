@@ -25,10 +25,7 @@ async function insertPractitioner(): Promise<void> {
   )
 }
 
-async function makePngBuffer(
-  width: number,
-  height: number,
-): Promise<Buffer> {
+async function makePngBuffer(width: number, height: number): Promise<Buffer> {
   return sharp({
     create: {
       width,

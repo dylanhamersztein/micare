@@ -21,7 +21,11 @@ describe('photo-policy constants', () => {
   })
 
   it('allows jpeg, png, and webp', () => {
-    expect(ALLOWED_MIME_TYPES).toEqual(['image/jpeg', 'image/png', 'image/webp'])
+    expect(ALLOWED_MIME_TYPES).toEqual([
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+    ])
   })
 })
 

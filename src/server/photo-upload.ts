@@ -18,6 +18,6 @@ const inputSchema = z.object({
 
 export const submitProfilePhoto = createServerFn({ method: 'POST' })
   .inputValidator((raw: unknown) => inputSchema.parse(raw))
-  .handler(({ data }): Promise<PhotoUploadResult> =>
-    uploadPractitionerPhoto(data),
+  .handler(
+    ({ data }): Promise<PhotoUploadResult> => uploadPractitionerPhoto(data),
   )
