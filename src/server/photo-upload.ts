@@ -12,7 +12,6 @@ import type { PhotoUploadResult } from './photo-upload-impl'
 const inputSchema = z.object({
   shortId: z.string().trim().min(1),
   fileBase64: z.string().min(1),
-  mimeType: z.string().min(1),
   filename: z.string().min(1),
 })
 

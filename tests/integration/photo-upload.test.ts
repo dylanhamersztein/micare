@@ -57,7 +57,6 @@ describe('uploadPractitionerPhoto', () => {
     const result = await uploadPractitionerPhoto({
       shortId: TEST_SHORT_ID,
       fileBase64: asBase64(buffer),
-      mimeType: 'image/png',
       filename: 'headshot.png',
     })
 
@@ -78,7 +77,6 @@ describe('uploadPractitionerPhoto', () => {
     const result = await uploadPractitionerPhoto({
       shortId: TEST_SHORT_ID,
       fileBase64: asBase64(Buffer.from([0x47, 0x49, 0x46])),
-      mimeType: 'image/gif',
       filename: 'animated.gif',
     })
 
@@ -97,7 +95,6 @@ describe('uploadPractitionerPhoto', () => {
     const result = await uploadPractitionerPhoto({
       shortId: TEST_SHORT_ID,
       fileBase64: asBase64(buffer),
-      mimeType: 'image/png',
       filename: 'huge.png',
     })
 
@@ -109,7 +106,6 @@ describe('uploadPractitionerPhoto', () => {
     const result = await uploadPractitionerPhoto({
       shortId: TEST_SHORT_ID,
       fileBase64: asBase64(buffer),
-      mimeType: 'image/png',
       filename: 'tiny.png',
     })
 
@@ -121,7 +117,6 @@ describe('uploadPractitionerPhoto', () => {
     const result = await uploadPractitionerPhoto({
       shortId: TEST_SHORT_ID,
       fileBase64: asBase64(buffer),
-      mimeType: 'image/png',
       filename: 'sample-noface.png',
     })
 
@@ -138,7 +133,6 @@ describe('uploadPractitionerPhoto', () => {
     const result = await uploadPractitionerPhoto({
       shortId: TEST_SHORT_ID,
       fileBase64: asBase64(buffer),
-      mimeType: 'image/png',
       filename: 'group-multiface.png',
     })
 
@@ -150,7 +144,6 @@ describe('uploadPractitionerPhoto', () => {
     const result = await uploadPractitionerPhoto({
       shortId: 'nopenope',
       fileBase64: asBase64(buffer),
-      mimeType: 'image/png',
       filename: 'headshot.png',
     })
 
@@ -166,7 +159,6 @@ describe('uploadPractitionerPhoto', () => {
     await uploadPractitionerPhoto({
       shortId: TEST_SHORT_ID,
       fileBase64: asBase64(buffer),
-      mimeType: 'image/png',
       filename: 'headshot.png',
     })
 

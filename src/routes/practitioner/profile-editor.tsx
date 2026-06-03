@@ -264,7 +264,11 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
     event.target.value = ''
     if (!file) return
 
-    if (!isAllowedMimeType(file.type)) {
+    // Some browsers (Linux/WSL without xdg-mime) report file.type as an
+    // empty string for valid JPEGs. Only reject up front when the browser
+    // confidently reports a disallowed MIME; otherwise let the server
+    // sniff the bytes.
+    if (file.type && !isAllowedMimeType(file.type)) {
       setPhotoUploadState({ kind: 'failed', outcome: 'unsupported-type' })
       return
     }
@@ -280,7 +284,6 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
         data: {
           shortId: profile.shortId,
           fileBase64,
-          mimeType: file.type,
           filename: file.name,
         },
       })
