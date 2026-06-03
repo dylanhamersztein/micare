@@ -16,11 +16,13 @@
     "lint": "eslint",
     "format": "prettier --write . && eslint --fix",
     "check": "prettier --check .",
-    "setup:local": "docker compose -f docker/compose.yml up -d --wait && pnpm db:migrate && pnpm db:seed",
+    "setup:local": "docker compose -f docker/compose.yml up -d --wait && pnpm db:migrate && pnpm db:seed && pnpm face-api:models",
     "db:migrate": "bash scripts/db-migrate.sh",
-    "db:seed": "bash scripts/db-seed.sh"
+    "db:seed": "bash scripts/db-seed.sh",
+    "face-api:models": "bash scripts/download-face-api-models.sh"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.107.0",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-router": "latest",
@@ -28,11 +30,14 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/router-plugin": "^1.132.0",
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "@vladmandic/face-api": "^1.7.15",
     "lucide-react": "^0.545.0",
     "node-html-parser": "^7.1.0",
     "pg": "^8.20.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "sharp": "^0.34.5",
     "stripe": "^22.1.1",
     "tailwindcss": "^4.1.18",
     "zod": "^4.4.3"
@@ -59,8 +64,10 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@tensorflow/tfjs-node",
       "esbuild",
       "lightningcss",
+      "sharp",
       "supabase"
     ]
   }
