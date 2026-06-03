@@ -49,7 +49,10 @@ function ProfileEditorPage() {
 
   if (loaderData.kind === 'no-short-id') {
     return (
-      <div className="mx-auto max-w-2xl p-8" data-testid="profile-editor-no-short-id">
+      <div
+        className="mx-auto max-w-2xl p-8"
+        data-testid="profile-editor-no-short-id"
+      >
         <h1 className="text-2xl font-bold">We can&apos;t find your account</h1>
         <p className="mt-2 text-gray-700">
           Open the link from your payment confirmation email, or finish signup
@@ -66,7 +69,10 @@ function ProfileEditorPage() {
 
   if (loaderData.kind === 'unknown') {
     return (
-      <div className="mx-auto max-w-2xl p-8" data-testid="profile-editor-unknown">
+      <div
+        className="mx-auto max-w-2xl p-8"
+        data-testid="profile-editor-unknown"
+      >
         <h1 className="text-2xl font-bold">We can&apos;t find your account</h1>
         <p className="mt-2 text-gray-700">
           The profile <code>{loaderData.shortId}</code> doesn&apos;t match any
@@ -97,18 +103,32 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
   const router = useRouter()
 
   const [practiceName, setPracticeName] = useState(profile.practiceName ?? '')
-  const [addressLine1, setAddressLine1] = useState(profile.practiceAddressLine1 ?? '')
-  const [addressLine2, setAddressLine2] = useState(profile.practiceAddressLine2 ?? '')
-  const [addressLine3, setAddressLine3] = useState(profile.practiceAddressLine3 ?? '')
+  const [addressLine1, setAddressLine1] = useState(
+    profile.practiceAddressLine1 ?? '',
+  )
+  const [addressLine2, setAddressLine2] = useState(
+    profile.practiceAddressLine2 ?? '',
+  )
+  const [addressLine3, setAddressLine3] = useState(
+    profile.practiceAddressLine3 ?? '',
+  )
   const [postcode, setPostcode] = useState(profile.practicePostcode ?? '')
   const [town, setTown] = useState(profile.practiceTown ?? '')
-  const [bookingLinkUrl, setBookingLinkUrl] = useState(profile.bookingLinkUrl ?? '')
-  const [byAppointmentOnly, setByAppointmentOnly] = useState(profile.byAppointmentOnly)
-  const [hours, setHours] = useState<Record<Day, string>>(hoursFromProfile(profile))
+  const [bookingLinkUrl, setBookingLinkUrl] = useState(
+    profile.bookingLinkUrl ?? '',
+  )
+  const [byAppointmentOnly, setByAppointmentOnly] = useState(
+    profile.byAppointmentOnly,
+  )
+  const [hours, setHours] = useState<Record<Day, string>>(
+    hoursFromProfile(profile),
+  )
   const [bio, setBio] = useState(profile.bio ?? '')
   const [photoUrl, setPhotoUrl] = useState(profile.photoUrl ?? '')
   const [servicesText, setServicesText] = useState(profile.services.join(', '))
-  const [languagesText, setLanguagesText] = useState(profile.languages.join(', '))
+  const [languagesText, setLanguagesText] = useState(
+    profile.languages.join(', '),
+  )
   const [accessibilityNotes, setAccessibilityNotes] = useState(
     profile.accessibilityNotes ?? '',
   )
@@ -151,7 +171,9 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
     [bio, photoUrl, services, languages, accessibilityNotes],
   )
 
-  function collectInput(): ProfileEditorInput | { fieldErrors: Record<string, string> } {
+  function collectInput():
+    | ProfileEditorInput
+    | { fieldErrors: Record<string, string> } {
     const trimmedHours: Record<string, string> = {}
     for (const day of DAYS) {
       const value = hours[day].trim()
@@ -227,10 +249,10 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
 
   const requiredFieldsComplete = Boolean(
     practiceName.trim() &&
-      addressLine1.trim() &&
-      postcode.trim() &&
-      town.trim() &&
-      bookingLinkUrl.trim(),
+    addressLine1.trim() &&
+    postcode.trim() &&
+    town.trim() &&
+    bookingLinkUrl.trim(),
   )
 
   return (
@@ -371,10 +393,16 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
           </label>
 
           {!byAppointmentOnly && (
-            <div className="flex flex-col gap-2" data-testid="profile-opening-hours">
+            <div
+              className="flex flex-col gap-2"
+              data-testid="profile-opening-hours"
+            >
               <span className="text-sm">Opening hours</span>
               {DAYS.map((day) => (
-                <label key={day} className="grid grid-cols-[120px_1fr] items-center gap-2 text-sm">
+                <label
+                  key={day}
+                  className="grid grid-cols-[120px_1fr] items-center gap-2 text-sm"
+                >
                   <span>{day}</span>
                   <input
                     type="text"
@@ -497,7 +525,10 @@ function Field({
         data-testid={testId}
       />
       {error && (
-        <span className="mt-1 text-xs text-red-600" data-testid={`${testId}-error`}>
+        <span
+          className="mt-1 text-xs text-red-600"
+          data-testid={`${testId}-error`}
+        >
           {error}
         </span>
       )}

@@ -16,6 +16,7 @@ const inputSchema = z.object({
 
 export const submitProfileUpdate = createServerFn({ method: 'POST' })
   .inputValidator((raw: unknown) => inputSchema.parse(raw))
-  .handler(({ data }): Promise<ProfileUpdateResult> =>
-    updateProfile(data.shortId, data.input),
+  .handler(
+    ({ data }): Promise<ProfileUpdateResult> =>
+      updateProfile(data.shortId, data.input),
   )

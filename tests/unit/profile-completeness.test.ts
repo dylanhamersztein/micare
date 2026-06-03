@@ -23,7 +23,13 @@ describe('profileCompleteness', () => {
     expect(profileCompleteness(EMPTY)).toEqual({
       filled: 0,
       total: 5,
-      missing: ['bio', 'photoUrl', 'services', 'languages', 'accessibilityNotes'],
+      missing: [
+        'bio',
+        'photoUrl',
+        'services',
+        'languages',
+        'accessibilityNotes',
+      ],
     })
   })
 
@@ -41,7 +47,13 @@ describe('profileCompleteness', () => {
     ).toEqual({
       filled: 0,
       total: 5,
-      missing: ['bio', 'photoUrl', 'services', 'languages', 'accessibilityNotes'],
+      missing: [
+        'bio',
+        'photoUrl',
+        'services',
+        'languages',
+        'accessibilityNotes',
+      ],
     })
   })
 
@@ -60,6 +72,10 @@ describe('profileCompleteness', () => {
     })
     expect(result.filled).toBe(2)
     expect(result.total).toBe(5)
-    expect(result.missing).toEqual(['services', 'languages', 'accessibilityNotes'])
+    expect(result.missing).toEqual([
+      'services',
+      'languages',
+      'accessibilityNotes',
+    ])
   })
 })

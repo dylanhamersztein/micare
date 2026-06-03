@@ -8,8 +8,12 @@ const TEST_EMAIL = 'load-test@example.co.uk'
 const TEST_SHORT_ID = 'load1234'
 
 async function clearTestRows(): Promise<void> {
-  await db.query("delete from public.verifications where goc_number = $1", [TEST_GOC])
-  await db.query("delete from public.practitioners where email = $1", [TEST_EMAIL])
+  await db.query('delete from public.verifications where goc_number = $1', [
+    TEST_GOC,
+  ])
+  await db.query('delete from public.practitioners where email = $1', [
+    TEST_EMAIL,
+  ])
 }
 
 async function insertFixture(): Promise<void> {
@@ -31,12 +35,7 @@ async function insertFixture(): Promise<void> {
        'https://test.example/book', 'A short bio.', array['Eye exam'], array['English'],
        'Step-free.', true
      )`,
-    [
-      TEST_SHORT_ID,
-      TEST_GOC,
-      TEST_EMAIL,
-      '{"Monday":"9:00-17:30"}',
-    ],
+    [TEST_SHORT_ID, TEST_GOC, TEST_EMAIL, '{"Monday":"9:00-17:30"}'],
   )
 }
 

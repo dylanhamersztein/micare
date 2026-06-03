@@ -18,7 +18,11 @@ const openingHoursSchema = z
 
 export const profileEditorInputSchema = z
   .object({
-    practiceName: z.string().trim().min(1, 'Practice name is required').max(120),
+    practiceName: z
+      .string()
+      .trim()
+      .min(1, 'Practice name is required')
+      .max(120),
     practiceAddressLine1: z
       .string()
       .trim()
@@ -43,7 +47,12 @@ export const profileEditorInputSchema = z
     openingHours: openingHoursSchema,
     byAppointmentOnly: z.boolean(),
     bio: z.string().trim().max(1000).nullable(),
-    photoUrl: z.string().trim().url().nullable().or(z.literal('').transform(() => null)),
+    photoUrl: z
+      .string()
+      .trim()
+      .url()
+      .nullable()
+      .or(z.literal('').transform(() => null)),
     services: z.array(z.string().trim().min(1)).default([]),
     languages: z.array(z.string().trim().min(1)).default([]),
     accessibilityNotes: z.string().trim().max(500).nullable(),

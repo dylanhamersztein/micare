@@ -129,17 +129,11 @@ test('saving with required fields missing shows field errors and keeps the Pract
   // Submit immediately — every required field is empty.
   await page.getByTestId('profile-save').click()
 
-  await expect(
-    page.getByTestId('profile-practice-name-error'),
-  ).toBeVisible()
-  await expect(
-    page.getByTestId('profile-address-line1-error'),
-  ).toBeVisible()
+  await expect(page.getByTestId('profile-practice-name-error')).toBeVisible()
+  await expect(page.getByTestId('profile-address-line1-error')).toBeVisible()
   await expect(page.getByTestId('profile-postcode-error')).toBeVisible()
   await expect(page.getByTestId('profile-town-error')).toBeVisible()
-  await expect(
-    page.getByTestId('profile-booking-link-error'),
-  ).toBeVisible()
+  await expect(page.getByTestId('profile-booking-link-error')).toBeVisible()
 
   // The success banner must NOT appear, and the practitioner must still be
   // hidden — searching the area returns no result for "Editor Optician".

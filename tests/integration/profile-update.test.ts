@@ -43,8 +43,12 @@ function geocodeNotFound(): Response {
 }
 
 async function clearTestRows(): Promise<void> {
-  await db.query("delete from public.verifications where goc_number = $1", [TEST_GOC])
-  await db.query("delete from public.practitioners where email = $1", [TEST_EMAIL])
+  await db.query('delete from public.verifications where goc_number = $1', [
+    TEST_GOC,
+  ])
+  await db.query('delete from public.practitioners where email = $1', [
+    TEST_EMAIL,
+  ])
 }
 
 async function insertEmptyPractitioner(): Promise<void> {
@@ -142,7 +146,10 @@ describe('updateProfile', () => {
     const result = await updateProfile(TEST_SHORT_ID, VALID_INPUT)
 
     expect(result).toEqual({ kind: 'postcode-not-found' })
-    const row = await db.query<{ practice_name: string | null; visible: boolean }>(
+    const row = await db.query<{
+      practice_name: string | null
+      visible: boolean
+    }>(
       `select practice_name, visible from public.practitioners where short_id = $1`,
       [TEST_SHORT_ID],
     )
