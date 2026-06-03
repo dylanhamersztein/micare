@@ -6,3 +6,5 @@ process.env.SUPABASE_PROJECT_REF ??= 'local-dev'
 process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'local-dev-service-role-key'
 process.env.DATABASE_URL ??=
   'postgresql://postgres:postgres@localhost:54322/postgres'
+process.env.PHOTO_CHECK_MOCK ??= 'true'
+process.env.SUPABASE_STORAGE_MOCK ??= 'true'
