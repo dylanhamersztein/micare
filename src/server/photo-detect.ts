@@ -10,13 +10,15 @@
 
 import path from 'node:path'
 
+import type * as FaceApi from '@vladmandic/face-api'
+
 import { env } from '../env.server'
 
 type DetectFacesResult = { faceCount: number }
 
 let modelLoaded = false
 
-async function loadModelOnce(): Promise<typeof import('@vladmandic/face-api')> {
+async function loadModelOnce(): Promise<typeof FaceApi> {
   const faceapi = await import('@vladmandic/face-api')
   await import('@tensorflow/tfjs-node')
   if (!modelLoaded) {

@@ -41,9 +41,10 @@ describe('photoCheckMessage', () => {
   }
 
   it('every failure message is unique', () => {
-    const messages = PHOTO_CHECK_OUTCOMES.filter((o) => o !== 'ok').map((o) =>
-      photoCheckMessage(o as Exclude<PhotoCheckOutcome, 'ok'>),
+    const failures = PHOTO_CHECK_OUTCOMES.filter(
+      (o): o is Exclude<PhotoCheckOutcome, 'ok'> => o !== 'ok',
     )
+    const messages = failures.map(photoCheckMessage)
     expect(new Set(messages).size).toBe(messages.length)
   })
 })
