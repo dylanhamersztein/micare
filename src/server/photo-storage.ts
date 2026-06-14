@@ -44,7 +44,11 @@ export async function uploadProfilePhoto(input: UploadInput): Promise<string> {
   const objectKey = objectPath(input.shortId, ext)
 
   if (env.SUPABASE_STORAGE_MOCK) {
-    return `https://storage.mock/${env.SUPABASE_STORAGE_BUCKET}/${objectKey}`
+    // Return a data URL so the browser can actually render the uploaded
+    // photo in the preview and on the public profile page during local
+    // dev. A real Storage upload would return a CDN URL the browser could
+    // fetch; the data URL is the simplest local equivalent.
+    return `data:${input.mimeType};base64,${input.buffer.toString('base64')}`
   }
 
   const bucket = getClient().storage.from(env.SUPABASE_STORAGE_BUCKET)

@@ -62,9 +62,7 @@ describe('uploadPractitionerPhoto', () => {
 
     expect(result.kind).toBe('ok')
     if (result.kind !== 'ok') throw new Error('expected ok')
-    expect(result.photoUrl).toMatch(
-      new RegExp(`/practitioner-photos/${TEST_SHORT_ID}/photo\\.png$`),
-    )
+    expect(result.photoUrl).toMatch(/^data:image\/png;base64,/)
 
     const row = await db.query<{ photo_url: string | null }>(
       `select photo_url from public.practitioners where short_id = $1`,
