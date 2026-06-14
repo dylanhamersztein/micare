@@ -27,6 +27,11 @@ const schema = z
     APP_URL: z.string().url().optional(),
 
     RESEND_API_KEY: z.string().optional(),
+
+    PHOTO_CHECK_MOCK: boolFromEnv,
+    SUPABASE_STORAGE_MOCK: boolFromEnv,
+    SUPABASE_URL: z.string().url().optional(),
+    SUPABASE_STORAGE_BUCKET: z.string().default('practitioner-photos'),
   })
   .superRefine((env, ctx) => {
     if (!env.GOC_MOCK && !env.GOC_API_KEY) {
@@ -51,6 +56,13 @@ const schema = z
           })
         }
       }
+    }
+    if (!env.SUPABASE_STORAGE_MOCK && !env.SUPABASE_URL) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['SUPABASE_URL'],
+        message: 'Required when SUPABASE_STORAGE_MOCK is false',
+      })
     }
   })
 

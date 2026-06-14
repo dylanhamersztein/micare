@@ -2,9 +2,17 @@ import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 
+import {
+  ALLOWED_MIME_TYPES,
+  MAX_BYTES,
+  isAllowedMimeType,
+} from '../../photo-policy'
+import { photoCheckMessage } from '../../photo-check-result'
+import type { PhotoCheckOutcome } from '../../photo-check-result'
 import { profileCompleteness } from '../../profile-completeness'
 import { profileEditorInputSchema } from '../../profile-editor-input'
 import type { ProfileEditorInput } from '../../profile-editor-input'
+import { submitProfilePhoto } from '../../server/photo-upload'
 import { loadProfile } from '../../server/profile-load'
 import type { EditableProfile } from '../../server/profile-load-impl'
 import { submitProfileUpdate } from '../../server/profile-update'
@@ -43,6 +51,11 @@ type FormState =
   | { kind: 'invalid'; fieldErrors: Record<string, string> }
   | { kind: 'postcode-not-found' }
   | { kind: 'server-error'; message: string }
+
+type PhotoUploadState =
+  | { kind: 'idle' }
+  | { kind: 'uploading' }
+  | { kind: 'failed'; outcome: Exclude<PhotoCheckOutcome, 'ok'> }
 
 function ProfileEditorPage() {
   const loaderData = Route.useLoaderData()
@@ -136,6 +149,9 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
     profile.acceptingNewPatients,
   )
   const [state, setState] = useState<FormState>({ kind: 'editing' })
+  const [photoUploadState, setPhotoUploadState] = useState<PhotoUploadState>({
+    kind: 'idle',
+  })
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -241,6 +257,55 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
         message: error instanceof Error ? error.message : 'Save failed.',
       })
     }
+  }
+
+  async function onPhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+
+    // Some browsers (Linux/WSL without xdg-mime) report file.type as an
+    // empty string for valid JPEGs. Only reject up front when the browser
+    // confidently reports a disallowed MIME; otherwise let the server
+    // sniff the bytes.
+    if (file.type && !isAllowedMimeType(file.type)) {
+      setPhotoUploadState({ kind: 'failed', outcome: 'unsupported-type' })
+      return
+    }
+    if (file.size > MAX_BYTES) {
+      setPhotoUploadState({ kind: 'failed', outcome: 'too-large' })
+      return
+    }
+
+    setPhotoUploadState({ kind: 'uploading' })
+    try {
+      const fileBase64 = await fileToBase64(file)
+      const result = await submitProfilePhoto({
+        data: {
+          shortId: profile.shortId,
+          fileBase64,
+          filename: file.name,
+        },
+      })
+      if (result.kind === 'ok') {
+        setPhotoUrl(result.photoUrl)
+        setPhotoUploadState({ kind: 'idle' })
+      } else if (result.kind === 'unknown') {
+        setPhotoUploadState({
+          kind: 'failed',
+          outcome: 'unsupported-type',
+        })
+      } else {
+        setPhotoUploadState({ kind: 'failed', outcome: result.kind })
+      }
+    } catch {
+      setPhotoUploadState({ kind: 'failed', outcome: 'unsupported-type' })
+    }
+  }
+
+  function onRemovePhoto() {
+    setPhotoUrl('')
+    setPhotoUploadState({ kind: 'idle' })
   }
 
   function errorFor(key: string): string | undefined {
@@ -444,12 +509,56 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
               data-testid="profile-bio"
             />
           </label>
-          <Field
-            label="Photo URL (optional placeholder — upload ships later)"
-            testId="profile-photo-url"
-            value={photoUrl}
-            onChange={setPhotoUrl}
-          />
+          <div
+            className="flex flex-col gap-2"
+            data-testid="profile-photo-uploader"
+          >
+            <span className="text-sm">Profile photo (optional)</span>
+            {photoUrl ? (
+              <div className="flex items-center gap-3">
+                <img
+                  src={photoUrl}
+                  alt="Current profile photo"
+                  className="h-20 w-20 rounded-full object-cover"
+                  data-testid="profile-photo-preview"
+                />
+                <button
+                  type="button"
+                  className="text-sm underline"
+                  onClick={onRemovePhoto}
+                  data-testid="profile-photo-remove"
+                >
+                  Remove photo
+                </button>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-600">No photo uploaded yet.</p>
+            )}
+            <input
+              type="file"
+              accept={ALLOWED_MIME_TYPES.join(',')}
+              onChange={onPhotoChange}
+              data-testid="profile-photo-input"
+              disabled={photoUploadState.kind === 'uploading'}
+            />
+            {photoUploadState.kind === 'uploading' && (
+              <p
+                className="text-sm text-gray-600"
+                data-testid="profile-photo-uploading"
+              >
+                Checking photo…
+              </p>
+            )}
+            {photoUploadState.kind === 'failed' && (
+              <p
+                className="text-sm text-red-600"
+                data-testid="profile-photo-error"
+                data-outcome={photoUploadState.outcome}
+              >
+                {photoCheckMessage(photoUploadState.outcome)}
+              </p>
+            )}
+          </div>
           <Field
             label="Services (comma-separated)"
             testId="profile-services"
@@ -496,6 +605,17 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
       </form>
     </div>
   )
+}
+
+async function fileToBase64(file: File): Promise<string> {
+  const buffer = await file.arrayBuffer()
+  const bytes = new Uint8Array(buffer)
+  let binary = ''
+  const chunkSize = 0x8000
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize))
+  }
+  return btoa(binary)
 }
 
 function Field({
