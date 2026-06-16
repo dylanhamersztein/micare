@@ -28,6 +28,20 @@ const schema = z
 
     RESEND_API_KEY: z.string().optional(),
 
+    // Magic-link auth. Mirrors the other *_MOCK flags: when true (the
+    // default) no email is sent — the login flow returns a clickable dev
+    // magic-link and the callback verifies a locally-signed token, so the
+    // whole suite runs offline. When false, Supabase Auth sends/verifies the
+    // link (see ADR-0006).
+    AUTH_MOCK: boolFromEnv,
+    // Password h3 uses to seal the `micare_session` cookie (>= 32 chars).
+    // Optional in mock/dev (src/server/session.ts falls back to a dev
+    // constant); required when AUTH_MOCK is false.
+    AUTH_SESSION_SECRET: z.string().min(32).optional(),
+    // Supabase anon key for the real signInWithOtp / verifyOtp client.
+    // Required only when AUTH_MOCK is false.
+    SUPABASE_ANON_KEY: z.string().optional(),
+
     PHOTO_CHECK_MOCK: boolFromEnv,
     SUPABASE_STORAGE_MOCK: boolFromEnv,
     SUPABASE_URL: z.string().url().optional(),
@@ -63,6 +77,29 @@ const schema = z
         path: ['SUPABASE_URL'],
         message: 'Required when SUPABASE_STORAGE_MOCK is false',
       })
+    }
+    if (!env.AUTH_MOCK) {
+      if (!env.AUTH_SESSION_SECRET) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['AUTH_SESSION_SECRET'],
+          message: 'Required when AUTH_MOCK is false',
+        })
+      }
+      if (!env.SUPABASE_ANON_KEY) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SUPABASE_ANON_KEY'],
+          message: 'Required when AUTH_MOCK is false',
+        })
+      }
+      if (!env.APP_URL) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['APP_URL'],
+          message: 'Required when AUTH_MOCK is false (magic-link redirect URL)',
+        })
+      }
     }
   })
 
