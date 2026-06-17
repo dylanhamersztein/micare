@@ -20,10 +20,7 @@ describe('formatStaleAlertText', () => {
   })
 
   it('renders "never" for a null last_verified_at', () => {
-    const text = formatStaleAlertText(
-      [{ ...ROW, last_verified_at: null }],
-      14,
-    )
+    const text = formatStaleAlertText([{ ...ROW, last_verified_at: null }], 14)
     expect(text).toContain('never')
   })
 })

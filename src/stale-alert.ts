@@ -16,9 +16,7 @@ export function formatStaleAlertText(
 ): string {
   const header = `${stale.length} visible practitioner(s) not re-verified in over ${thresholdDays} days:`
   const lines = stale.map((p) => {
-    const when = p.last_verified_at
-      ? p.last_verified_at.toISOString()
-      : 'never'
+    const when = p.last_verified_at ? p.last_verified_at.toISOString() : 'never'
     return `- ${p.short_id} ${p.full_name} (last verified: ${when})`
   })
   return [header, ...lines].join('\n')

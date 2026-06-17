@@ -20,7 +20,9 @@ async function cleanup(): Promise<void> {
       where short_id like 'rv-test-%'
          or goc_number in ('99-000001', '99-000002', '99-000004')`,
   )
-  await db.query("delete from public.verifications where goc_number like '99-%'")
+  await db.query(
+    "delete from public.verifications where goc_number like '99-%'",
+  )
 }
 
 async function seedVisible(
@@ -35,7 +37,13 @@ async function seedVisible(
      values ($1, $2, $3, 'optician', $4,
         'verified', 'active', true, now() - make_interval(days => $5))
      returning id`,
-    [shortId, `RV ${shortId}`, gocNumber, `${shortId}@example.com`, lastVerifiedDaysAgo],
+    [
+      shortId,
+      `RV ${shortId}`,
+      gocNumber,
+      `${shortId}@example.com`,
+      lastVerifiedDaysAgo,
+    ],
   )
   return result.rows[0].id
 }
@@ -74,7 +82,10 @@ describe('runReVerification', () => {
     const summary = await runReVerification()
 
     expect(summary.revoked).toBeGreaterThanOrEqual(1)
-    const row = await db.query<{ verification_status: string; visible: boolean }>(
+    const row = await db.query<{
+      verification_status: string
+      visible: boolean
+    }>(
       'select verification_status, visible from public.practitioners where id = $1',
       [id],
     )
@@ -88,7 +99,10 @@ describe('runReVerification', () => {
     const summary = await runReVerification()
 
     expect(summary.indeterminate).toBeGreaterThanOrEqual(1)
-    const row = await db.query<{ verification_status: string; visible: boolean }>(
+    const row = await db.query<{
+      verification_status: string
+      visible: boolean
+    }>(
       'select verification_status, visible from public.practitioners where id = $1',
       [id],
     )
