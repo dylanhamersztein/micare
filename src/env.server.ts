@@ -46,6 +46,21 @@ const schema = z
     SUPABASE_STORAGE_MOCK: boolFromEnv,
     SUPABASE_URL: z.string().url().optional(),
     SUPABASE_STORAGE_BUCKET: z.string().default('practitioner-photos'),
+
+    // Slice 11 — re-verification cron + stale alert (ADR-0007).
+    // Guards the /api/cron/* routes; Vercel Cron sends it as a bearer token.
+    // Optional so mock/local runs (no cron) still boot; the routes return 500
+    // when it is unset and 401 on a mismatch.
+    CRON_SECRET: z.string().optional(),
+    // Recipient for the daily stale-verification digest. Required only when
+    // ALERT_MOCK is false (see superRefine below).
+    OPERATOR_ALERT_EMAIL: z.string().email().optional(),
+    // Follows the *_MOCK idiom: when true (default) the digest is a log line
+    // only and no Resend call is made, keeping the suite offline.
+    ALERT_MOCK: boolFromEnv,
+    // Visible practitioners whose last_verified_at is older than this many
+    // days are surfaced by the daily alert.
+    STALE_VERIFICATION_DAYS: z.coerce.number().int().positive().default(14),
   })
   .superRefine((env, ctx) => {
     if (!env.GOC_MOCK && !env.GOC_API_KEY) {
@@ -98,6 +113,22 @@ const schema = z
           code: 'custom',
           path: ['APP_URL'],
           message: 'Required when AUTH_MOCK is false (magic-link redirect URL)',
+        })
+      }
+    }
+    if (!env.ALERT_MOCK) {
+      if (!env.OPERATOR_ALERT_EMAIL) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['OPERATOR_ALERT_EMAIL'],
+          message: 'Required when ALERT_MOCK is false',
+        })
+      }
+      if (!env.RESEND_API_KEY) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['RESEND_API_KEY'],
+          message: 'Required when ALERT_MOCK is false',
         })
       }
     }
