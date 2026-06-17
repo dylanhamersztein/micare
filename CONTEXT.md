@@ -41,6 +41,13 @@ _Avoid_: contact link, schedule URL, booking page.
 - A **Practitioner** has exactly one **Verification Status**.
 - Only **Practitioners** with `Verification Status = verified` are visible to consumers.
 
+## Maintenance jobs
+
+Two scheduled jobs keep verification fresh after signup (ADR-0007). Both are Vercel Cron routes under `/api/cron/`, guarded by a `CRON_SECRET` bearer token.
+
+- **Weekly re-verification** (`0 3 * * 1`): re-runs `verify` against every visible **Practitioner**. A still-active result bumps `last_verified_at`; a definitive not-found flips **Verification Status** to `revoked` and hides the profile; a transient scraper error leaves the row untouched (it ages into the stale alert instead).
+- **Daily stale alert** (`0 8 * * *`): emails the operator (`OPERATOR_ALERT_EMAIL`) and logs when visible **Practitioners** have gone un-reverified past `STALE_VERIFICATION_DAYS` (default 14) — an early signal that the weekly job or the GOC scraper is failing.
+
 ## Example dialogue
 
 > **Dev:** "When a **Practitioner** signs up, do we need a **Practice** address?"

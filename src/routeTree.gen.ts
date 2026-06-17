@@ -20,6 +20,8 @@ import { Route as CheckoutCancelRouteImport } from './routes/checkout/cancel'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as PShortIdSlugRouteImport } from './routes/p.$shortId.$slug'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
+import { Route as ApiCronStaleAlertRouteImport } from './routes/api/cron/stale-alert'
+import { Route as ApiCronReVerifyRouteImport } from './routes/api/cron/re-verify'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -77,6 +79,16 @@ const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
   path: '/api/stripe/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronStaleAlertRoute = ApiCronStaleAlertRouteImport.update({
+  id: '/api/cron/stale-alert',
+  path: '/api/cron/stale-alert',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCronReVerifyRoute = ApiCronReVerifyRouteImport.update({
+  id: '/api/cron/re-verify',
+  path: '/api/cron/re-verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,6 +100,8 @@ export interface FileRoutesByFullPath {
   '/checkout/cancel': typeof CheckoutCancelRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
+  '/api/cron/re-verify': typeof ApiCronReVerifyRoute
+  '/api/cron/stale-alert': typeof ApiCronStaleAlertRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
@@ -101,6 +115,8 @@ export interface FileRoutesByTo {
   '/checkout/cancel': typeof CheckoutCancelRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
+  '/api/cron/re-verify': typeof ApiCronReVerifyRoute
+  '/api/cron/stale-alert': typeof ApiCronStaleAlertRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
@@ -115,6 +131,8 @@ export interface FileRoutesById {
   '/checkout/cancel': typeof CheckoutCancelRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
+  '/api/cron/re-verify': typeof ApiCronReVerifyRoute
+  '/api/cron/stale-alert': typeof ApiCronStaleAlertRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/p/$shortId/$slug': typeof PShortIdSlugRoute
 }
@@ -130,6 +148,8 @@ export interface FileRouteTypes {
     | '/checkout/cancel'
     | '/checkout/success'
     | '/practitioner/profile-editor'
+    | '/api/cron/re-verify'
+    | '/api/cron/stale-alert'
     | '/api/stripe/webhook'
     | '/p/$shortId/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -143,6 +163,8 @@ export interface FileRouteTypes {
     | '/checkout/cancel'
     | '/checkout/success'
     | '/practitioner/profile-editor'
+    | '/api/cron/re-verify'
+    | '/api/cron/stale-alert'
     | '/api/stripe/webhook'
     | '/p/$shortId/$slug'
   id:
@@ -156,6 +178,8 @@ export interface FileRouteTypes {
     | '/checkout/cancel'
     | '/checkout/success'
     | '/practitioner/profile-editor'
+    | '/api/cron/re-verify'
+    | '/api/cron/stale-alert'
     | '/api/stripe/webhook'
     | '/p/$shortId/$slug'
   fileRoutesById: FileRoutesById
@@ -170,6 +194,8 @@ export interface RootRouteChildren {
   CheckoutCancelRoute: typeof CheckoutCancelRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
   PractitionerProfileEditorRoute: typeof PractitionerProfileEditorRoute
+  ApiCronReVerifyRoute: typeof ApiCronReVerifyRoute
+  ApiCronStaleAlertRoute: typeof ApiCronStaleAlertRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   PShortIdSlugRoute: typeof PShortIdSlugRoute
 }
@@ -253,6 +279,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/stale-alert': {
+      id: '/api/cron/stale-alert'
+      path: '/api/cron/stale-alert'
+      fullPath: '/api/cron/stale-alert'
+      preLoaderRoute: typeof ApiCronStaleAlertRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cron/re-verify': {
+      id: '/api/cron/re-verify'
+      path: '/api/cron/re-verify'
+      fullPath: '/api/cron/re-verify'
+      preLoaderRoute: typeof ApiCronReVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -266,6 +306,8 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutCancelRoute: CheckoutCancelRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
   PractitionerProfileEditorRoute: PractitionerProfileEditorRoute,
+  ApiCronReVerifyRoute: ApiCronReVerifyRoute,
+  ApiCronStaleAlertRoute: ApiCronStaleAlertRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   PShortIdSlugRoute: PShortIdSlugRoute,
 }
