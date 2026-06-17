@@ -8,3 +8,6 @@ process.env.DATABASE_URL ??=
   'postgresql://postgres:postgres@localhost:54322/postgres'
 process.env.PHOTO_CHECK_MOCK ??= 'true'
 process.env.SUPABASE_STORAGE_MOCK ??= 'true'
+process.env.AUTH_MOCK ??= 'true'
+process.env.AUTH_SESSION_SECRET ??=
+  'integration-test-session-secret-not-secret-0123456789'

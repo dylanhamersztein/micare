@@ -35,6 +35,10 @@ export default defineConfig({
       GOC_MOCK: process.env.GOC_MOCK ?? 'true',
       PHOTO_CHECK_MOCK: process.env.PHOTO_CHECK_MOCK ?? 'true',
       SUPABASE_STORAGE_MOCK: process.env.SUPABASE_STORAGE_MOCK ?? 'true',
+      AUTH_MOCK: process.env.AUTH_MOCK ?? 'true',
+      AUTH_SESSION_SECRET:
+        process.env.AUTH_SESSION_SECRET ??
+        'e2e-session-secret-not-secret-0123456789abcdef',
     },
   },
 })
