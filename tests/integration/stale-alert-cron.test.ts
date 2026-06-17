@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { db } from '../../src/server/db'
 import {
@@ -34,6 +34,10 @@ async function seedVisible(
   )
   return result.rows[0].id
 }
+
+// Clean up after the file too, so no seeded row outlives it on the shared
+// Compose DB (fileParallelism: false).
+afterAll(cleanup)
 
 describe('findStalePractitioners', () => {
   beforeEach(cleanup)

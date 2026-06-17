@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { db } from '../../src/server/db'
 import {
@@ -10,9 +10,15 @@ import {
 //   99-000001 -> found-active (stays verified)
 //   99-000002 -> not-found   (revoked)
 //   99-000004 -> error       (indeterminate; untouched)
+// Clean by GOC number, not just short_id: the reserved 99-000001/2/4 fixtures
+// are shared with the checkout suites, which seed them under a different
+// short_id/email. Clearing by goc_number removes any leftover from either
+// suite so the insert below never collides on the unique constraint.
 async function cleanup(): Promise<void> {
   await db.query(
-    "delete from public.practitioners where short_id like 'rv-test-%'",
+    `delete from public.practitioners
+      where short_id like 'rv-test-%'
+         or goc_number in ('99-000001', '99-000002', '99-000004')`,
   )
   await db.query("delete from public.verifications where goc_number like '99-%'")
 }
@@ -33,6 +39,10 @@ async function seedVisible(
   )
   return result.rows[0].id
 }
+
+// Reserved 99- GOC numbers collide with the checkout suites; clean up after
+// the file so no row outlives it (shared Compose DB, fileParallelism: false).
+afterAll(cleanup)
 
 describe('runReVerification', () => {
   beforeEach(cleanup)
