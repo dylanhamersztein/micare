@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { db } from '../../src/server/db'
-import { runReVerification } from '../../src/server/reverify-cron'
+import {
+  handleReVerifyCron,
+  runReVerification,
+} from '../../src/server/reverify-cron'
 
 // Reserved 99- GOC numbers map to deterministic mock outcomes:
 //   99-000001 -> found-active (stays verified)
@@ -81,5 +84,28 @@ describe('runReVerification', () => {
     )
     expect(row.rows[0].verification_status).toBe('verified')
     expect(row.rows[0].visible).toBe(true)
+  })
+})
+
+describe('handleReVerifyCron auth', () => {
+  beforeEach(cleanup)
+
+  it('rejects a request without the bearer token', async () => {
+    const response = await handleReVerifyCron(
+      new Request('https://micare.co.uk/api/cron/re-verify'),
+    )
+    expect(response.status).toBe(401)
+  })
+
+  it('runs and returns a summary with the correct token', async () => {
+    await seedVisible('rv-test-auth', '99-000001', 30)
+    const response = await handleReVerifyCron(
+      new Request('https://micare.co.uk/api/cron/re-verify', {
+        headers: { authorization: 'Bearer integration-test-cron-secret' },
+      }),
+    )
+    expect(response.status).toBe(200)
+    const body = (await response.json()) as { checked: number }
+    expect(body.checked).toBeGreaterThanOrEqual(1)
   })
 })
