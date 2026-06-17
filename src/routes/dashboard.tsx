@@ -4,7 +4,7 @@ import {
   redirect,
   useRouter,
 } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { openBillingPortal } from '../server/billing-portal'
 import { loadDashboard } from '../server/dashboard'
@@ -51,6 +51,14 @@ function DashboardPage() {
   const data = Route.useLoaderData()
   const router = useRouter()
   const [billingBusy, setBillingBusy] = useState(false)
+  // Signals to the e2e suite that the route has hydrated and its click
+  // handlers are attached, mirroring the login/signup forms. Without this the
+  // tests can click the SSR-rendered (but not-yet-interactive) buttons.
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    setHydrated(true)
+  }, [])
 
   async function onSignOut() {
     await signOut()
@@ -72,7 +80,11 @@ function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl p-8" data-testid="dashboard">
+    <div
+      className="mx-auto max-w-2xl p-8"
+      data-testid="dashboard"
+      data-hydrated={hydrated ? 'true' : undefined}
+    >
       <header className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Your dashboard</h1>
         <button
