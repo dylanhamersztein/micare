@@ -17,6 +17,7 @@ import { env } from '../env.server'
 import type { ProfessionCode } from '../verification'
 import { cronAuthError } from './cron-auth'
 import { db } from './db'
+import { handleRevocationRefund } from './revocation-refund-impl'
 import { verify } from './verification-impl'
 
 export type ReVerificationSummary = {
@@ -73,6 +74,14 @@ export async function runReVerification(): Promise<ReVerificationSummary> {
         [p.id],
       )
       summary.revoked++
+      // Cancel billing + notify. Isolated so one failed refund cannot abort
+      // the weekly sweep; the handler is idempotent, so a future manual replay
+      // is safe. Errors surface in the structured log for operator recovery.
+      try {
+        await handleRevocationRefund(p.id)
+      } catch (error) {
+        console.error('[cron:re-verify] revocation refund failed', p.id, error)
+      }
     } else {
       // error | ambiguous — leave untouched.
       summary.indeterminate++
