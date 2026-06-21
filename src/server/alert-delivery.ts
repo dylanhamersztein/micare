@@ -8,27 +8,9 @@
 import { env } from '../env.server'
 import { formatStaleAlertText } from '../stale-alert'
 import type { StalePractitioner } from '../stale-alert'
+import { sendResendEmail } from './resend'
 
 export type AlertChannel = 'log' | 'email'
-
-async function sendResendEmail(subject: string, text: string): Promise<void> {
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${env.RESEND_API_KEY}`,
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: 'MiCare Alerts <alerts@micare.co.uk>',
-      to: env.OPERATOR_ALERT_EMAIL,
-      subject,
-      text,
-    }),
-  })
-  if (!response.ok) {
-    throw new Error(`Resend send failed: HTTP ${response.status}`)
-  }
-}
 
 export async function deliverStaleAlert(
   stale: ReadonlyArray<StalePractitioner>,
@@ -46,9 +28,11 @@ export async function deliverStaleAlert(
     return { channel: 'log' }
   }
 
-  await sendResendEmail(
-    `MiCare: ${stale.length} stale practitioner verification(s)`,
-    body,
-  )
+  await sendResendEmail({
+    from: 'MiCare Alerts <alerts@micare.co.uk>',
+    to: env.OPERATOR_ALERT_EMAIL!,
+    subject: `MiCare: ${stale.length} stale practitioner verification(s)`,
+    text: body,
+  })
   return { channel: 'email' }
 }
