@@ -9,7 +9,9 @@ import { handleRevocationRefund } from '../../src/server/revocation-refund-impl'
 // revocation_refunds row (FK ON DELETE CASCADE), so no separate ledger cleanup
 // is needed.
 async function cleanup(): Promise<void> {
-  await db.query("delete from public.practitioners where short_id like 'rr-test-%'")
+  await db.query(
+    "delete from public.practitioners where short_id like 'rr-test-%'",
+  )
 }
 
 async function seed(args: {

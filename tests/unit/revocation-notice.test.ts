@@ -27,6 +27,8 @@ describe('formatRevocationEmail', () => {
       refunded: false,
     })
     expect(email.text.toLowerCase()).toContain('not being billed')
-    expect(email.text.toLowerCase()).not.toContain('refunded the unused portion')
+    expect(email.text.toLowerCase()).not.toContain(
+      'refunded the unused portion',
+    )
   })
 })

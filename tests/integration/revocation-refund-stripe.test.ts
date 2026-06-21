@@ -1,4 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 
 import type { db as dbApi } from '../../src/server/db'
 import type { handleRevocationRefund as handleFn } from '../../src/server/revocation-refund-impl'
@@ -59,7 +67,9 @@ describe('handleRevocationRefund (real Stripe + Resend boundary)', () => {
   it('cancels the subscription with proration and emails the practitioner', async () => {
     const id = await seedActive()
 
-    const cancel = vi.fn().mockResolvedValue({ id: 'sub_rr_real', status: 'canceled' })
+    const cancel = vi
+      .fn()
+      .mockResolvedValue({ id: 'sub_rr_real', status: 'canceled' })
     vi.spyOn(stripeModule, 'getStripe').mockReturnValue({
       subscriptions: { cancel },
     } as unknown as ReturnType<typeof stripeModule.getStripe>)
