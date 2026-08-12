@@ -6,6 +6,8 @@
 // branch: `geocodePostcode` for UK postcodes, `geocodePlace` for city/town
 // names. `geocodeLocation` is the dispatcher used by `searchPractitioners`.
 
+import { formatUkPostcode, isFullUkPostcode } from '../uk-postcode'
+
 export type GeocodedLocation = {
   label: string
   longitude: number
@@ -31,21 +33,6 @@ export class PlaceNotFoundError extends LocationNotFoundError {
     super(`Place not found: ${place}`)
     this.name = 'PlaceNotFoundError'
   }
-}
-
-// Matches a full UK postcode (with or without internal whitespace). Outward
-// codes alone (e.g. "EC2V") are intentionally not matched here — they fall
-// through to the place lookup, which postcodes.io also resolves.
-const UK_POSTCODE_PATTERN = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i
-
-function formatUkPostcode(raw: string): string {
-  const collapsed = raw.trim().toUpperCase().replace(/\s+/g, '')
-  if (collapsed.length < 5) return collapsed
-  return `${collapsed.slice(0, collapsed.length - 3)} ${collapsed.slice(-3)}`
-}
-
-function looksLikePostcode(raw: string): boolean {
-  return UK_POSTCODE_PATTERN.test(raw.trim())
 }
 
 export async function geocodePostcode(raw: string): Promise<GeocodedLocation> {
@@ -128,5 +115,5 @@ export async function geocodePlace(raw: string): Promise<GeocodedLocation> {
 }
 
 export async function geocodeLocation(raw: string): Promise<GeocodedLocation> {
-  return looksLikePostcode(raw) ? geocodePostcode(raw) : geocodePlace(raw)
+  return isFullUkPostcode(raw) ? geocodePostcode(raw) : geocodePlace(raw)
 }

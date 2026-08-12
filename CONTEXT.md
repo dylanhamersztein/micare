@@ -55,6 +55,14 @@ _Avoid_: contact link, schedule URL, booking page.
 One consumer following a **Practitioner**'s **Booking Link** via the MiCare redirect at `/go?p=<short_id>`. Recorded once per visitor per **Practitioner** per 24 hours, against a salted hash of IP + user agent — so the count means distinct interested consumers, not page loads (ADR-0009). The only conversion signal MiCare holds; the dashboard and the monthly summary email both report it per billing cycle.
 _Avoid_: click, hit, view, visit, lead.
 
+**Notify-Me Subscription**:
+A consumer's standing request to be told when a verified **Practitioner** lists near a postcode they searched. Captured only from the empty-results state on `/search` — the moment a consumer is provably interested and provably unserved. Identified by `(email, postcode)`, so one consumer can watch several places (home and work) with one address. Reaches consumers' inboxes only after **Confirmation**, and every email it sends carries a one-click unsubscribe link (ADR-0012).
+_Avoid_: alert, waitlist, lead, signup (too close to Practitioner signup).
+
+**Confirmation**:
+The consumer's click on the emailed double-opt-in link that turns a captured **Notify-Me Subscription** into an eligible one. Until it happens the row is inert — nothing is ever sent to an unconfirmed address, so typing a stranger's email into the public form achieves nothing beyond one message they can ignore.
+_Avoid_: verification (means the regulator check), activation, opt-in.
+
 ## Relationships
 
 - A **Practitioner** has exactly one **Profession**.
@@ -62,6 +70,7 @@ _Avoid_: click, hit, view, visit, lead.
 - A **Practitioner** has exactly one **Verification Status**.
 - A **Practitioner** has exactly one **Subscription Status**.
 - Only **Practitioners** with `Verification Status = verified` and a **Subscription Status** of `active`, `trialing`, or `past_due` are visible to consumers.
+- A consumer may hold several **Notify-Me Subscriptions**, one per postcode they are watching.
 
 ## Maintenance jobs
 

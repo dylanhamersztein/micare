@@ -13,3 +13,4 @@ process.env.AUTH_SESSION_SECRET ??=
   'integration-test-session-secret-not-secret-0123456789'
 process.env.CRON_SECRET ??= 'integration-test-cron-secret'
 process.env.ALERT_MOCK ??= 'true'
+process.env.NOTIFY_TOKEN_SECRET ??= 'integration-test-notify-secret'

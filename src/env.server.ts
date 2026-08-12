@@ -68,6 +68,13 @@ const schema = z
     // back to a fixed dev constant (src/server/click-tracking-impl.ts).
     // Changing it in production resets every in-flight dedup window.
     CLICK_TRACKING_SALT: z.string().optional(),
+
+    // Slice 15 — Notify-Me capture. Signs the confirm / unsubscribe links so
+    // they are non-guessable without storing a token per row. Optional like
+    // CLICK_TRACKING_SALT: local/mock runs fall back to a fixed dev constant
+    // (src/server/notify-impl.ts). Rotating it in production invalidates every
+    // link already sitting in a consumer's inbox.
+    NOTIFY_TOKEN_SECRET: z.string().optional(),
   })
   .superRefine((env, ctx) => {
     if (!env.GOC_MOCK && !env.GOC_API_KEY) {
