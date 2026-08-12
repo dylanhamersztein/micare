@@ -33,15 +33,18 @@ async function seedVisible(
   const result = await db.query<{ id: string }>(
     `insert into public.practitioners
        (short_id, full_name, goc_number, profession_code, email,
-        verification_status, subscription_status, visible, last_verified_at)
+        verification_status, subscription_status, stripe_customer_id,
+        stripe_subscription_id, visible, last_verified_at)
      values ($1, $2, $3, 'optician', $4,
-        'verified', 'active', true, now() - make_interval(days => $5))
+        'verified', 'active', 'cus_rv_test', $5, true,
+        now() - make_interval(days => $6))
      returning id`,
     [
       shortId,
       `RV ${shortId}`,
       gocNumber,
       `${shortId}@example.com`,
+      `sub_rv_${shortId}`,
       lastVerifiedDaysAgo,
     ],
   )
@@ -76,7 +79,7 @@ describe('runReVerification', () => {
     )
   })
 
-  it('revokes and hides a struck-off (not-found) practitioner', async () => {
+  it('revokes, hides, cancels billing and records a refund for a struck-off practitioner', async () => {
     const id = await seedVisible('rv-test-struck', '99-000002', 1)
 
     const summary = await runReVerification()
@@ -85,12 +88,21 @@ describe('runReVerification', () => {
     const row = await db.query<{
       verification_status: string
       visible: boolean
+      subscription_status: string
     }>(
-      'select verification_status, visible from public.practitioners where id = $1',
+      `select verification_status, visible, subscription_status
+         from public.practitioners where id = $1`,
       [id],
     )
     expect(row.rows[0].verification_status).toBe('revoked')
     expect(row.rows[0].visible).toBe(false)
+    expect(row.rows[0].subscription_status).toBe('canceled')
+
+    const ledger = await db.query<{ outcome: string }>(
+      'select outcome from public.revocation_refunds where practitioner_id = $1',
+      [id],
+    )
+    expect(ledger.rows[0].outcome).toBe('refunded')
   })
 
   it('leaves a transient-error practitioner untouched', async () => {
