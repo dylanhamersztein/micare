@@ -1,10 +1,11 @@
 // Server-only implementation of the `verification` deep module. `verify` is
-// the public entry point: the signup orchestrator calls it, and (in a future
-// slice) so will the weekly re-verification cron. It hides the GOC register
-// scrape, the GOC_MOCK toggle, network retries inside a 10s budget, and the
-// 24h re-scrape suppression cache backed by the append-only `verifications`
-// table. Integration tests call `verify` directly; src/server/signup.ts wraps
-// it in a thin createServerFn shim.
+// the public entry point: the signup orchestrator calls it, so does the
+// weekly re-verification cron, and so does the operator's manual re-run for a
+// stuck-pending Practitioner (ADR-0014) — the only caller that ever passes
+// `force`. It hides the GOC register scrape, the GOC_MOCK toggle, network
+// retries inside a 10s budget, and the 24h re-scrape suppression cache backed
+// by the append-only `verifications` table. Integration tests call `verify`
+// directly; src/server/signup.ts wraps it in a thin createServerFn shim.
 
 import { env } from '../env.server'
 import { parseGocRegisterPage } from '../goc-register'
@@ -124,12 +125,21 @@ async function scrapeGocRegister(
   }
 }
 
+export type VerifyOptions = {
+  // Skips the 24h suppression cache and goes to the register. Only the
+  // operator's manual re-verification (issue #10) sets this: signup and the
+  // weekly cron have no reason to re-ask a question answered hours ago, and
+  // the cache is what keeps MiCare's scrape volume off the GOC's radar.
+  force?: boolean
+}
+
 export async function verify(
   profession: ProfessionCode,
   fullName: string,
   regNumber: string,
+  options: VerifyOptions = {},
 ): Promise<VerificationResult> {
-  const cached = await findCachedVerification(regNumber)
+  const cached = options.force ? null : await findCachedVerification(regNumber)
   if (cached) {
     return cached
   }
