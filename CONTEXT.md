@@ -34,6 +34,10 @@ _Avoid_: state, badge, level.
 The external URL a Practitioner provides where consumers complete a booking — typically their own site, an online booking system, or a calendar provider page. The sole conversion action on a Practitioner profile in Phase 1. Consumers reach it via a MiCare-controlled redirect so click-throughs can be counted.
 _Avoid_: contact link, schedule URL, booking page.
 
+**Click-through**:
+One consumer following a **Practitioner**'s **Booking Link** via the MiCare redirect at `/go?p=<short_id>`. Recorded once per visitor per **Practitioner** per 24 hours, against a salted hash of IP + user agent — so the count means distinct interested consumers, not page loads (ADR-0009). The only conversion signal MiCare holds; the dashboard and the monthly summary email both report it per billing cycle.
+_Avoid_: click, hit, view, visit, lead.
+
 ## Relationships
 
 - A **Practitioner** has exactly one **Profession**.
