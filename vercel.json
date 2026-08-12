@@ -1,6 +1,7 @@
 {
   "crons": [
     { "path": "/api/cron/re-verify", "schedule": "0 3 * * 1" },
-    { "path": "/api/cron/stale-alert", "schedule": "0 8 * * *" }
+    { "path": "/api/cron/stale-alert", "schedule": "0 8 * * *" },
+    { "path": "/api/cron/monthly-summary", "schedule": "0 9 * * *" }
   ]
 }

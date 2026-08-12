@@ -6,7 +6,7 @@
 import { currentBillingCycle } from '../billing-cycle'
 import { generateProfileUrl } from '../slug'
 import type { SubscriptionStatus, VerificationStatus } from '../visibility'
-import { db } from './db'
+import { countClickthroughs } from './clickthrough-count'
 import { findPractitionerByEmail } from './practitioner-account'
 
 export type DashboardData = {
@@ -29,21 +29,14 @@ export async function loadDashboardImpl(
 
   const cycle = currentBillingCycle(account.createdAt, now)
 
-  const countResult = await db.query<{ count: number }>(
-    `select count(*)::int as count
-       from public.clickthroughs
-      where practitioner_id = $1
-        and occurred_at >= $2
-        and occurred_at < $3`,
-    [account.id, cycle.start, cycle.end],
-  )
+  const clickthroughCount = await countClickthroughs(account.id, cycle)
 
   return {
     fullName: account.fullName,
     verificationStatus: account.verificationStatus,
     lastVerifiedAt: account.lastVerifiedAt?.toISOString() ?? null,
     subscriptionStatus: account.subscriptionStatus,
-    clickthroughCount: countResult.rows[0]?.count ?? 0,
+    clickthroughCount,
     cycleStart: cycle.start.toISOString(),
     cycleEnd: cycle.end.toISOString(),
     publicProfileUrl: generateProfileUrl({
