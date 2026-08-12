@@ -43,6 +43,10 @@ A Practitioner's current standing with Stripe, as known to MiCare. Mirrored verb
 A cancellation scheduled at period end holds `active` until the period actually ends, because Stripe holds it there.
 _Avoid_: plan, membership, billing state.
 
+**Billing Cycle**:
+The month a **Practitioner**'s £29 subscription currently covers, as a half-open window `[start, end)` — `end` is the renewal instant and belongs to the next cycle. Stripe owns the bounds (they live on the subscription's item, not the subscription); MiCare reads them rather than recomputing, so a moved anchor or a pause can't drift the window (ADR-0011). The unit both the dashboard **Click-through** count and the monthly summary email report against.
+_Avoid_: billing period, month, subscription period.
+
 **Booking Link**:
 The external URL a Practitioner provides where consumers complete a booking — typically their own site, an online booking system, or a calendar provider page. The sole conversion action on a Practitioner profile in Phase 1. Consumers reach it via a MiCare-controlled redirect so click-throughs can be counted.
 _Avoid_: contact link, schedule URL, booking page.
@@ -61,10 +65,11 @@ _Avoid_: click, hit, view, visit, lead.
 
 ## Maintenance jobs
 
-Two scheduled jobs keep verification fresh after signup (ADR-0007). Both are Vercel Cron routes under `/api/cron/`, guarded by a `CRON_SECRET` bearer token.
+Three scheduled jobs run as Vercel Cron routes under `/api/cron/`, each guarded by a `CRON_SECRET` bearer token. The first two keep verification fresh after signup (ADR-0007).
 
 - **Weekly re-verification** (`0 3 * * 1`): re-runs `verify` against every visible **Practitioner**. A still-active result bumps `last_verified_at`; a definitive not-found flips **Verification Status** to `revoked` and hides the profile; a transient scraper error leaves the row untouched (it ages into the stale alert instead).
 - **Daily stale alert** (`0 8 * * *`): emails the operator (`OPERATOR_ALERT_EMAIL`) and logs when visible **Practitioners** have gone un-reverified past `STALE_VERIFICATION_DAYS` (default 14) — an early signal that the weekly job or the GOC scraper is failing.
+- **Daily monthly summary** (`0 9 * * *`): emails each **Practitioner** whose **Billing Cycle** ends tomorrow their **Click-through** count for that cycle (ADR-0011).
 
 ## Example dialogue
 

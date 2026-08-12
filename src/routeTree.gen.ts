@@ -23,6 +23,7 @@ import { Route as PShortIdSlugRouteImport } from './routes/p.$shortId.$slug'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 import { Route as ApiCronStaleAlertRouteImport } from './routes/api/cron/stale-alert'
 import { Route as ApiCronReVerifyRouteImport } from './routes/api/cron/re-verify'
+import { Route as ApiCronMonthlySummaryRouteImport } from './routes/api/cron/monthly-summary'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -95,6 +96,11 @@ const ApiCronReVerifyRoute = ApiCronReVerifyRouteImport.update({
   path: '/api/cron/re-verify',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronMonthlySummaryRoute = ApiCronMonthlySummaryRouteImport.update({
+  id: '/api/cron/monthly-summary',
+  path: '/api/cron/monthly-summary',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/checkout/cancel': typeof CheckoutCancelRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
+  '/api/cron/monthly-summary': typeof ApiCronMonthlySummaryRoute
   '/api/cron/re-verify': typeof ApiCronReVerifyRoute
   '/api/cron/stale-alert': typeof ApiCronStaleAlertRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/checkout/cancel': typeof CheckoutCancelRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
+  '/api/cron/monthly-summary': typeof ApiCronMonthlySummaryRoute
   '/api/cron/re-verify': typeof ApiCronReVerifyRoute
   '/api/cron/stale-alert': typeof ApiCronStaleAlertRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/checkout/cancel': typeof CheckoutCancelRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
+  '/api/cron/monthly-summary': typeof ApiCronMonthlySummaryRoute
   '/api/cron/re-verify': typeof ApiCronReVerifyRoute
   '/api/cron/stale-alert': typeof ApiCronStaleAlertRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/checkout/cancel'
     | '/checkout/success'
     | '/practitioner/profile-editor'
+    | '/api/cron/monthly-summary'
     | '/api/cron/re-verify'
     | '/api/cron/stale-alert'
     | '/api/stripe/webhook'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/checkout/cancel'
     | '/checkout/success'
     | '/practitioner/profile-editor'
+    | '/api/cron/monthly-summary'
     | '/api/cron/re-verify'
     | '/api/cron/stale-alert'
     | '/api/stripe/webhook'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/checkout/cancel'
     | '/checkout/success'
     | '/practitioner/profile-editor'
+    | '/api/cron/monthly-summary'
     | '/api/cron/re-verify'
     | '/api/cron/stale-alert'
     | '/api/stripe/webhook'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   CheckoutCancelRoute: typeof CheckoutCancelRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
   PractitionerProfileEditorRoute: typeof PractitionerProfileEditorRoute
+  ApiCronMonthlySummaryRoute: typeof ApiCronMonthlySummaryRoute
   ApiCronReVerifyRoute: typeof ApiCronReVerifyRoute
   ApiCronStaleAlertRoute: typeof ApiCronStaleAlertRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCronReVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/monthly-summary': {
+      id: '/api/cron/monthly-summary'
+      path: '/api/cron/monthly-summary'
+      fullPath: '/api/cron/monthly-summary'
+      preLoaderRoute: typeof ApiCronMonthlySummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutCancelRoute: CheckoutCancelRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
   PractitionerProfileEditorRoute: PractitionerProfileEditorRoute,
+  ApiCronMonthlySummaryRoute: ApiCronMonthlySummaryRoute,
   ApiCronReVerifyRoute: ApiCronReVerifyRoute,
   ApiCronStaleAlertRoute: ApiCronStaleAlertRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
