@@ -1,5 +1,15 @@
 import type Stripe from 'stripe'
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
+
+import type { searchPractitioners as searchFn } from '../../src/server/search-impl'
 
 import type { handleStripeWebhook as handleFn } from '../../src/server/webhook-handler'
 import type { db as dbApi } from '../../src/server/db'
@@ -16,10 +26,18 @@ process.env.APP_URL = 'http://localhost:3000'
 let handleStripeWebhook: typeof handleFn
 let db: typeof dbApi
 let getStripe: typeof getStripeFn
+let searchPractitioners: typeof searchFn
 
 const CUSTOMER_ID = 'cus_webhook_test'
 const SUBSCRIPTION_ID = 'sub_webhook_test'
 const TEST_EMAIL = 'webhook@example.co.uk'
+
+// EC2V 6AA — the same London point the search fixtures use.
+const LONDON = {
+  postcode: 'EC2V 6AA',
+  longitude: -0.0921,
+  latitude: 51.5144,
+}
 
 function signedRequest(payload: object): Request {
   const body = JSON.stringify(payload)
@@ -53,20 +71,134 @@ function subscriptionCreatedEvent(): object {
   }
 }
 
-async function seedPractitionerInIncomplete(): Promise<void> {
+// Seeded verified and profile-complete at a known point so the ADR-0004
+// visibility consequences of each lifecycle transition can be asserted
+// through `/search` rather than by re-reading the rule in the test.
+function subscriptionUpdatedEvent(overrides: {
+  id?: string
+  status: Stripe.Subscription.Status
+  cancelAtPeriodEnd?: boolean
+}): object {
+  return {
+    id: overrides.id ?? 'evt_test_sub_updated',
+    object: 'event',
+    type: 'customer.subscription.updated',
+    data: {
+      object: {
+        id: SUBSCRIPTION_ID,
+        customer: CUSTOMER_ID,
+        status: overrides.status,
+        cancel_at_period_end: overrides.cancelAtPeriodEnd ?? false,
+      } as Partial<Stripe.Subscription>,
+    },
+  }
+}
+
+function subscriptionDeletedEvent(): object {
+  return {
+    id: 'evt_test_sub_deleted',
+    object: 'event',
+    type: 'customer.subscription.deleted',
+    data: {
+      object: {
+        id: SUBSCRIPTION_ID,
+        customer: CUSTOMER_ID,
+        status: 'canceled',
+        cancel_at_period_end: true,
+      } as Partial<Stripe.Subscription>,
+    },
+  }
+}
+
+function invoicePaymentFailedEvent(): object {
+  return {
+    id: 'evt_test_invoice_failed',
+    object: 'event',
+    type: 'invoice.payment_failed',
+    data: {
+      object: {
+        id: 'in_test_failed',
+        customer: CUSTOMER_ID,
+        subscription: SUBSCRIPTION_ID,
+      } as Partial<Stripe.Invoice>,
+    },
+  }
+}
+
+async function seedPractitioner(
+  subscriptionStatus = 'incomplete',
+): Promise<void> {
   await db.query('delete from public.practitioners where email = $1', [
     TEST_EMAIL,
   ])
   await db.query(
     `insert into public.practitioners (
        short_id, full_name, goc_number, profession_code, email,
+       practice_name, practice_address_line1, practice_postcode,
+       practice_town, practice_point, booking_link_url, bio,
        verification_status, subscription_status, stripe_customer_id
      ) values (
        $1, 'Webhook Optician', $2, 'optician', $3,
-       'verified', 'incomplete', $4
+       'Webhook Eyecare', '1 Webhook Street', $4,
+       'London',
+       extensions.st_setsrid(extensions.st_makepoint($5, $6), 4326)::extensions.geography,
+       'https://webhook-eyecare.example.co.uk/book',
+       'Twenty years on the high street.',
+       'verified', $7, $8
      )`,
-    ['WEBHK001', '99-000099', TEST_EMAIL, CUSTOMER_ID],
+    [
+      'WEBHK001',
+      '99-000099',
+      TEST_EMAIL,
+      LONDON.postcode,
+      LONDON.longitude,
+      LONDON.latitude,
+      subscriptionStatus,
+      CUSTOMER_ID,
+    ],
   )
+}
+
+async function appearsInSearch(): Promise<boolean> {
+  vi.stubGlobal('fetch', vi.fn())
+  try {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ status: 200, result: LONDON }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    )
+    const results = await searchPractitioners({
+      postcodeOrCity: LONDON.postcode,
+      radiusMiles: 5,
+    })
+    return results.some((r) => r.shortId === 'WEBHK001')
+  } finally {
+    vi.unstubAllGlobals()
+  }
+}
+
+async function practitionerRow(): Promise<{
+  id: string
+  subscription_status: string
+  full_name: string
+  bio: string | null
+  booking_link_url: string | null
+  practice_name: string | null
+}> {
+  const result = await db.query<{
+    id: string
+    subscription_status: string
+    full_name: string
+    bio: string | null
+    booking_link_url: string | null
+    practice_name: string | null
+  }>(
+    `select id, subscription_status, full_name, bio, booking_link_url, practice_name
+       from public.practitioners where stripe_customer_id = $1`,
+    [CUSTOMER_ID],
+  )
+  return result.rows[0]
 }
 
 beforeAll(async () => {
@@ -74,13 +206,15 @@ beforeAll(async () => {
     .handleStripeWebhook
   db = (await import('../../src/server/db')).db
   getStripe = (await import('../../src/server/stripe')).getStripe
+  searchPractitioners = (await import('../../src/server/search-impl'))
+    .searchPractitioners
 })
 
 beforeEach(async () => {
   await db.query(
     "delete from public.stripe_events where event_id like 'evt_test_%'",
   )
-  await seedPractitionerInIncomplete()
+  await seedPractitioner()
 })
 
 afterEach(async () => {
@@ -176,6 +310,108 @@ describe('handleStripeWebhook', () => {
       firstRow.rows[0].updated_at.getTime(),
     )
     expect(Number(ledger.rows[0].count)).toBe(1)
+  })
+
+  it('on invoice.payment_failed, moves the practitioner to past_due but keeps them in search results (ADR-0004 dunning window)', async () => {
+    await seedPractitioner('active')
+
+    const response = await handleStripeWebhook(
+      signedRequest(invoicePaymentFailedEvent()),
+    )
+
+    expect(response.status).toBe(200)
+    expect((await practitionerRow()).subscription_status).toBe('past_due')
+    expect(await appearsInSearch()).toBe(true)
+  })
+
+  it('on customer.subscription.updated to unpaid, hides the practitioner but preserves the row and every profile field', async () => {
+    await seedPractitioner('past_due')
+    const before = await practitionerRow()
+
+    await handleStripeWebhook(
+      signedRequest(subscriptionUpdatedEvent({ status: 'unpaid' })),
+    )
+
+    const after = await practitionerRow()
+    expect(after.subscription_status).toBe('unpaid')
+    expect(await appearsInSearch()).toBe(false)
+    expect(after.id).toBe(before.id)
+    expect(after.full_name).toBe(before.full_name)
+    expect(after.bio).toBe(before.bio)
+    expect(after.practice_name).toBe(before.practice_name)
+    expect(after.booking_link_url).toBe(before.booking_link_url)
+  })
+
+  it('restores the same listing when an unpaid practitioner re-subscribes — no profile rebuild', async () => {
+    await seedPractitioner('active')
+    const before = await practitionerRow()
+
+    await handleStripeWebhook(
+      signedRequest(subscriptionUpdatedEvent({ status: 'unpaid' })),
+    )
+    expect(await appearsInSearch()).toBe(false)
+
+    await handleStripeWebhook(signedRequest(subscriptionCreatedEvent()))
+
+    const after = await practitionerRow()
+    expect(after.subscription_status).toBe('active')
+    expect(await appearsInSearch()).toBe(true)
+    expect(after.id).toBe(before.id)
+    expect(after.bio).toBe(before.bio)
+    expect(after.booking_link_url).toBe(before.booking_link_url)
+  })
+
+  it('keeps a cancel-at-period-end practitioner listed until the period ends, then hides them on customer.subscription.deleted', async () => {
+    await seedPractitioner('active')
+
+    // Stripe reports the subscription as still active while the cancellation
+    // is merely scheduled — the paid-for period is honoured.
+    await handleStripeWebhook(
+      signedRequest(
+        subscriptionUpdatedEvent({ status: 'active', cancelAtPeriodEnd: true }),
+      ),
+    )
+    expect((await practitionerRow()).subscription_status).toBe('active')
+    expect(await appearsInSearch()).toBe(true)
+
+    // The period ends and Stripe deletes the subscription.
+    await handleStripeWebhook(signedRequest(subscriptionDeletedEvent()))
+    const after = await practitionerRow()
+    expect(after.subscription_status).toBe('canceled')
+    expect(await appearsInSearch()).toBe(false)
+    expect(after.booking_link_url).not.toBeNull()
+  })
+
+  it('is idempotent across the whole lifecycle: replaying each event yields the same state and one ledger row', async () => {
+    await seedPractitioner('active')
+
+    const lifecycle: Array<{ event: object; expected: string }> = [
+      { event: invoicePaymentFailedEvent(), expected: 'past_due' },
+      {
+        event: subscriptionUpdatedEvent({ status: 'unpaid' }),
+        expected: 'unpaid',
+      },
+      { event: subscriptionCreatedEvent(), expected: 'active' },
+      { event: subscriptionDeletedEvent(), expected: 'canceled' },
+    ]
+
+    for (const { event, expected } of lifecycle) {
+      const first = await handleStripeWebhook(signedRequest(event))
+      const afterFirst = await practitionerRow()
+      const replay = await handleStripeWebhook(signedRequest(event))
+      const afterReplay = await practitionerRow()
+
+      expect(first.status).toBe(200)
+      expect(replay.status).toBe(200)
+      expect(afterFirst.subscription_status).toBe(expected)
+      expect(afterReplay.subscription_status).toBe(expected)
+
+      const ledger = await db.query<{ count: string }>(
+        'select count(*) as count from public.stripe_events where event_id = $1',
+        [(event as { id: string }).id],
+      )
+      expect(Number(ledger.rows[0].count)).toBe(1)
+    }
   })
 
   it('returns 200 and writes no practitioner change for an unhandled event type', async () => {

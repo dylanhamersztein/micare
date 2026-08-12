@@ -38,6 +38,43 @@ function invoicePaymentSucceededEvent(overrides: {
   } as Stripe.Event
 }
 
+function subscriptionUpdatedEvent(overrides: {
+  customer: string
+  subscription: string
+  status: Stripe.Subscription.Status
+  cancelAtPeriodEnd?: boolean
+}): Stripe.Event {
+  return {
+    id: 'evt_test_subscription_updated',
+    type: 'customer.subscription.updated',
+    data: {
+      object: {
+        id: overrides.subscription,
+        customer: overrides.customer,
+        status: overrides.status,
+        cancel_at_period_end: overrides.cancelAtPeriodEnd ?? false,
+      } as unknown as Stripe.Subscription,
+    },
+  } as Stripe.Event
+}
+
+function invoicePaymentFailedEvent(overrides: {
+  customer: string
+  subscription: string | null
+}): Stripe.Event {
+  return {
+    id: 'evt_test_invoice_payment_failed',
+    type: 'invoice.payment_failed',
+    data: {
+      object: {
+        id: 'in_test_failed',
+        customer: overrides.customer,
+        subscription: overrides.subscription,
+      } as unknown as Stripe.Invoice,
+    },
+  } as Stripe.Event
+}
+
 describe('mapStripeEvent', () => {
   it('maps customer.subscription.created with status=active to an active state change', () => {
     const event = subscriptionCreatedEvent({
@@ -90,6 +127,130 @@ describe('mapStripeEvent', () => {
     } as Stripe.Event
 
     expect(mapStripeEvent(event)).toBeNull()
+  })
+
+  it('maps invoice.payment_failed on a subscription invoice to past_due', () => {
+    const event = invoicePaymentFailedEvent({
+      customer: 'cus_dunning',
+      subscription: 'sub_dunning',
+    })
+
+    expect(mapStripeEvent(event)).toEqual({
+      stripeCustomerId: 'cus_dunning',
+      stripeSubscriptionId: 'sub_dunning',
+      subscriptionStatus: 'past_due',
+    })
+  })
+
+  it('returns null for invoice.payment_failed with no subscription (one-off invoice)', () => {
+    const event = invoicePaymentFailedEvent({
+      customer: 'cus_dunning',
+      subscription: null,
+    })
+
+    expect(mapStripeEvent(event)).toBeNull()
+  })
+
+  it('maps customer.subscription.updated with status=past_due to past_due', () => {
+    const event = subscriptionUpdatedEvent({
+      customer: 'cus_upd',
+      subscription: 'sub_upd',
+      status: 'past_due',
+    })
+
+    expect(mapStripeEvent(event)).toEqual({
+      stripeCustomerId: 'cus_upd',
+      stripeSubscriptionId: 'sub_upd',
+      subscriptionStatus: 'past_due',
+    })
+  })
+
+  it('maps customer.subscription.updated with status=unpaid to unpaid', () => {
+    const event = subscriptionUpdatedEvent({
+      customer: 'cus_upd',
+      subscription: 'sub_upd',
+      status: 'unpaid',
+    })
+
+    expect(mapStripeEvent(event)).toEqual({
+      stripeCustomerId: 'cus_upd',
+      stripeSubscriptionId: 'sub_upd',
+      subscriptionStatus: 'unpaid',
+    })
+  })
+
+  it('maps customer.subscription.updated with status=canceled to canceled', () => {
+    const event = subscriptionUpdatedEvent({
+      customer: 'cus_upd',
+      subscription: 'sub_upd',
+      status: 'canceled',
+    })
+
+    expect(mapStripeEvent(event)).toEqual({
+      stripeCustomerId: 'cus_upd',
+      stripeSubscriptionId: 'sub_upd',
+      subscriptionStatus: 'canceled',
+    })
+  })
+
+  it('keeps a cancel-at-period-end subscription active — Stripe reports status=active until the period actually ends', () => {
+    const event = subscriptionUpdatedEvent({
+      customer: 'cus_upd',
+      subscription: 'sub_upd',
+      status: 'active',
+      cancelAtPeriodEnd: true,
+    })
+
+    expect(mapStripeEvent(event)).toEqual({
+      stripeCustomerId: 'cus_upd',
+      stripeSubscriptionId: 'sub_upd',
+      subscriptionStatus: 'active',
+    })
+  })
+
+  it('maps customer.subscription.updated with status=trialing to trialing', () => {
+    const event = subscriptionUpdatedEvent({
+      customer: 'cus_upd',
+      subscription: 'sub_upd',
+      status: 'trialing',
+    })
+
+    expect(mapStripeEvent(event)).toEqual({
+      stripeCustomerId: 'cus_upd',
+      stripeSubscriptionId: 'sub_upd',
+      subscriptionStatus: 'trialing',
+    })
+  })
+
+  it('returns null for a Stripe status MiCare does not model, leaving the row untouched', () => {
+    const event = subscriptionUpdatedEvent({
+      customer: 'cus_upd',
+      subscription: 'sub_upd',
+      status: 'incomplete_expired',
+    })
+
+    expect(mapStripeEvent(event)).toBeNull()
+  })
+
+  it('maps customer.subscription.deleted to canceled — the end of a period-end cancellation', () => {
+    const event = {
+      id: 'evt_test_subscription_deleted',
+      type: 'customer.subscription.deleted',
+      data: {
+        object: {
+          id: 'sub_gone',
+          customer: 'cus_gone',
+          status: 'canceled',
+          cancel_at_period_end: true,
+        } as unknown as Stripe.Subscription,
+      },
+    } as Stripe.Event
+
+    expect(mapStripeEvent(event)).toEqual({
+      stripeCustomerId: 'cus_gone',
+      stripeSubscriptionId: 'sub_gone',
+      subscriptionStatus: 'canceled',
+    })
   })
 
   it('returns null for unhandled event types', () => {

@@ -30,6 +30,19 @@ A Practitioner's current standing with their regulator, as known to MiCare. One 
 
 _Avoid_: state, badge, level.
 
+**Subscription Status**:
+A Practitioner's current standing with Stripe, as known to MiCare. Mirrored verbatim from Stripe's subscription status — Stripe is the system of record, MiCare only projects it onto visibility (ADR-0010). One of:
+
+- `incomplete` — signed up, Checkout not completed. Not visible.
+- `active` — paying. Visible.
+- `trialing` — inside a trial period. Visible.
+- `past_due` — a renewal payment failed and Stripe is retrying. **Still visible** for the duration of Stripe's dunning window (ADR-0004) — a failed card is usually a card problem, not a Practitioner leaving.
+- `unpaid` — dunning ran out. Hidden, row and all profile fields preserved.
+- `canceled` — the subscription ended. Hidden, row and all profile fields preserved, so resubscribing restores the same listing.
+
+A cancellation scheduled at period end holds `active` until the period actually ends, because Stripe holds it there.
+_Avoid_: plan, membership, billing state.
+
 **Booking Link**:
 The external URL a Practitioner provides where consumers complete a booking — typically their own site, an online booking system, or a calendar provider page. The sole conversion action on a Practitioner profile in Phase 1. Consumers reach it via a MiCare-controlled redirect so click-throughs can be counted.
 _Avoid_: contact link, schedule URL, booking page.
@@ -43,7 +56,8 @@ _Avoid_: click, hit, view, visit, lead.
 - A **Practitioner** has exactly one **Profession**.
 - A **Practitioner** has exactly one **Practice** in Phase 1 (expected to relax in Phase 2 to support mobile Practitioners and multi-Practitioner Practices such as Dental Hygienists working in dental surgeries).
 - A **Practitioner** has exactly one **Verification Status**.
-- Only **Practitioners** with `Verification Status = verified` are visible to consumers.
+- A **Practitioner** has exactly one **Subscription Status**.
+- Only **Practitioners** with `Verification Status = verified` and a **Subscription Status** of `active`, `trialing`, or `past_due` are visible to consumers.
 
 ## Maintenance jobs
 
