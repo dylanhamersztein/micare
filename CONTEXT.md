@@ -23,7 +23,7 @@ _Avoid_: validation, accreditation, certification.
 **Verification Status**:
 A Practitioner's current standing with their regulator, as known to MiCare. One of:
 
-- `pending` — signup scrape timed out; not yet confirmed. Rare. Not visible to consumers.
+- `pending` — signup scrape timed out; not yet confirmed. Rare. Not visible to consumers. Nothing scheduled revisits it (the weekly re-verification sweeps _visible_ Practitioners), so it is cleared by **Manual Re-verification**.
 - `verified` — confirmed present and active on the regulator's register. The only consumer-visible status.
 - `rejected` — signup scrape ran and the Practitioner was not on the register. Signup blocked, no charge.
 - `revoked` — was previously `verified`, but a re-check found them no longer on the register (e.g. struck off). Hidden from consumers; row preserved for refund and audit.
@@ -67,6 +67,10 @@ _Avoid_: verification (means the regulator check), activation, opt-in.
 The one moment a **Notify-Me Subscription** pays off: a **Practitioner** becomes visible for the first time, and every confirmed subscription within 10 miles of their **Practice** is emailed a link to the new profile. It happens once per Practitioner, ever — a later visibility flip (a recovered card, a re-filled field) is not news to anyone already told, and the `notify_fires` ledger is what enforces it (ADR-0013). Fired from the profile save that flips visibility, not from a scheduled job.
 _Avoid_: blast, campaign, broadcast, alert (means the operator's stale-verification digest).
 
+**Manual Re-verification**:
+The operator re-running **Verification** for one **Practitioner** who is stuck in `pending`, via `POST /api/admin/verify-practitioner` guarded by `OPERATOR_SECRET`. Recovery only: it acts on `pending` and refuses every other **Verification Status**, so it can unstick a legitimate sign-up but never reinstate a `revoked` one. A register that cannot be read leaves the Practitioner exactly as it found them (ADR-0014).
+_Avoid_: override, manual approval, admin verify (all imply a human judging the Practitioner — the regulator's register still decides; the operator only asks it again).
+
 ## Relationships
 
 - A **Practitioner** has exactly one **Profession**.
@@ -84,6 +88,12 @@ Three scheduled jobs run as Vercel Cron routes under `/api/cron/`, each guarded 
 - **Weekly re-verification** (`0 3 * * 1`): re-runs `verify` against every visible **Practitioner**. A still-active result bumps `last_verified_at`; a definitive not-found flips **Verification Status** to `revoked` and hides the profile; a transient scraper error leaves the row untouched (it ages into the stale alert instead).
 - **Daily stale alert** (`0 8 * * *`): emails the operator (`OPERATOR_ALERT_EMAIL`) and logs when visible **Practitioners** have gone un-reverified past `STALE_VERIFICATION_DAYS` (default 14) — an early signal that the weekly job or the GOC scraper is failing.
 - **Daily monthly summary** (`0 9 * * *`): emails each **Practitioner** whose **Billing Cycle** ends tomorrow their **Click-through** count for that cycle (ADR-0011).
+
+## Operator tooling
+
+One route, run by hand rather than on a schedule, guarded by `OPERATOR_SECRET` rather than `CRON_SECRET`.
+
+- **Manual Re-verification** (`POST /api/admin/verify-practitioner`): re-runs `verify` for one GOC number and applies the result, for a **Practitioner** stuck in `pending`. `{"force": true}` bypasses the verification module's 24h suppression cache when the operator needs a live answer. Every run — including the refusals — logs `[admin:verify-practitioner]` (ADR-0014).
 
 ## Example dialogue
 

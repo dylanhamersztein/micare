@@ -52,6 +52,13 @@ const schema = z
     // Optional so mock/local runs (no cron) still boot; the routes return 500
     // when it is unset and 401 on a mismatch.
     CRON_SECRET: z.string().optional(),
+    // Slice 17 — manual re-verification for stuck-pending Practitioners
+    // (issue #10). Guards POST /api/admin/verify-practitioner. Deliberately
+    // separate from CRON_SECRET: that one is injected by Vercel into every
+    // scheduled run, this one is typed by a human, and rotating either should
+    // not disturb the other. Optional so local/mock runs still boot; the
+    // route returns 500 when it is unset and 401 on a mismatch.
+    OPERATOR_SECRET: z.string().optional(),
     // Recipient for the daily stale-verification digest. Required only when
     // ALERT_MOCK is false (see superRefine below).
     OPERATOR_ALERT_EMAIL: z.string().email().optional(),

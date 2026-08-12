@@ -26,6 +26,7 @@ import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhoo
 import { Route as ApiCronStaleAlertRouteImport } from './routes/api/cron/stale-alert'
 import { Route as ApiCronReVerifyRouteImport } from './routes/api/cron/re-verify'
 import { Route as ApiCronMonthlySummaryRouteImport } from './routes/api/cron/monthly-summary'
+import { Route as ApiAdminVerifyPractitionerRouteImport } from './routes/api/admin/verify-practitioner'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -113,6 +114,12 @@ const ApiCronMonthlySummaryRoute = ApiCronMonthlySummaryRouteImport.update({
   path: '/api/cron/monthly-summary',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminVerifyPractitionerRoute =
+  ApiAdminVerifyPractitionerRouteImport.update({
+    id: '/api/admin/verify-practitioner',
+    path: '/api/admin/verify-practitioner',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/notify-me/confirm': typeof NotifyMeConfirmRoute
   '/notify-me/unsubscribe': typeof NotifyMeUnsubscribeRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
+  '/api/admin/verify-practitioner': typeof ApiAdminVerifyPractitionerRoute
   '/api/cron/monthly-summary': typeof ApiCronMonthlySummaryRoute
   '/api/cron/re-verify': typeof ApiCronReVerifyRoute
   '/api/cron/stale-alert': typeof ApiCronStaleAlertRoute
@@ -146,6 +154,7 @@ export interface FileRoutesByTo {
   '/notify-me/confirm': typeof NotifyMeConfirmRoute
   '/notify-me/unsubscribe': typeof NotifyMeUnsubscribeRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
+  '/api/admin/verify-practitioner': typeof ApiAdminVerifyPractitionerRoute
   '/api/cron/monthly-summary': typeof ApiCronMonthlySummaryRoute
   '/api/cron/re-verify': typeof ApiCronReVerifyRoute
   '/api/cron/stale-alert': typeof ApiCronStaleAlertRoute
@@ -166,6 +175,7 @@ export interface FileRoutesById {
   '/notify-me/confirm': typeof NotifyMeConfirmRoute
   '/notify-me/unsubscribe': typeof NotifyMeUnsubscribeRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
+  '/api/admin/verify-practitioner': typeof ApiAdminVerifyPractitionerRoute
   '/api/cron/monthly-summary': typeof ApiCronMonthlySummaryRoute
   '/api/cron/re-verify': typeof ApiCronReVerifyRoute
   '/api/cron/stale-alert': typeof ApiCronStaleAlertRoute
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/notify-me/confirm'
     | '/notify-me/unsubscribe'
     | '/practitioner/profile-editor'
+    | '/api/admin/verify-practitioner'
     | '/api/cron/monthly-summary'
     | '/api/cron/re-verify'
     | '/api/cron/stale-alert'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/notify-me/confirm'
     | '/notify-me/unsubscribe'
     | '/practitioner/profile-editor'
+    | '/api/admin/verify-practitioner'
     | '/api/cron/monthly-summary'
     | '/api/cron/re-verify'
     | '/api/cron/stale-alert'
@@ -225,6 +237,7 @@ export interface FileRouteTypes {
     | '/notify-me/confirm'
     | '/notify-me/unsubscribe'
     | '/practitioner/profile-editor'
+    | '/api/admin/verify-practitioner'
     | '/api/cron/monthly-summary'
     | '/api/cron/re-verify'
     | '/api/cron/stale-alert'
@@ -245,6 +258,7 @@ export interface RootRouteChildren {
   NotifyMeConfirmRoute: typeof NotifyMeConfirmRoute
   NotifyMeUnsubscribeRoute: typeof NotifyMeUnsubscribeRoute
   PractitionerProfileEditorRoute: typeof PractitionerProfileEditorRoute
+  ApiAdminVerifyPractitionerRoute: typeof ApiAdminVerifyPractitionerRoute
   ApiCronMonthlySummaryRoute: typeof ApiCronMonthlySummaryRoute
   ApiCronReVerifyRoute: typeof ApiCronReVerifyRoute
   ApiCronStaleAlertRoute: typeof ApiCronStaleAlertRoute
@@ -373,6 +387,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCronMonthlySummaryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/verify-practitioner': {
+      id: '/api/admin/verify-practitioner'
+      path: '/api/admin/verify-practitioner'
+      fullPath: '/api/admin/verify-practitioner'
+      preLoaderRoute: typeof ApiAdminVerifyPractitionerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -389,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotifyMeConfirmRoute: NotifyMeConfirmRoute,
   NotifyMeUnsubscribeRoute: NotifyMeUnsubscribeRoute,
   PractitionerProfileEditorRoute: PractitionerProfileEditorRoute,
+  ApiAdminVerifyPractitionerRoute: ApiAdminVerifyPractitionerRoute,
   ApiCronMonthlySummaryRoute: ApiCronMonthlySummaryRoute,
   ApiCronReVerifyRoute: ApiCronReVerifyRoute,
   ApiCronStaleAlertRoute: ApiCronStaleAlertRoute,
