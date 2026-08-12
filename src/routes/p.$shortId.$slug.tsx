@@ -123,14 +123,15 @@ function Profile({ profile }: { profile: PublicProfile }) {
           : 'Not currently accepting new patients'}
       </p>
 
-      {/* The Booking Link target URL is wired in Slice 5 (click tracking). */}
-      <button
-        type="button"
-        className="rounded bg-black px-4 py-2 text-white"
+      {/* A plain anchor, not a <Link>: /go redirects off-site, so the browser
+          must do a full navigation rather than a client-side route change. */}
+      <a
+        href={`/go?p=${profile.shortId}`}
+        className="inline-block rounded bg-black px-4 py-2 text-white"
         data-testid="profile-book"
       >
         Book an appointment
-      </button>
+      </a>
     </div>
   )
 }

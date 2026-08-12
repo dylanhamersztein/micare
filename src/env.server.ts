@@ -61,6 +61,13 @@ const schema = z
     // Visible practitioners whose last_verified_at is older than this many
     // days are surfaced by the daily alert.
     STALE_VERIFICATION_DAYS: z.coerce.number().int().positive().default(14),
+
+    // Slice 5 — Booking Link click tracking. Salts the visitor hash stored in
+    // `clickthroughs` so the raw IP cannot be recovered by brute-forcing the
+    // address space. Optional like AUTH_SESSION_SECRET: local/mock runs fall
+    // back to a fixed dev constant (src/server/click-tracking-impl.ts).
+    // Changing it in production resets every in-flight dedup window.
+    CLICK_TRACKING_SALT: z.string().optional(),
   })
   .superRefine((env, ctx) => {
     if (!env.GOC_MOCK && !env.GOC_API_KEY) {
