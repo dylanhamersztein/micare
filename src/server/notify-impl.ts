@@ -1,6 +1,7 @@
-// Server-only implementation of the Notify-Me module. Consumers who search a
-// postcode with no verified Practitioner nearby leave an email here; a
-// downstream slice fires the actual "someone has listed near you" mail.
+// Server-only capture half of the Notify-Me module. Consumers who search a
+// postcode with no verified Practitioner nearby leave an email here;
+// src/server/notify-fire.ts sends the "someone has listed near you" mail when
+// one of them finally becomes visible.
 //
 // The module hides from its caller:
 //   * geocoding the postcode into `notify_subscriptions.point`,
@@ -9,6 +10,7 @@
 //   * minting and checking the signed confirm / unsubscribe links.
 
 import { PostcodeNotFoundError, geocodePostcode } from './geocode'
+import { absoluteUrl } from './app-url'
 import type { NotifyInput } from '../notify-input'
 import { formatConfirmationEmail } from '../notify-email'
 import { db } from './db'
@@ -24,10 +26,6 @@ const DEV_NOTIFY_SECRET = 'micare-dev-insecure-notify-secret-change-me'
 
 function secret(): string {
   return env.NOTIFY_TOKEN_SECRET ?? DEV_NOTIFY_SECRET
-}
-
-function absoluteUrl(path: string): string {
-  return `${env.APP_URL ?? 'http://localhost:3000'}${path}`
 }
 
 export function confirmPathFor(subscriptionId: string): string {

@@ -3,14 +3,13 @@
 // tests call it directly, and `src/server/search.ts` wraps it in a thin
 // createServerFn shim for the route loader.
 
+import { METERS_PER_MILE, milesToMeters } from '../distance'
 import { searchInputSchema } from '../search-input'
 import type { SearchInput, SearchResult } from '../search-input'
 import { hasMinFields, isVisible } from '../visibility'
 import type { SubscriptionStatus, VerificationStatus } from '../visibility'
 import { db } from './db'
 import { geocodeLocation } from './geocode'
-
-const METERS_PER_MILE = 1609.344
 
 type PractitionerRow = {
   id: string
@@ -32,7 +31,7 @@ export async function searchPractitioners(
 ): Promise<Array<SearchResult>> {
   const { postcodeOrCity, radiusMiles } = searchInputSchema.parse(input)
   const point = await geocodeLocation(postcodeOrCity)
-  const radiusMeters = radiusMiles * METERS_PER_MILE
+  const radiusMeters = milesToMeters(radiusMiles)
 
   const result = await db.query<PractitionerRow>(
     `select

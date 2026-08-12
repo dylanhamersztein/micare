@@ -63,6 +63,10 @@ _Avoid_: alert, waitlist, lead, signup (too close to Practitioner signup).
 The consumer's click on the emailed double-opt-in link that turns a captured **Notify-Me Subscription** into an eligible one. Until it happens the row is inert — nothing is ever sent to an unconfirmed address, so typing a stranger's email into the public form achieves nothing beyond one message they can ignore.
 _Avoid_: verification (means the regulator check), activation, opt-in.
 
+**Notify-Me Fire**:
+The one moment a **Notify-Me Subscription** pays off: a **Practitioner** becomes visible for the first time, and every confirmed subscription within 10 miles of their **Practice** is emailed a link to the new profile. It happens once per Practitioner, ever — a later visibility flip (a recovered card, a re-filled field) is not news to anyone already told, and the `notify_fires` ledger is what enforces it (ADR-0013). Fired from the profile save that flips visibility, not from a scheduled job.
+_Avoid_: blast, campaign, broadcast, alert (means the operator's stale-verification digest).
+
 ## Relationships
 
 - A **Practitioner** has exactly one **Profession**.
@@ -71,6 +75,7 @@ _Avoid_: verification (means the regulator check), activation, opt-in.
 - A **Practitioner** has exactly one **Subscription Status**.
 - Only **Practitioners** with `Verification Status = verified` and a **Subscription Status** of `active`, `trialing`, or `past_due` are visible to consumers.
 - A consumer may hold several **Notify-Me Subscriptions**, one per postcode they are watching.
+- A **Practitioner** has at most one **Notify-Me Fire**, on first becoming visible.
 
 ## Maintenance jobs
 

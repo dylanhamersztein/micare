@@ -180,4 +180,45 @@ describe('updateProfile', () => {
     expect(result.fieldErrors.bookingLinkUrl).toBeTruthy()
     expect(fetch).not.toHaveBeenCalled()
   })
+
+  // Slice 16 (issue #18): this is the "Practitioner becomes visible" moment,
+  // and it is the only place the Notify-Me fire hangs off. Asserted through
+  // the ledger the fire writes, not by spying on the module.
+  it('fires the Notify-Me hook the first time the save makes the Practitioner visible', async () => {
+    await insertEmptyPractitioner()
+    vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
+
+    await updateProfile(TEST_SHORT_ID, VALID_INPUT)
+
+    const fired = await db.query<{ practitioner_id: string }>(
+      `select f.practitioner_id
+         from public.notify_fires f
+         join public.practitioners p on p.id = f.practitioner_id
+        where p.short_id = $1`,
+      [TEST_SHORT_ID],
+    )
+    expect(fired.rowCount).toBe(1)
+  })
+
+  it('does not fire the Notify-Me hook on a save that leaves the Practitioner hidden', async () => {
+    await db.query(
+      `insert into public.practitioners (
+         short_id, full_name, goc_number, profession_code, email,
+         verification_status, last_verified_at, subscription_status, visible
+       ) values ($1, 'Canceled Tester', $2, 'optician', $3,
+                 'verified', now(), 'canceled', false)`,
+      [TEST_SHORT_ID, TEST_GOC, TEST_EMAIL],
+    )
+    vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
+
+    await updateProfile(TEST_SHORT_ID, VALID_INPUT)
+
+    const fired = await db.query(
+      `select 1 from public.notify_fires f
+         join public.practitioners p on p.id = f.practitioner_id
+        where p.short_id = $1`,
+      [TEST_SHORT_ID],
+    )
+    expect(fired.rowCount).toBe(0)
+  })
 })
