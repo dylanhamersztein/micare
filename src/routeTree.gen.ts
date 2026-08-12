@@ -16,6 +16,8 @@ import { Route as GoRouteImport } from './routes/go'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PractitionerProfileEditorRouteImport } from './routes/practitioner/profile-editor'
+import { Route as NotifyMeUnsubscribeRouteImport } from './routes/notify-me/unsubscribe'
+import { Route as NotifyMeConfirmRouteImport } from './routes/notify-me/confirm'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout/success'
 import { Route as CheckoutCancelRouteImport } from './routes/checkout/cancel'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
@@ -61,6 +63,16 @@ const PractitionerProfileEditorRoute =
     path: '/practitioner/profile-editor',
     getParentRoute: () => rootRouteImport,
   } as any)
+const NotifyMeUnsubscribeRoute = NotifyMeUnsubscribeRouteImport.update({
+  id: '/notify-me/unsubscribe',
+  path: '/notify-me/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotifyMeConfirmRoute = NotifyMeConfirmRouteImport.update({
+  id: '/notify-me/confirm',
+  path: '/notify-me/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
   id: '/checkout/success',
   path: '/checkout/success',
@@ -112,6 +124,8 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/checkout/cancel': typeof CheckoutCancelRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/notify-me/confirm': typeof NotifyMeConfirmRoute
+  '/notify-me/unsubscribe': typeof NotifyMeUnsubscribeRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
   '/api/cron/monthly-summary': typeof ApiCronMonthlySummaryRoute
   '/api/cron/re-verify': typeof ApiCronReVerifyRoute
@@ -129,6 +143,8 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/checkout/cancel': typeof CheckoutCancelRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/notify-me/confirm': typeof NotifyMeConfirmRoute
+  '/notify-me/unsubscribe': typeof NotifyMeUnsubscribeRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
   '/api/cron/monthly-summary': typeof ApiCronMonthlySummaryRoute
   '/api/cron/re-verify': typeof ApiCronReVerifyRoute
@@ -147,6 +163,8 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/checkout/cancel': typeof CheckoutCancelRoute
   '/checkout/success': typeof CheckoutSuccessRoute
+  '/notify-me/confirm': typeof NotifyMeConfirmRoute
+  '/notify-me/unsubscribe': typeof NotifyMeUnsubscribeRoute
   '/practitioner/profile-editor': typeof PractitionerProfileEditorRoute
   '/api/cron/monthly-summary': typeof ApiCronMonthlySummaryRoute
   '/api/cron/re-verify': typeof ApiCronReVerifyRoute
@@ -166,6 +184,8 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/checkout/cancel'
     | '/checkout/success'
+    | '/notify-me/confirm'
+    | '/notify-me/unsubscribe'
     | '/practitioner/profile-editor'
     | '/api/cron/monthly-summary'
     | '/api/cron/re-verify'
@@ -183,6 +203,8 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/checkout/cancel'
     | '/checkout/success'
+    | '/notify-me/confirm'
+    | '/notify-me/unsubscribe'
     | '/practitioner/profile-editor'
     | '/api/cron/monthly-summary'
     | '/api/cron/re-verify'
@@ -200,6 +222,8 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/checkout/cancel'
     | '/checkout/success'
+    | '/notify-me/confirm'
+    | '/notify-me/unsubscribe'
     | '/practitioner/profile-editor'
     | '/api/cron/monthly-summary'
     | '/api/cron/re-verify'
@@ -218,6 +242,8 @@ export interface RootRouteChildren {
   AuthCallbackRoute: typeof AuthCallbackRoute
   CheckoutCancelRoute: typeof CheckoutCancelRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
+  NotifyMeConfirmRoute: typeof NotifyMeConfirmRoute
+  NotifyMeUnsubscribeRoute: typeof NotifyMeUnsubscribeRoute
   PractitionerProfileEditorRoute: typeof PractitionerProfileEditorRoute
   ApiCronMonthlySummaryRoute: typeof ApiCronMonthlySummaryRoute
   ApiCronReVerifyRoute: typeof ApiCronReVerifyRoute
@@ -275,6 +301,20 @@ declare module '@tanstack/react-router' {
       path: '/practitioner/profile-editor'
       fullPath: '/practitioner/profile-editor'
       preLoaderRoute: typeof PractitionerProfileEditorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notify-me/unsubscribe': {
+      id: '/notify-me/unsubscribe'
+      path: '/notify-me/unsubscribe'
+      fullPath: '/notify-me/unsubscribe'
+      preLoaderRoute: typeof NotifyMeUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notify-me/confirm': {
+      id: '/notify-me/confirm'
+      path: '/notify-me/confirm'
+      fullPath: '/notify-me/confirm'
+      preLoaderRoute: typeof NotifyMeConfirmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/success': {
@@ -346,6 +386,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthCallbackRoute: AuthCallbackRoute,
   CheckoutCancelRoute: CheckoutCancelRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
+  NotifyMeConfirmRoute: NotifyMeConfirmRoute,
+  NotifyMeUnsubscribeRoute: NotifyMeUnsubscribeRoute,
   PractitionerProfileEditorRoute: PractitionerProfileEditorRoute,
   ApiCronMonthlySummaryRoute: ApiCronMonthlySummaryRoute,
   ApiCronReVerifyRoute: ApiCronReVerifyRoute,
