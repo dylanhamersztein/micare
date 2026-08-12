@@ -12,6 +12,7 @@ import { hasMinFields, isVisible } from '../visibility'
 import type { SubscriptionStatus, VerificationStatus } from '../visibility'
 import { db } from './db'
 import { PostcodeNotFoundError, geocodePostcode } from './geocode'
+import { onPractitionerBecameVisible } from './notify-fire'
 
 export type ProfileUpdateResult =
   | { kind: 'saved'; visible: boolean }
@@ -58,6 +59,7 @@ export async function updateProfile(
   })
 
   const result = await db.query<{
+    id: string
     verification_status: VerificationStatus
     subscription_status: SubscriptionStatus
     full_name: string
@@ -84,7 +86,7 @@ export async function updateProfile(
             visible                 = $19,
             updated_at              = now()
       where short_id = $1
-      returning verification_status, subscription_status, full_name`,
+      returning id, verification_status, subscription_status, full_name`,
     [
       shortId,
       input.practiceName,
@@ -130,6 +132,22 @@ export async function updateProfile(
       `update public.practitioners set visible = $2 where short_id = $1`,
       [shortId, visible],
     )
+  }
+
+  // The "Practitioner becomes visible" moment (issue #18). The hook is
+  // fire-once by its own ledger, so calling it on every visible save is safe;
+  // this path only has to know when visibility is true.
+  //
+  // Never let a Notify-Me failure fail a save that has already committed: the
+  // Practitioner would see an error on work that was in fact written. The
+  // trade-off is that mail lost to a Resend outage is not retried — the
+  // ledger row is already down.
+  if (visible) {
+    try {
+      await onPractitionerBecameVisible(row.id)
+    } catch (error) {
+      console.error('[notify-me:fire] failed', row.id, error)
+    }
   }
 
   return { kind: 'saved', visible }
