@@ -1,6 +1,7 @@
 -- 0001_core_tables.sql
 -- Phase 1 slice 1: the four core tables sketched in the PRD (issue #1).
--- RLS is enabled in the next migration; this file is the shape only.
+-- This file is the shape only. RLS on these tables is enabled by
+-- 0008_enable_rls.sql (ADR-0015).
 --
 -- The `visible` boolean on practitioners is a Phase 1 simplification.
 -- ADR-0002 + ADR-0004 will eventually derive visibility from
