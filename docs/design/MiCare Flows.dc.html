@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  @font-face { font-family: "Newsreader"; src: url("/fonts/Newsreader-Variable.woff2") format("woff2-variations"); font-weight: 400 700; font-display: swap; }
+  @font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Variable.woff2") format("woff2-variations"); font-weight: 300 800; font-display: swap; }
+  @font-face { font-family: "JetBrains Mono"; src: url("/fonts/JetBrainsMono-Variable.woff2") format("woff2-variations"); font-weight: 400 600; font-display: swap; }
+  :root { color-scheme: light; }
+  body { margin: 0; background: #F4EFE7; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #0D4A45; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: #093632; }
+  :focus-visible { outline: 3px solid #0D4A45; outline-offset: 2px; border-radius: 2px; }
+  .on-deep :focus-visible { outline-color: #E8C468; }
+  @keyframes micare-spin { to { transform: rotate(360deg); } }
+  @keyframes micare-sheen { 0% { opacity: 1; } 50% { opacity: 0.55; } 100% { opacity: 1; } }
+  .micare-spin { animation: micare-spin 900ms linear infinite; }
+  .micare-pulse { animation: micare-sheen 1400ms ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .micare-spin, .micare-pulse { animation: none; }
+    .micare-spin { border-top-color: #0D4A45; border-right-color: #0D4A45; }
+  }
+</style>
+</helmet>
+
+<div style="font-family: 'Public Sans', system-ui, sans-serif; color: #1C1A17; background: #FBF8F3; min-height: 100%; padding-bottom: 96px; font-size: 17px;">
+
+  <div style="background: #12332F; color: #F4EFE7; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 10px;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+      <span style="width: 1px; height: 16px; background: rgba(244,239,231,0.35); display: inline-block;"></span>
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; color: #A8C4BE;">The two risky compositions · 1280 &amp; 390</span>
+    </div>
+    <span style="font-size: 13px; color: #A8C4BE;">Waiting, and finding nothing</span>
+  </div>
+
+  <div style="max-width: 1240px; margin: 0 auto; padding: 0 32px;">
+
+    <section style="padding: 64px 0 48px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">17 — Signup · the verification wait</div>
+      <h1 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em; margin: 0 0 20px; max-width: 30ch;">Show the work while it happens.</h1>
+      <p style="font-size: 19px; line-height: 1.58; color: #423C34; margin: 0 0 14px; max-width: 68ch;">Four or five seconds is long enough for a practitioner to wonder whether the form submitted. So the wait is not a spinner over a greyed page — it is a three-line record of what is being done, in the order it is being done, naming the register and the number. The whole proposition is “we checked”; this is the one screen where the user watches us check.</p>
+      <p style="font-size: 19px; line-height: 1.58; color: #423C34; margin: 0 0 36px; max-width: 68ch;">One thing moves on the page. Under <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px;">prefers-reduced-motion</span> the ring stops spinning and holds as a two-thirds arc — the state is already carried by the word “checking”, so nothing is lost.</p>
+
+      <div style="overflow-x: auto; margin: 0 -32px; padding: 0 32px 8px;">
+        <div style="width: 1280px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+          <div class="on-deep" style="background: #12332F; height: 64px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; color: #F4EFE7;">
+            <div style="display: flex; align-items: baseline; gap: 12px;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+              <span style="width: 1px; height: 18px; background: rgba(244,239,231,0.35); display: inline-block;"></span>
+              <span style="font-size: 16px; color: #A8C4BE;">List your practice</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 24px; font-size: 16px;">
+              <span style="color: #A8C4BE; font-variant-numeric: tabular-nums;">Step 3 of 4</span>
+              <a href="#exit" style="color: #F4EFE7; font-weight: 600;">Save and exit</a>
+            </div>
+          </div>
+          <div style="height: 4px; background: #E2DBD0; display: flex;">
+            <span style="flex: 1; background: #0D4A45;"></span><span style="width: 1px; background: #FBF8F3;"></span>
+            <span style="flex: 1; background: #0D4A45;"></span><span style="width: 1px; background: #FBF8F3;"></span>
+            <span style="flex: 1; background: #0D4A45;"></span><span style="width: 1px; background: #FBF8F3;"></span>
+            <span style="flex: 1;"></span>
+          </div>
+
+          <div style="padding: 64px 32px 72px; display: flex; justify-content: center;">
+            <div style="width: 100%; max-width: 720px;">
+              <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 14px;">Verification</div>
+              <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em; margin: 0 0 16px;">Checking the GOC register</h2>
+              <p style="font-size: 19px; line-height: 1.58; color: #423C34; margin: 0 0 32px; max-width: 56ch;">We are matching <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #1C1A17;">D-17909</span> against the General Optical Council's public register. This usually takes four or five seconds.</p>
+
+              <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 8px 24px;">
+                <div style="display: flex; align-items: center; gap: 16px; padding: 20px 0; border-bottom: 1px solid #EFE9DF;">
+                  <span style="width: 26px; height: 26px; border-radius: 999px; background: #186A3B; display: inline-flex; align-items: center; justify-content: center; flex: none;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+                  </span>
+                  <span style="font-size: 18px; font-weight: 600; flex: 1;">Registration number read</span>
+                  <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; color: #5A544B;">D-17909</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px; padding: 20px 0; border-bottom: 1px solid #EFE9DF;">
+                  <span class="micare-spin" style="width: 26px; height: 26px; border-radius: 999px; border: 3px solid #C3DFCB; border-top-color: #0D4A45; display: inline-block; flex: none;"></span>
+                  <span style="font-size: 18px; font-weight: 600; flex: 1;">Matching the live General Optical Council register</span>
+                  <span style="font-size: 16px; color: #5A544B;" aria-live="polite">Checking…</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px; padding: 20px 0;">
+                  <span style="width: 26px; height: 26px; border-radius: 999px; border: 2px solid #C9C0B1; display: inline-block; flex: none;"></span>
+                  <span style="font-size: 18px; color: #6E6252; flex: 1;">Confirming your name and registration status</span>
+                  <span style="font-size: 16px; color: #6E6252;">Waiting</span>
+                </div>
+              </div>
+
+              <p style="font-size: 17px; line-height: 1.55; color: #423C34; margin: 20px 0 0;">Keep this page open. If you do close it, everything you have entered is saved and you will land back on this step.</p>
+
+              <div style="margin-top: 32px; background: #F4EFE7; border-radius: 4px; padding: 18px 22px; display: flex; gap: 14px; align-items: flex-start;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0D4A45" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg>
+                <div style="font-size: 17px; line-height: 1.5; color: #423C34;">We read the public register only. We never ask for your GOC login, and we do not contact your employer.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ showMobile }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 40px 0 12px;">The wait · 390</div>
+        <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+          <div class="on-deep" style="background: #12332F; color: #F4EFE7;">
+            <div style="height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+              <a href="#exit" style="color: #F4EFE7; font-weight: 600; font-size: 16px; min-height: 44px; display: inline-flex; align-items: center;">Save and exit</a>
+            </div>
+            <div style="height: 40px; padding: 0 16px; display: flex; align-items: center; gap: 12px; border-top: 1px solid rgba(244,239,231,0.16); font-size: 16px; color: #A8C4BE;">
+              <span style="font-variant-numeric: tabular-nums;">Step 3 of 4</span>
+              <span style="color: #F4EFE7; font-weight: 600;">Verification</span>
+            </div>
+          </div>
+          <div style="height: 4px; background: #E2DBD0; display: flex;">
+            <span style="flex: 3; background: #0D4A45;"></span><span style="flex: 1;"></span>
+          </div>
+          <div style="padding: 28px 16px 36px;">
+            <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 32px; line-height: 1.14; letter-spacing: -0.015em; margin: 0 0 12px;">Checking the GOC register</h2>
+            <p style="font-size: 17px; line-height: 1.55; color: #423C34; margin: 0 0 24px;">Matching <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #1C1A17;">D-17909</span> against the General Optical Council's public register. Four or five seconds.</p>
+            <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 4px 16px;">
+              <div style="display: flex; align-items: flex-start; gap: 12px; padding: 16px 0; border-bottom: 1px solid #EFE9DF;">
+                <span style="width: 24px; height: 24px; border-radius: 999px; background: #186A3B; display: inline-flex; align-items: center; justify-content: center; flex: none;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+                </span>
+                <div><div style="font-size: 17px; font-weight: 600;">Number read</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 16px; color: #5A544B;">D-17909</div></div>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 12px; padding: 16px 0; border-bottom: 1px solid #EFE9DF;">
+                <span class="micare-spin" style="width: 24px; height: 24px; border-radius: 999px; border: 3px solid #C3DFCB; border-top-color: #0D4A45; display: inline-block; flex: none;"></span>
+                <div><div style="font-size: 17px; font-weight: 600;">Matching the live register</div><div style="font-size: 16px; color: #5A544B;" aria-live="polite">Checking…</div></div>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 12px; padding: 16px 0;">
+                <span style="width: 24px; height: 24px; border-radius: 999px; border: 2px solid #C9C0B1; display: inline-block; flex: none;"></span>
+                <div><div style="font-size: 17px; color: #6E6252;">Confirming your name and status</div><div style="font-size: 16px; color: #6E6252;">Waiting</div></div>
+              </div>
+            </div>
+            <p style="font-size: 16px; line-height: 1.5; color: #423C34; margin: 16px 0 0;">Keep this page open. Your answers are saved either way.</p>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showAnnotations }}" hint-placeholder-val="{{ true }}">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 36px;">
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">No progress percentage</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">We cannot know how long the register will take, and a bar that stalls at 80% reads as broken. Three named steps with one active are honest about position without inventing a duration.</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">The step never blocks exit</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">“Save and exit” stays live and the checklist is not a modal. Nobody is trapped by our latency; the outcome is emailed if they leave.</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Announced once, politely</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">One <span style="font-family: 'JetBrains Mono', monospace; font-size: 14px;">aria-live="polite"</span> region on the active line, and the outcome heading takes focus when it arrives. Not a live region per row.</div>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+
+    <section style="padding: 56px 0 48px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">18 — Signup · the three outcomes</div>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 12px; max-width: 32ch;">Every outcome names what we did, what it means, and one thing to do next.</h2>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 36px; max-width: 74ch;">The same layout carries all three, so the shape of the page does not tell the practitioner whether they passed before they have read a word. What changes is the record block at the top, the explanation, and the primary action. Two of the three are our fault or a data lag, and the copy says so.</p>
+
+      <div style="overflow-x: auto; margin: 0 -32px; padding: 0 32px 8px;">
+        <div style="width: 1280px; display: flex; flex-direction: column; gap: 32px;">
+
+          <div style="border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <div class="on-deep" style="background: #12332F; height: 56px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; color: #F4EFE7;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 22px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+              <span style="font-size: 16px; color: #A8C4BE; font-variant-numeric: tabular-nums;">Step 3 of 4 · complete</span>
+            </div>
+            <div style="padding: 56px 32px 64px; display: flex; justify-content: center;">
+              <div style="width: 100%; max-width: 720px;">
+                <div style="display: inline-flex; align-items: stretch; background: #FFFFFF; border: 1px solid #C3DFCB; border-left: 5px solid #186A3B; border-radius: 3px; box-shadow: 0 1px 2px rgba(58,44,26,0.06); margin-bottom: 28px;" role="group" aria-label="Verification: verified. General Optical Council D-17909. Checked 18/08/2026.">
+                  <div style="padding: 16px 22px 16px 18px; display: flex; gap: 14px; align-items: flex-start;">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 2px; flex: none;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                    <div>
+                      <div style="font-weight: 700; font-size: 18px; letter-spacing: -0.005em; color: #14472B;">Verified dispensing optician</div>
+                      <div style="font-size: 16px; color: #5A544B; line-height: 1.5; margin-top: 4px;">General Optical Council · reg. <span style="font-variant-numeric: tabular-nums; font-weight: 600; color: #1C1A17;">D-17909</span></div>
+                      <div style="font-size: 16px; color: #5A544B; line-height: 1.5; font-variant-numeric: tabular-nums;">Checked 18/08/2026 · re-checked weekly</div>
+                    </div>
+                  </div>
+                </div>
+                <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 40px; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 14px;">You're on the register, Ravi.</h3>
+                <p style="font-size: 19px; line-height: 1.58; color: #423C34; margin: 0 0 28px; max-width: 58ch;">Your name and registration matched the General Optical Council's entry for D-17909. The badge above is the one consumers will see on your profile, with the date it was last checked.</p>
+                <div style="background: #F2E9DA; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px 24px; margin-bottom: 28px;">
+                  <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6E6252; margin-bottom: 10px;">Not public yet</div>
+                  <div style="font-size: 17px; line-height: 1.55; color: #423C34;">Nothing appears in search until you add your practice details and start your subscription. Two steps left, about four minutes.</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                  <a href="#practice" style="display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 28px; background: #0D4A45; color: #FFFFFF; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Add practice details</a>
+                  <a href="#later" style="display: inline-flex; align-items: center; min-height: 56px; padding: 0 4px; font-size: 18px; font-weight: 600;">Finish this later</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <div class="on-deep" style="background: #12332F; height: 56px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; color: #F4EFE7;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 22px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+              <span style="font-size: 16px; color: #A8C4BE; font-variant-numeric: tabular-nums;">Step 3 of 4 · no match</span>
+            </div>
+            <div style="padding: 56px 32px 64px; display: flex; justify-content: center;">
+              <div style="width: 100%; max-width: 720px;">
+                <div style="display: inline-flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E9C6BF; border-left: 5px solid #96301C; border-radius: 3px; padding: 14px 18px; margin-bottom: 28px;" role="group" aria-label="Verification: not found on the register. No General Optical Council entry matches D-17909 as searched on 18/08/2026.">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#96301C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path></svg>
+                  <div>
+                    <div style="font-weight: 700; font-size: 18px; color: #7E2817;">Not found on the register</div>
+                    <div style="font-size: 16px; color: #5A544B; margin-top: 2px;">Searched 18/08/2026 · no entry matched</div>
+                  </div>
+                </div>
+                <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 40px; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 14px;">We couldn't match that number.</h3>
+                <p style="font-size: 19px; line-height: 1.58; color: #423C34; margin: 0 0 24px; max-width: 58ch;">This is what we looked for. If any of it is wrong, correcting it is the fastest fix — you are not locked out and nothing has been charged.</p>
+                <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 24px; margin-bottom: 28px; display: grid; grid-template-columns: 200px minmax(0, 1fr); row-gap: 12px; column-gap: 24px;">
+                  <div style="font-size: 16px; color: #6E6252;">Registration number</div>
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 600;">D-17909</div>
+                  <div style="font-size: 16px; color: #6E6252;">Surname</div>
+                  <div style="font-size: 17px; font-weight: 600;">Chandrasekaran</div>
+                  <div style="font-size: 16px; color: #6E6252;">Register file</div>
+                  <div style="font-size: 17px;">General Optical Council, published 16/08/2026</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 30px;">
+                  <div style="display: flex; gap: 14px; align-items: flex-start;">
+                    <span style="width: 8px; height: 8px; border-radius: 999px; background: #8F8574; flex: none; margin-top: 9px;"></span>
+                    <div style="font-size: 18px; line-height: 1.55; color: #423C34;"><strong style="font-weight: 700; color: #1C1A17;">A digit or the prefix is out.</strong> The number on your GOC card is two digits or a one-to-two letter code, then four to six digits — <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px;">D-17909</span> or <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px;">01-31842</span>.</div>
+                  </div>
+                  <div style="display: flex; gap: 14px; align-items: flex-start;">
+                    <span style="width: 8px; height: 8px; border-radius: 999px; background: #8F8574; flex: none; margin-top: 9px;"></span>
+                    <div style="font-size: 18px; line-height: 1.55; color: #423C34;"><strong style="font-weight: 700; color: #1C1A17;">Your surname differs from the register.</strong> We match on the surname the GOC holds. If yours has changed and theirs has not, tell us and we will check by hand.</div>
+                  </div>
+                  <div style="display: flex; gap: 14px; align-items: flex-start;">
+                    <span style="width: 8px; height: 8px; border-radius: 999px; background: #8F8574; flex: none; margin-top: 9px;"></span>
+                    <div style="font-size: 18px; line-height: 1.55; color: #423C34;"><strong style="font-weight: 700; color: #1C1A17;">You registered in the last few days.</strong> The register file we read is published weekly. A new entry can take up to seven days to reach us.</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                  <a href="#retry" style="display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 28px; background: #0D4A45; color: #FFFFFF; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Check the number and try again</a>
+                  <a href="#byhand" style="display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 24px; background: #FFFFFF; border: 1px solid #0D4A45; color: #0D4A45; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Ask us to check by hand</a>
+                </div>
+                <p style="font-size: 16px; line-height: 1.5; color: #5A544B; margin: 18px 0 0;">Checking by hand takes one working day. Your details stay saved, your listing stays private, and you are not charged until it clears.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <div class="on-deep" style="background: #12332F; height: 56px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; color: #F4EFE7;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 22px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+              <span style="font-size: 16px; color: #A8C4BE; font-variant-numeric: tabular-nums;">Step 3 of 4 · pending</span>
+            </div>
+            <div style="padding: 56px 32px 64px; display: flex; justify-content: center;">
+              <div style="width: 100%; max-width: 720px;">
+                <div style="display: inline-flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E6D3A6; border-left: 5px solid #7A4F00; border-radius: 3px; padding: 14px 18px; margin-bottom: 28px;" role="group" aria-label="Verification: pending. Could not reach the General Optical Council register on 18/08/2026. An operator will re-run this check.">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A4F00" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                  <div>
+                    <div style="font-weight: 700; font-size: 18px; color: #5E3E00;">Verification pending</div>
+                    <div style="font-size: 16px; color: #5A544B; margin-top: 2px;">Could not reach the GOC register on 18/08/2026 · an operator will re-run this check</div>
+                  </div>
+                </div>
+                <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 40px; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 14px;">The register didn't answer.</h3>
+                <p style="font-size: 19px; line-height: 1.58; color: #423C34; margin: 0 0 24px; max-width: 58ch;">That is our end, not yours, and it says nothing about your registration. Everything you entered is saved.</p>
+                <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 24px; margin-bottom: 28px;">
+                  <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6E6252; margin-bottom: 12px;">What happens now</div>
+                  <div style="font-size: 18px; line-height: 1.55; color: #423C34; margin-bottom: 10px;">Nothing retries in the background. A person here re-runs this check by hand, normally within one working day, and we email <span style="font-weight: 600; color: #1C1A17;">ravi@chandraopticians.co.uk</span> the moment it clears.</div>
+                  <div style="font-size: 18px; line-height: 1.55; color: #423C34;">You can also run it again yourself right now — if the register is back, you will have your answer in seconds.</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                  <a href="#again" style="display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 28px; background: #0D4A45; color: #FFFFFF; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Try the check again</a>
+                  <a href="#carryon" style="display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 24px; background: #FFFFFF; border: 1px solid #0D4A45; color: #0D4A45; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Carry on setting up</a>
+                </div>
+                <p style="font-size: 16px; line-height: 1.5; color: #5A544B; margin: 18px 0 0;">Carrying on is safe: your profile stays private and unpublished until verification clears. No subscription starts on a pending check.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <sc-if value="{{ showMobile }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 44px 0 12px;">The three outcomes · 390</div>
+        <div style="display: flex; gap: 28px; flex-wrap: wrap;">
+
+          <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <div class="on-deep" style="background: #12332F; height: 56px; padding: 0 16px; display: flex; align-items: center; color: #F4EFE7;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 22px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+            </div>
+            <div style="padding: 26px 16px 32px;">
+              <div style="background: #FFFFFF; border: 1px solid #C3DFCB; border-left: 5px solid #186A3B; border-radius: 3px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; margin-bottom: 22px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                <div>
+                  <div style="font-weight: 700; font-size: 17px; color: #14472B;">Verified dispensing optician</div>
+                  <div style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-top: 3px;">GOC · reg. <span style="font-variant-numeric: tabular-nums; font-weight: 600; color: #1C1A17;">D-17909</span></div>
+                  <div style="font-size: 16px; color: #5A544B; line-height: 1.45; font-variant-numeric: tabular-nums;">Checked 18/08/2026</div>
+                </div>
+              </div>
+              <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 32px; line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 12px;">You're on the register, Ravi.</h3>
+              <p style="font-size: 17px; line-height: 1.55; color: #423C34; margin: 0 0 20px;">Your name and registration matched the GOC entry for D-17909.</p>
+              <div style="background: #F2E9DA; border: 1px solid #E2DBD0; border-radius: 4px; padding: 16px 18px; font-size: 16px; line-height: 1.5; color: #423C34; margin-bottom: 22px;"><strong style="font-weight: 700; color: #1C1A17;">Not public yet.</strong> Two steps left — practice details, then your plan.</div>
+              <a href="#practice" style="display: flex; align-items: center; justify-content: center; min-height: 56px; background: #0D4A45; color: #FFFFFF; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Add practice details</a>
+              <a href="#later" style="display: flex; align-items: center; justify-content: center; min-height: 48px; margin-top: 8px; font-size: 17px; font-weight: 600;">Finish this later</a>
+            </div>
+          </div>
+
+          <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <div class="on-deep" style="background: #12332F; height: 56px; padding: 0 16px; display: flex; align-items: center; color: #F4EFE7;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 22px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+            </div>
+            <div style="padding: 26px 16px 32px;">
+              <div style="background: #FFFFFF; border: 1px solid #E9C6BF; border-left: 5px solid #96301C; border-radius: 3px; padding: 14px 16px; display: flex; gap: 12px; align-items: center; margin-bottom: 22px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#96301C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path></svg>
+                <div>
+                  <div style="font-weight: 700; font-size: 17px; color: #7E2817;">Not found on the register</div>
+                  <div style="font-size: 16px; color: #5A544B; margin-top: 2px;">Searched 18/08/2026</div>
+                </div>
+              </div>
+              <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 32px; line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 12px;">We couldn't match that number.</h3>
+              <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 16px 18px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid #EFE9DF;"><span style="font-size: 16px; color: #6E6252;">Number</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600;">D-17909</span></div>
+                <div style="display: flex; justify-content: space-between; gap: 12px; padding-top: 10px;"><span style="font-size: 16px; color: #6E6252;">Surname</span><span style="font-size: 16px; font-weight: 600;">Chandrasekaran</span></div>
+              </div>
+              <ul style="margin: 0 0 22px; padding-left: 20px; font-size: 17px; line-height: 1.5; color: #423C34;">
+                <li style="margin-bottom: 8px;">A digit or the letter prefix is out.</li>
+                <li style="margin-bottom: 8px;">Your surname differs from the GOC's.</li>
+                <li style="margin: 0;">You registered within the last seven days.</li>
+              </ul>
+              <a href="#retry" style="display: flex; align-items: center; justify-content: center; min-height: 56px; background: #0D4A45; color: #FFFFFF; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Check and try again</a>
+              <a href="#byhand" style="display: flex; align-items: center; justify-content: center; min-height: 56px; margin-top: 10px; background: #FFFFFF; border: 1px solid #0D4A45; color: #0D4A45; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Ask us to check by hand</a>
+              <p style="font-size: 16px; line-height: 1.5; color: #5A544B; margin: 14px 0 0;">One working day. Nothing published, nothing charged.</p>
+            </div>
+          </div>
+
+          <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <div class="on-deep" style="background: #12332F; height: 56px; padding: 0 16px; display: flex; align-items: center; color: #F4EFE7;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 22px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+            </div>
+            <div style="padding: 26px 16px 32px;">
+              <div style="background: #FFFFFF; border: 1px solid #E6D3A6; border-left: 5px solid #7A4F00; border-radius: 3px; padding: 14px 16px; display: flex; gap: 12px; align-items: center; margin-bottom: 22px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A4F00" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                <div>
+                  <div style="font-weight: 700; font-size: 17px; color: #5E3E00;">Verification pending</div>
+                  <div style="font-size: 16px; color: #5A544B; margin-top: 2px; line-height: 1.4;">Register unreachable 18/08/2026 · an operator will re-run it</div>
+                </div>
+              </div>
+              <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 32px; line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 12px;">The register didn't answer.</h3>
+              <p style="font-size: 17px; line-height: 1.55; color: #423C34; margin: 0 0 20px;">Our end, not yours — it says nothing about your registration, and everything you entered is saved.</p>
+              <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 16px 18px; font-size: 16px; line-height: 1.5; color: #423C34; margin-bottom: 22px;">Nothing retries in the background. A person re-runs it by hand, usually within one working day, and we email you when it clears.</div>
+              <a href="#again" style="display: flex; align-items: center; justify-content: center; min-height: 56px; background: #0D4A45; color: #FFFFFF; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Try the check again</a>
+              <a href="#carryon" style="display: flex; align-items: center; justify-content: center; min-height: 56px; margin-top: 10px; background: #FFFFFF; border: 1px solid #0D4A45; color: #0D4A45; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">Carry on setting up</a>
+              <p style="font-size: 16px; line-height: 1.5; color: #5A544B; margin: 14px 0 0;">Your profile stays private until it clears.</p>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showAnnotations }}" hint-placeholder-val="{{ true }}">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 36px;">
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Not-found is not an accusation</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">The three reasons are ordered by likelihood, and all three are recoverable. We never imply the person is unregistered — we only ever claim we could not match what we were given.</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Pending never promises a robot</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">There is no background retry, so the copy names the operator and the working day. “Try again” is the practitioner's own button, which is honest and often faster.</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Money is mentioned on every branch</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">Verified says the listing is not live yet; the other two say nothing is charged. A practitioner's first question after a failed check is whether they have paid for nothing.</div>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+
+    <section style="padding: 56px 0 48px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">19 — Search · empty result with Notify-Me</div>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 12px; max-width: 34ch;">An empty register page is evidence, not an apology.</h2>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 36px; max-width: 74ch;">Nothing within ten miles means exactly one thing: we have not verified anyone there. Saying so plainly is the strongest possible statement of the proposition — a directory that pads this page with unchecked listings is a directory whose ticks mean nothing. The page then does three jobs in order: widen the search with real counts, take a notification request, and invite the local practitioner who should be here.</p>
+
+      <div style="overflow-x: auto; margin: 0 -32px; padding: 0 32px 8px;">
+        <div style="width: 1280px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+          <div class="on-deep" style="background: #12332F; height: 64px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; color: #F4EFE7;">
+            <div style="display: flex; align-items: center; gap: 28px;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+              <span style="font-size: 16px; font-weight: 600;">Find an optician</span>
+              <span style="font-size: 16px; color: #A8C4BE;">How verification works</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 24px;">
+              <span style="font-size: 16px; color: #A8C4BE;">List your practice</span>
+              <span style="width: 1px; height: 20px; background: rgba(244,239,231,0.35);"></span>
+              <span style="font-size: 16px; font-weight: 600;">Sign in</span>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border-bottom: 1px solid #E2DBD0; padding: 20px 32px;">
+            <div style="max-width: 1080px; margin: 0 auto; display: flex; gap: 12px; align-items: center;">
+              <div style="position: relative; flex: 1;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5A544B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 17px;"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input type="search" value="BA2 4AS" aria-label="Postcode or town" style="width: 100%; height: 56px; padding: 0 14px 0 46px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-family: inherit; font-size: 18px; color: #1C1A17;" />
+              </div>
+              <div style="position: relative;">
+                <select aria-label="Search radius" style="height: 56px; padding: 0 44px 0 16px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-family: inherit; font-size: 18px; color: #1C1A17; appearance: none;">
+                  <option>Within 10 miles</option>
+                  <option>Within 25 miles</option>
+                  <option>Within 50 miles</option>
+                </select>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#423C34" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 18px; pointer-events: none;"><path d="m6 9 6 6 6-6"></path></svg>
+              </div>
+              <button type="button" style="height: 56px; padding: 0 28px; background: #0D4A45; color: #FFFFFF; border: none; border-radius: 3px; font-family: inherit; font-size: 18px; font-weight: 700; cursor: pointer;">Search</button>
+            </div>
+          </div>
+
+          <div style="padding: 48px 32px 64px;">
+            <div style="max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 56px; align-items: start;">
+              <div>
+                <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 14px;">0 results · BA2 4AS · within 10 miles</div>
+                <h1 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em; margin: 0 0 18px; max-width: 24ch; text-wrap: balance;">No verified optician within 10 miles of BA2 4AS — yet.</h1>
+                <p style="font-size: 19px; line-height: 1.58; color: #423C34; margin: 0 0 14px; max-width: 56ch;">There are <span style="font-weight: 700; font-variant-numeric: tabular-nums; color: #1C1A17;">1,284</span> verified practitioners on MiCare. None of them practises inside this radius today.</p>
+                <p style="font-size: 19px; line-height: 1.58; color: #423C34; margin: 0 0 36px; max-width: 56ch;">We could fill this page with practices we have not checked. Then the tick would mean nothing, and neither would this page.</p>
+
+                <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 26px 28px;">
+                  <div style="font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 24px; line-height: 1.3; margin-bottom: 6px;">Try a wider radius</div>
+                  <div style="font-size: 17px; line-height: 1.55; color: #423C34; margin-bottom: 20px;">The nearest verified optician is in Bristol, 14 miles away — a 26 minute drive.</div>
+                  <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <a href="#r25" style="display: inline-flex; flex-direction: column; justify-content: center; min-height: 64px; padding: 0 22px; background: #FFFFFF; border: 1px solid #0D4A45; border-radius: 3px; text-decoration: none; color: #0D4A45;">
+                      <span style="font-size: 18px; font-weight: 700;">Within 25 miles</span>
+                      <span style="font-size: 16px; color: #5A544B; font-variant-numeric: tabular-nums;">3 verified</span>
+                    </a>
+                    <a href="#r50" style="display: inline-flex; flex-direction: column; justify-content: center; min-height: 64px; padding: 0 22px; background: #FFFFFF; border: 1px solid #0D4A45; border-radius: 3px; text-decoration: none; color: #0D4A45;">
+                      <span style="font-size: 18px; font-weight: 700;">Within 50 miles</span>
+                      <span style="font-size: 16px; color: #5A544B; font-variant-numeric: tabular-nums;">11 verified</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div style="margin-top: 24px; background: #F2E9DA; border: 1px solid #E2DBD0; border-radius: 4px; padding: 26px 28px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+                  <div style="flex: 1; min-width: 260px;">
+                    <div style="font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 24px; line-height: 1.3; margin-bottom: 6px;">Do you practise near Bath?</div>
+                    <div style="font-size: 17px; line-height: 1.55; color: #423C34;">Yours would be the first verified entry here. Verification takes a few seconds against the GOC register.</div>
+                  </div>
+                  <a href="#list" style="display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 26px; background: #0D4A45; color: #FFFFFF; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none; flex: none;">List your practice</a>
+                </div>
+              </div>
+
+              <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-top: 4px solid #0D4A45; border-radius: 4px; padding: 30px 30px 32px; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+                <div style="font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 26px; line-height: 1.24; margin-bottom: 10px;">Tell me when someone lists near BA2 4AS</div>
+                <div style="font-size: 17px; line-height: 1.55; color: #423C34; margin-bottom: 26px;">One email, once, when a verified optician appears inside your radius.</div>
+
+                <label for="nm-email" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">Email address</label>
+                <div style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-bottom: 8px;">We confirm it before we store it.</div>
+                <input id="nm-email" type="email" autocomplete="email" placeholder="you@example.com" style="width: 100%; height: 56px; padding: 0 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-family: inherit; font-size: 18px; color: #1C1A17; margin-bottom: 20px;" />
+
+                <div style="display: flex; gap: 14px; margin-bottom: 22px;">
+                  <div style="flex: 1;">
+                    <label for="nm-postcode" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">Postcode</label>
+                    <input id="nm-postcode" type="text" value="BA2 4AS" autocomplete="postal-code" style="width: 100%; height: 56px; padding: 0 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-family: inherit; font-size: 18px; color: #1C1A17; font-variant-numeric: tabular-nums;" />
+                  </div>
+                  <div style="width: 150px;">
+                    <label for="nm-radius" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">Radius</label>
+                    <div style="position: relative;">
+                      <select id="nm-radius" style="width: 100%; height: 56px; padding: 0 38px 0 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-family: inherit; font-size: 18px; color: #1C1A17; appearance: none;">
+                        <option>10 miles</option>
+                        <option>25 miles</option>
+                        <option>50 miles</option>
+                      </select>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#423C34" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 12px; top: 18px; pointer-events: none;"><path d="m6 9 6 6 6-6"></path></svg>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" style="width: 100%; min-height: 56px; background: #0D4A45; color: #FFFFFF; border: none; border-radius: 3px; font-family: inherit; font-size: 18px; font-weight: 700; cursor: pointer;">Notify me</button>
+                <div style="font-size: 16px; line-height: 1.5; color: #5A544B; margin-top: 16px;">A confirmation email arrives in a minute or two. Until you click the link in it, we hold nothing. No newsletter, no partners, unsubscribe in one click.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ showMobile }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 44px 0 12px;">Empty result · 390</div>
+        <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+          <div class="on-deep" style="background: #12332F; color: #F4EFE7;">
+            <div style="height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+              <a href="#signin" style="color: #F4EFE7; font-weight: 600; font-size: 16px; min-height: 44px; display: inline-flex; align-items: center;">Sign in</a>
+            </div>
+            <div style="height: 56px; padding: 0 16px 12px; display: flex; align-items: center; gap: 8px;">
+              <div style="position: relative; flex: 1;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5A544B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 12px; top: 12px;"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input type="search" value="BA2 4AS · 10 miles" aria-label="Search" style="width: 100%; height: 44px; padding: 0 12px 0 40px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-family: inherit; font-size: 16px; color: #1C1A17;" />
+              </div>
+            </div>
+          </div>
+          <div style="padding: 26px 16px 32px;">
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">0 results</div>
+            <h1 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 32px; line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 14px;">No verified optician within 10 miles of BA2 4AS — yet.</h1>
+            <p style="font-size: 17px; line-height: 1.55; color: #423C34; margin: 0 0 24px;">1,284 verified practitioners are listed on MiCare. None inside this radius. We won't pad the page with practices we haven't checked.</p>
+
+            <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 18px; margin-bottom: 20px;">
+              <div style="font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 21px; margin-bottom: 4px;">Try a wider radius</div>
+              <div style="font-size: 16px; line-height: 1.5; color: #423C34; margin-bottom: 16px;">Nearest is Bristol, 14 miles.</div>
+              <a href="#r25" style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 0 16px; border: 1px solid #0D4A45; border-radius: 3px; text-decoration: none; color: #0D4A45; margin-bottom: 10px;">
+                <span style="font-size: 17px; font-weight: 700;">Within 25 miles</span><span style="font-size: 16px; color: #5A544B; font-variant-numeric: tabular-nums;">3 verified</span>
+              </a>
+              <a href="#r50" style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 0 16px; border: 1px solid #0D4A45; border-radius: 3px; text-decoration: none; color: #0D4A45;">
+                <span style="font-size: 17px; font-weight: 700;">Within 50 miles</span><span style="font-size: 16px; color: #5A544B; font-variant-numeric: tabular-nums;">11 verified</span>
+              </a>
+            </div>
+
+            <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-top: 4px solid #0D4A45; border-radius: 4px; padding: 20px 18px 22px; margin-bottom: 20px;">
+              <div style="font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 22px; line-height: 1.26; margin-bottom: 6px;">Tell me when someone lists near BA2 4AS</div>
+              <div style="font-size: 16px; line-height: 1.5; color: #423C34; margin-bottom: 20px;">One email, once, when a verified optician appears inside your radius.</div>
+              <label for="nm-email-m" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">Email address</label>
+              <input id="nm-email-m" type="email" autocomplete="email" placeholder="you@example.com" style="width: 100%; height: 56px; padding: 0 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-family: inherit; font-size: 18px; color: #1C1A17; margin-bottom: 16px;" />
+              <label for="nm-postcode-m" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">Postcode</label>
+              <input id="nm-postcode-m" type="text" value="BA2 4AS" autocomplete="postal-code" style="width: 100%; height: 56px; padding: 0 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-family: inherit; font-size: 18px; color: #1C1A17; margin-bottom: 18px; font-variant-numeric: tabular-nums;" />
+              <button type="button" style="width: 100%; min-height: 56px; background: #0D4A45; color: #FFFFFF; border: none; border-radius: 3px; font-family: inherit; font-size: 18px; font-weight: 700; cursor: pointer;">Notify me</button>
+              <div style="font-size: 16px; line-height: 1.5; color: #5A544B; margin-top: 14px;">We email to confirm first. Until you click the link, we hold nothing.</div>
+            </div>
+
+            <div style="background: #F2E9DA; border: 1px solid #E2DBD0; border-radius: 4px; padding: 18px;">
+              <div style="font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 21px; line-height: 1.28; margin-bottom: 6px;">Do you practise near Bath?</div>
+              <div style="font-size: 16px; line-height: 1.5; color: #423C34; margin-bottom: 16px;">Yours would be the first verified entry here.</div>
+              <a href="#list" style="display: flex; align-items: center; justify-content: center; min-height: 56px; background: #0D4A45; color: #FFFFFF; border-radius: 3px; font-size: 18px; font-weight: 700; text-decoration: none;">List your practice</a>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showAnnotations }}" hint-placeholder-val="{{ true }}">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 36px;">
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Counts, not just wider radii</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">“Within 25 miles — 3 verified” is a promise the next page keeps. A bare “widen your search” asks the user to gamble on another empty page.</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">The capture is a card, not a banner</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">It sits in the right rail at 1280 with a 4px primary top edge — the only raised element on the page — and moves under the radius options at 390, where widening still comes first.</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Double opt-in is stated up front</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">The help text says the confirmation email is coming before the button is pressed, so the next screen is expected rather than a surprise dead end.</div>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+
+    <section style="padding: 56px 0 24px;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">20 — Search · confirm your email</div>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 12px; max-width: 34ch;">The half-finished state, said out loud.</h2>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 36px; max-width: 74ch;">Double opt-in means the request is not real until the link is clicked, so this screen has to carry that without sounding like a failure. It restates exactly what will be watched, gives the two things that go wrong (wrong address, mail in spam), and says what happens if nothing is clicked.</p>
+
+      <div style="display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start;">
+        <div style="flex: 1; min-width: 520px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Confirm · 1280 (content column)</div>
+          <div style="border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <div class="on-deep" style="background: #12332F; height: 64px; padding: 0 28px; display: flex; align-items: center; justify-content: space-between; color: #F4EFE7;">
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+              <span style="font-size: 16px; color: #A8C4BE;">Find an optician</span>
+            </div>
+            <div style="padding: 56px 48px 60px;">
+              <div style="max-width: 620px;">
+                <div style="display: inline-flex; align-items: center; gap: 10px; background: #E7F0EE; border: 1px solid #C6D6D4; border-radius: 3px; padding: 8px 14px; margin-bottom: 24px;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D4A45" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                  <span style="font-size: 16px; font-weight: 700; color: #0D4A45;">One email sent</span>
+                </div>
+                <h1 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 40px; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 16px;">Confirm your email to finish.</h1>
+                <p style="font-size: 19px; line-height: 1.58; color: #423C34; margin: 0 0 28px; max-width: 54ch;">We have sent a single email to <span style="font-weight: 700; color: #1C1A17;">m.okafor@gmail.com</span>. Click the link in it and we will start watching for verified opticians near you.</p>
+                <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px 24px; margin-bottom: 28px; display: grid; grid-template-columns: 180px minmax(0, 1fr); row-gap: 12px; column-gap: 24px;">
+                  <div style="font-size: 16px; color: #6E6252;">Watching</div>
+                  <div style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums;">BA2 4AS · within 10 miles</div>
+                  <div style="font-size: 16px; color: #6E6252;">You'll hear from us</div>
+                  <div style="font-size: 17px;">Once, when a verified optician lists inside that radius</div>
+                  <div style="font-size: 16px; color: #6E6252;">If you don't confirm</div>
+                  <div style="font-size: 17px;">The request expires in 7 days and we delete the address</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                  <button type="button" disabled style="display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 26px; background: #E7E1D6; border: 1px solid #C9C0B1; color: #6E6252; border-radius: 3px; font-family: inherit; font-size: 18px; font-weight: 700; white-space: nowrap;">Resend in 0:42</button>
+                  <a href="#change" style="display: inline-flex; align-items: center; min-height: 56px; font-size: 18px; font-weight: 600;">Use a different address</a>
+                </div>
+                <p style="font-size: 17px; line-height: 1.55; color: #423C34; margin: 24px 0 0; max-width: 54ch;">Nothing in five minutes? Check your spam folder for a message from <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px;">register@micare.co.uk</span>, then resend.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ showMobile }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Confirm · 390</div>
+            <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+              <div class="on-deep" style="background: #12332F; height: 56px; padding: 0 16px; display: flex; align-items: center; color: #F4EFE7;">
+                <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+              </div>
+              <div style="padding: 26px 16px 32px;">
+                <div style="display: inline-flex; align-items: center; gap: 8px; background: #E7F0EE; border: 1px solid #C6D6D4; border-radius: 3px; padding: 7px 12px; margin-bottom: 18px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D4A45" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                  <span style="font-size: 16px; font-weight: 700; color: #0D4A45;">One email sent</span>
+                </div>
+                <h1 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 32px; line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 14px;">Confirm your email to finish.</h1>
+                <p style="font-size: 17px; line-height: 1.55; color: #423C34; margin: 0 0 22px;">One email is on its way to <span style="font-weight: 700; color: #1C1A17;">m.okafor@gmail.com</span>. Click the link in it and we'll start watching.</p>
+                <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 16px 18px; margin-bottom: 22px;">
+                  <div style="padding-bottom: 12px; border-bottom: 1px solid #EFE9DF;">
+                    <div style="font-size: 16px; color: #6E6252;">Watching</div>
+                    <div style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums;">BA2 4AS · within 10 miles</div>
+                  </div>
+                  <div style="padding-top: 12px;">
+                    <div style="font-size: 16px; color: #6E6252;">If you don't confirm</div>
+                    <div style="font-size: 17px; line-height: 1.45;">The request expires in 7 days and we delete the address.</div>
+                  </div>
+                </div>
+                <button type="button" disabled style="width: 100%; min-height: 56px; background: #E7E1D6; border: 1px solid #C9C0B1; color: #6E6252; border-radius: 3px; font-family: inherit; font-size: 18px; font-weight: 700;">Resend in 0:42</button>
+                <a href="#change" style="display: flex; align-items: center; justify-content: center; min-height: 48px; margin-top: 8px; font-size: 17px; font-weight: 600;">Use a different address</a>
+                <p style="font-size: 16px; line-height: 1.5; color: #423C34; margin: 16px 0 0;">Nothing in five minutes? Look for <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">register@micare.co.uk</span> in spam.</p>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ showAnnotations }}" hint-placeholder-val="{{ true }}">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 36px;">
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Resend is disabled, not hidden</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">A visible 42-second countdown on the disabled control tells the user the button exists and when it will work — the disabled token pair carries 5.0:1 ink, so the label stays readable.</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Retention is on the screen</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">Seven days then deleted, stated where the decision is made rather than in the privacy policy. It is also the honest reason the address is not stored yet.</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px 22px;">
+            <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Sender named</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #423C34;">An audience that skews older searches spam by sender. Give them the exact address to look for, in mono, and the search succeeds.</div>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280},&quot;showMobile&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Artboards&quot;},&quot;showAnnotations&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Artboards&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      showMobile: this.props.showMobile ?? true,
+      showAnnotations: this.props.showAnnotations ?? true
+    };
+  }
+}
+</script>
+</body>
+</html>

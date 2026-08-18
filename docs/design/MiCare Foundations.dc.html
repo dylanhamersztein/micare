@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  /* Self-hosted variable woff2 — no runtime CDN call. */
+  @font-face { font-family: "Newsreader"; src: url("/fonts/Newsreader-Variable.woff2") format("woff2-variations"); font-weight: 400 700; font-display: swap; }
+  @font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Variable.woff2") format("woff2-variations"); font-weight: 300 800; font-display: swap; }
+  @font-face { font-family: "JetBrains Mono"; src: url("/fonts/JetBrainsMono-Variable.woff2") format("woff2-variations"); font-weight: 400 600; font-display: swap; }
+  body { margin: 0; background: #F4EFE7; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #0D4A45; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: #093632; }
+  :focus-visible { outline: 3px solid #0D4A45; outline-offset: 2px; border-radius: 2px; }
+</style>
+</helmet>
+
+<div style="font-family: 'Public Sans', system-ui, sans-serif; color: #1C1A17; background: #FBF8F3; min-height: 100%; padding-bottom: 96px;">
+
+  <div style="background: #12332F; color: #F4EFE7; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 10px;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+      <span style="width: 1px; height: 16px; background: rgba(244,239,231,0.35); display: inline-block;"></span>
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; color: #A8C4BE;">Foundations · v1</span>
+    </div>
+    <span style="font-size: 13px; color: #A8C4BE;">Verified, not advertised</span>
+  </div>
+
+  <div style="max-width: 1180px; margin: 0 auto; padding: 0 32px;">
+
+    <section style="padding: 72px 0 56px; border-bottom: 1px solid #E2DBD0; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 64px; align-items: start;">
+      <div>
+        <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">01 — The direction</div>
+        <h1 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 56px; line-height: 1.08; letter-spacing: -0.02em; margin: 0 0 24px; text-wrap: balance;">A reference work, not a landing page.</h1>
+        <p style="font-size: 19px; line-height: 1.6; color: #423C34; margin: 0 0 18px; max-width: 58ch;">MiCare should read like a well-set public register: warm paper rather than clinical white, ink-black text, one deep institutional green that earns its authority by being used sparingly. Evidence is typeset, not decorated. Nothing pulses, nothing counts down.</p>
+        <p style="font-size: 19px; line-height: 1.6; color: #423C34; margin: 0; max-width: 58ch;">Density is generous by SaaS standards and deliberately so — the average consumer here is sixty, outdoors, one-handed, and possibly reading with a correction they came to us to renew. Base body text is 17px on mobile and 18px on desktop. Nothing functional ships below 16px.</p>
+      </div>
+      <div style="border: 1px solid #E2DBD0; background: #FFFFFF; border-radius: 4px; padding: 28px;">
+        <div style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 18px;">Typeface pairing</div>
+        <div style="padding-bottom: 20px; border-bottom: 1px solid #EFE9DF;">
+          <div style="font-family: 'Newsreader', Georgia, serif; font-size: 40px; line-height: 1; margin-bottom: 10px;">Newsreader</div>
+          <div style="font-size: 15px; line-height: 1.55; color: #5A544B;">Production Type, SIL Open Font Licence. Headings, wordmark, and page titles only. A screen-first text serif with a large x-height and open apertures — editorial warmth without nostalgia.</div>
+        </div>
+        <div style="padding-top: 20px;">
+          <div style="font-size: 36px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; margin-bottom: 10px;">Public Sans</div>
+          <div style="font-size: 15px; line-height: 1.55; color: #5A544B;">USWDS, public domain / OFL. All UI, body copy, forms, data. Plainspoken grotesque built for civic legibility; unmistakable 1/l/I and 0/O at small sizes. Both self-host cleanly as variable woff2.</div>
+        </div>
+        <div style="margin-top: 20px; padding: 12px 14px; background: #F7F3EC; border-radius: 3px; font-size: 14px; line-height: 1.5; color: #5A544B;">Numerals: <strong style="color: #1C1A17; font-weight: 600;">tabular</strong> everywhere a figure can change — distance, click-throughs, price, dates.</div>
+      </div>
+    </section>
+
+    <section style="padding: 64px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">02 — Colour</div>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 12px;">Warm paper, deep register green, and four states that never rely on hue alone.</h2>
+      <p style="font-size: 18px; line-height: 1.6; color: #423C34; margin: 0 0 40px; max-width: 70ch;">Contrast ratios below are measured against the surface named on each swatch. Every text pairing clears WCAG 2.2 AA; body ink clears AAA.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1px; background: #E2DBD0; border: 1px solid #E2DBD0; border-radius: 4px; overflow: hidden;">
+        <div style="background: #FFFFFF; padding: 20px;">
+          <div style="height: 56px; border-radius: 3px; background: #FBF8F3; border: 1px solid #E2DBD0; margin-bottom: 14px;"></div>
+          <div style="font-weight: 700; font-size: 15px;">surface</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5A544B; margin-top: 3px;">#FBF8F3</div>
+          <div style="font-size: 13px; color: #6E6252; margin-top: 6px; line-height: 1.45;">Page. Warm paper, 2% ochre off white.</div>
+        </div>
+        <div style="background: #FFFFFF; padding: 20px;">
+          <div style="height: 56px; border-radius: 3px; background: #FFFFFF; border: 1px solid #E2DBD0; margin-bottom: 14px;"></div>
+          <div style="font-weight: 700; font-size: 15px;">surface-raised</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5A544B; margin-top: 3px;">#FFFFFF</div>
+          <div style="font-size: 13px; color: #6E6252; margin-top: 6px; line-height: 1.45;">Cards, result rows, form fields.</div>
+        </div>
+        <div style="background: #FFFFFF; padding: 20px;">
+          <div style="height: 56px; border-radius: 3px; background: #F2E9DA; border: 1px solid #E2DBD0; margin-bottom: 14px;"></div>
+          <div style="font-weight: 700; font-size: 15px;">surface-sand</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5A544B; margin-top: 3px;">#F2E9DA</div>
+          <div style="font-size: 13px; color: #6E6252; margin-top: 6px; line-height: 1.45;">Practitioner-facing blocks. The one tonal shift on the site.</div>
+        </div>
+        <div style="background: #FFFFFF; padding: 20px;">
+          <div style="height: 56px; border-radius: 3px; background: #12332F; margin-bottom: 14px;"></div>
+          <div style="font-weight: 700; font-size: 15px;">surface-deep</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5A544B; margin-top: 3px;">#12332F</div>
+          <div style="font-size: 13px; color: #6E6252; margin-top: 6px; line-height: 1.45;">Header, footer. #F4EFE7 on it: 12.4:1.</div>
+        </div>
+        <div style="background: #FFFFFF; padding: 20px;">
+          <div style="height: 56px; border-radius: 3px; background: #1C1A17; margin-bottom: 14px;"></div>
+          <div style="font-weight: 700; font-size: 15px;">text</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5A544B; margin-top: 3px;">#1C1A17</div>
+          <div style="font-size: 13px; color: #6E6252; margin-top: 6px; line-height: 1.45;">On surface: 15.6:1 (AAA).</div>
+        </div>
+        <div style="background: #FFFFFF; padding: 20px;">
+          <div style="height: 56px; border-radius: 3px; background: #5A544B; margin-bottom: 14px;"></div>
+          <div style="font-weight: 700; font-size: 15px;">text-muted</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5A544B; margin-top: 3px;">#5A544B</div>
+          <div style="font-size: 13px; color: #6E6252; margin-top: 6px; line-height: 1.45;">On surface: 7.0:1. Floor for any secondary text.</div>
+        </div>
+        <div style="background: #FFFFFF; padding: 20px;">
+          <div style="height: 56px; border-radius: 3px; background: #0D4A45; margin-bottom: 14px;"></div>
+          <div style="font-weight: 700; font-size: 15px;">primary</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5A544B; margin-top: 3px;">#0D4A45</div>
+          <div style="font-size: 13px; color: #6E6252; margin-top: 6px; line-height: 1.45;">Register green. White on it: 10.1:1. Hover #093632.</div>
+        </div>
+        <div style="background: #FFFFFF; padding: 20px;">
+          <div style="height: 56px; border-radius: 3px; background: #B4762A; margin-bottom: 14px;"></div>
+          <div style="font-weight: 700; font-size: 15px;">accent-ochre</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5A544B; margin-top: 3px;">#B4762A</div>
+          <div style="font-size: 13px; color: #6E6252; margin-top: 6px; line-height: 1.45;">Non-text only: rules, marks, the £29 underline.</div>
+        </div>
+        <div style="background: #FFFFFF; padding: 20px;">
+          <div style="height: 56px; border-radius: 3px; background: #FFFFFF; border: 1px solid #E2DBD0; margin-bottom: 14px; display: flex; align-items: center; justify-content: center;"><span style="width: 70%; height: 1px; background: #E2DBD0;"></span></div>
+          <div style="font-weight: 700; font-size: 15px;">border</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #5A544B; margin-top: 3px;">#E2DBD0</div>
+          <div style="font-size: 13px; color: #6E6252; margin-top: 6px; line-height: 1.45;">Strong variant #8F8574 — 3.4:1 on surface, clears SC 1.4.11 for field outlines.</div>
+        </div>
+      </div>
+
+      <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 24px; margin: 44px 0 8px;">Verification states</h3>
+      <p style="font-size: 17px; line-height: 1.6; color: #423C34; margin: 0 0 24px; max-width: 70ch;">Each state carries three redundant signals: colour, a distinct lucide glyph, and a written word. Remove the colour and the meaning survives.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+        <div style="background: #E8F3EA; border: 1px solid #C3DFCB; border-left: 4px solid #186A3B; border-radius: 3px; padding: 18px;">
+          <div style="display: flex; align-items: center; gap: 8px; color: #186A3B; font-weight: 700; font-size: 16px;">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            Verified
+          </div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #2F4F3C; margin-top: 8px;">#186A3B on #E8F3EA — 5.8:1</div>
+          <div style="font-size: 14px; color: #35503F; margin-top: 8px; line-height: 1.45;">shield-check. On the GOC register at last check.</div>
+        </div>
+        <div style="background: #FDF3DC; border: 1px solid #E6D3A6; border-left: 4px solid #7A4F00; border-radius: 3px; padding: 18px;">
+          <div style="display: flex; align-items: center; gap: 8px; color: #7A4F00; font-weight: 700; font-size: 16px;">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Pending
+          </div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #6B4600; margin-top: 8px;">#7A4F00 on #FDF3DC — 4.8:1</div>
+          <div style="font-size: 14px; color: #5E3E00; margin-top: 8px; line-height: 1.45;">clock. The signup check timed out. Nothing retries it automatically — an operator re-runs it.</div>
+        </div>
+        <div style="background: #FBEAE7; border: 1px solid #E9C6BF; border-left: 4px solid #96301C; border-radius: 3px; padding: 18px;">
+          <div style="display: flex; align-items: center; gap: 8px; color: #96301C; font-weight: 700; font-size: 16px;">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path></svg>
+            Not found
+          </div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #7E2817; margin-top: 8px;">#96301C on #FBEAE7 — 4.8:1</div>
+          <div style="font-size: 14px; color: #6E2415; margin-top: 8px; line-height: 1.45;">x-circle. No matching GOC number. Never listed publicly.</div>
+        </div>
+        <div style="background: #F3EBE9; border: 1px solid #DFCDC9; border-left: 4px solid #7A1F1A; border-radius: 3px; padding: 18px;">
+          <div style="display: flex; align-items: center; gap: 8px; color: #7A1F1A; font-weight: 700; font-size: 16px;">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 2 20 20"></path><path d="M5 5a1 1 0 0 0-1 1v7c0 5 3.5 7.5 7.67 8.94a1 1 0 0 0 .67 0c1.9-.65 3.79-1.708 5.19-3.23"></path><path d="M9.309 3.652A12.252 12.252 0 0 0 11.24 2.28a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1c0 2.114 0 4.017-.428 5.71"></path></svg>
+            Revoked
+          </div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #6B1B16; margin-top: 8px;">#7A1F1A on #F3EBE9 — 5.9:1</div>
+          <div style="font-size: 14px; color: #5F1813; margin-top: 8px; line-height: 1.45;">shield-off. Removed from the register. Listing withdrawn.</div>
+        </div>
+      </div>
+
+      <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 24px; margin: 40px 0 8px;">Subscription states</h3>
+      <p style="font-size: 17px; line-height: 1.6; color: #423C34; margin: 0 0 20px; max-width: 74ch;">Six states, mirroring the billing provider exactly. Deliberately quieter than verification — billing is admin, not evidence: neutral chip, 8px dot, never the verified green. Each chip states whether the listing is public, because that is the only thing the practitioner actually needs to know.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); gap: 12px;">
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 3px; padding: 14px 16px;">
+          <span style="display: inline-flex; align-items: center; gap: 9px; font-size: 16px; font-weight: 700;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #6E6252;"></span>Incomplete</span>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; margin-top: 6px;">incomplete</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.45; margin-top: 6px;">First payment never completed. Listing not public.</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 3px; padding: 14px 16px;">
+          <span style="display: inline-flex; align-items: center; gap: 9px; font-size: 16px; font-weight: 700;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #0D4A45;"></span>Trialing</span>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; margin-top: 6px;">trialing</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.45; margin-top: 6px;">Free period. Listing public. First £29 due 03/09/2026.</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 3px; padding: 14px 16px;">
+          <span style="display: inline-flex; align-items: center; gap: 9px; font-size: 16px; font-weight: 700;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #186A3B;"></span>Active</span>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; margin-top: 6px;">active</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.45; margin-top: 6px;">Listing public. Next payment 03/09/2026.</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 3px; padding: 14px 16px;">
+          <span style="display: inline-flex; align-items: center; gap: 9px; font-size: 16px; font-weight: 700;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #7A4F00;"></span>Past due</span>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; margin-top: 6px;">past_due</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.45; margin-top: 6px;"><strong style="color: #1C1A17; font-weight: 600;">Listing still public.</strong> Payment retrying until 25/08/2026.</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 3px; padding: 14px 16px;">
+          <span style="display: inline-flex; align-items: center; gap: 9px; font-size: 16px; font-weight: 700;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #96301C;"></span>Unpaid</span>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; margin-top: 6px;">unpaid</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.45; margin-top: 6px;">Retries exhausted. Listing hidden until payment.</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 3px; padding: 14px 16px;">
+          <span style="display: inline-flex; align-items: center; gap: 9px; font-size: 16px; font-weight: 700;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #5A544B;"></span>Canceled</span>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; margin-top: 6px;">canceled</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.45; margin-top: 6px;">Listing public until the cycle ends 03/09/2026.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 64px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">03 — Type scale</div>
+      <p style="font-size: 18px; line-height: 1.6; color: #423C34; margin: 0 0 36px; max-width: 74ch;">Sizes below are the px each token renders at a default 16px root — the root is never overridden, so the scale means what it says and a reader who has set 20px gets everything 25% larger. The mobile→desktop body step is applied to <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px;">body</span> alone.</p>
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 56px; align-items: start;">
+        <div style="border-top: 1px solid #E2DBD0;">
+          <div style="display: flex; align-items: baseline; gap: 24px; padding: 22px 0; border-bottom: 1px solid #EFE9DF;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; width: 168px; flex: none; line-height: 1.4;">display<br />Newsreader 500 · 44/48 · -0.02em</div>
+            <div style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em;">Find a verified optician</div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 24px; padding: 22px 0; border-bottom: 1px solid #EFE9DF;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; width: 168px; flex: none; line-height: 1.4;">h1<br />Newsreader 500 · 34/40</div>
+            <div style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.18;">What verified means</div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 24px; padding: 22px 0; border-bottom: 1px solid #EFE9DF;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; width: 168px; flex: none; line-height: 1.4;">h2<br />Newsreader 600 · 24/32</div>
+            <div style="font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 24px; line-height: 1.33;">Opening hours</div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 24px; padding: 22px 0; border-bottom: 1px solid #EFE9DF;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; width: 168px; flex: none; line-height: 1.4;">h3 / card title<br />Public Sans 700 · 20/28 · -0.01em</div>
+            <div style="font-weight: 700; font-size: 20px; line-height: 1.4; letter-spacing: -0.01em;">Ravi Chandrasekaran</div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 24px; padding: 22px 0; border-bottom: 1px solid #EFE9DF;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; width: 168px; flex: none; line-height: 1.4;">body-lg<br />Public Sans 400 · 19/30</div>
+            <div style="font-size: 19px; line-height: 1.58; max-width: 46ch;">Every practitioner listed here is checked against the General Optical Council register every week.</div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 24px; padding: 22px 0; border-bottom: 1px solid #EFE9DF;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; width: 168px; flex: none; line-height: 1.4;">body<br />Public Sans 400 · 17/27 mobile, 18/29 desktop</div>
+            <div style="font-size: 18px; line-height: 1.61; max-width: 46ch;">Results are ordered by distance from your search. Nobody can pay to appear higher.</div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 24px; padding: 22px 0; border-bottom: 1px solid #EFE9DF;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; width: 168px; flex: none; line-height: 1.4;">meta<br />Public Sans 400 · 16/24 · muted</div>
+            <div style="font-size: 16px; line-height: 1.5; color: #5A544B;">1.2 miles · 14 Bridge Street, Bath BA2 4AS</div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 24px; padding: 22px 0; border-bottom: 1px solid #EFE9DF;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; width: 168px; flex: none; line-height: 1.4;">label<br />Public Sans 700 · 13/16 · 0.12em caps</div>
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B;">Last verified</div>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 24px; padding: 22px 0;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6252; width: 168px; flex: none; line-height: 1.4;">figure<br />Public Sans 700 · 48/52 · tabular</div>
+            <div style="font-size: 48px; font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -0.02em;">1,284</div>
+          </div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 24px;">
+          <div style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 16px;">Rules</div>
+          <ul style="margin: 0; padding-left: 18px; font-size: 15px; line-height: 1.6; color: #423C34;">
+            <li style="margin-bottom: 10px;">Serif for anything the site says. Sans for anything the site does.</li>
+            <li style="margin-bottom: 10px;">Measure caps at 70ch; long-form prose at 66ch.</li>
+            <li style="margin-bottom: 10px;">No text below 16px except mono token labels in this document.</li>
+            <li style="margin-bottom: 10px;">Caps-label tracking 0.12em; never letterspace lowercase body.</li>
+            <li style="margin: 0;">One weight jump per hierarchy step — 400 → 600 → 700, no 800 outside the wordmark.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 64px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 28px;">04 — Space, radii, elevation, focus</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 24px;">
+          <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Spacing — 4px base</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.5; margin-bottom: 18px;">1 2 3 4 6 8 12 16 20 24 → 4…96px. Section rhythm is 8 (32px) inside cards, 16 (64px) between page sections, 20 (80px) on desktop.</div>
+          <div style="display: flex; align-items: flex-end; gap: 6px; height: 96px;">
+            <span style="width: 22px; height: 4px; background: #0D4A45;"></span>
+            <span style="width: 22px; height: 8px; background: #0D4A45;"></span>
+            <span style="width: 22px; height: 12px; background: #0D4A45;"></span>
+            <span style="width: 22px; height: 16px; background: #0D4A45;"></span>
+            <span style="width: 22px; height: 24px; background: #0D4A45;"></span>
+            <span style="width: 22px; height: 32px; background: #0D4A45;"></span>
+            <span style="width: 22px; height: 48px; background: #0D4A45;"></span>
+            <span style="width: 22px; height: 64px; background: #0D4A45;"></span>
+            <span style="width: 22px; height: 80px; background: #0D4A45;"></span>
+            <span style="width: 22px; height: 96px; background: #0D4A45;"></span>
+          </div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 24px;">
+          <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Radii — restrained</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.5; margin-bottom: 18px;">2 / 3 / 4 / 6px and one pill. Documents have corners, not bubbles; the badge is squarer than everything else on purpose.</div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <span style="width: 62px; height: 44px; border: 1px solid #8F8574; background: #FBF8F3; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5A544B;">2</span>
+            <span style="width: 62px; height: 44px; border: 1px solid #8F8574; background: #FBF8F3; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5A544B;">3</span>
+            <span style="width: 62px; height: 44px; border: 1px solid #8F8574; background: #FBF8F3; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5A544B;">4</span>
+            <span style="width: 62px; height: 44px; border: 1px solid #8F8574; background: #FBF8F3; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5A544B;">6</span>
+            <span style="width: 72px; height: 44px; border: 1px solid #8F8574; background: #FBF8F3; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5A544B;">pill</span>
+          </div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 24px;">
+          <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Elevation — three, warm</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.5; margin-bottom: 18px;">Shadows are brown-tinted, never blue-grey. Cards sit flat with a border; shadow is reserved for things that genuinely float.</div>
+          <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+            <span style="width: 84px; height: 56px; background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A544B;">flat</span>
+            <span style="width: 84px; height: 56px; background: #FFFFFF; border-radius: 4px; box-shadow: 0 1px 2px rgba(58,44,26,0.08), 0 1px 1px rgba(58,44,26,0.06); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A544B;">sm</span>
+            <span style="width: 84px; height: 56px; background: #FFFFFF; border-radius: 4px; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A544B;">md</span>
+            <span style="width: 84px; height: 56px; background: #FFFFFF; border-radius: 6px; box-shadow: 0 12px 28px rgba(58,44,26,0.14), 0 2px 6px rgba(58,44,26,0.08); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5A544B;">lg</span>
+          </div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 24px;">
+          <div style="font-weight: 700; font-size: 17px; margin-bottom: 6px;">Focus — one ring, always visible</div>
+          <div style="font-size: 14px; color: #5A544B; line-height: 1.5; margin-bottom: 18px;">3px #0D4A45 with a 2px surface-coloured offset, so it reads on paper, on white and on sand. On deep green it flips to #E8C468. Never <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">outline: none</span>.</div>
+          <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+            <span style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; background: #0D4A45; color: #FFFFFF; font-weight: 600; font-size: 17px; border-radius: 3px; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 5px #0D4A45;">Search</span>
+            <span style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; background: #12332F; color: #F4EFE7; font-weight: 600; font-size: 17px; border-radius: 3px; box-shadow: 0 0 0 2px #12332F, 0 0 0 5px #E8C468;">Sign in</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 72px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">05 — The Verification badge</div>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 12px; max-width: 26ch;">A record, not a sticker.</h2>
+      <p style="font-size: 18px; line-height: 1.6; color: #423C34; margin: 0 0 40px; max-width: 68ch;">The badge behaves like an entry in a register: squared corners, a hairline rule, a hard left edge in the state colour, and — critically — it always cites its source and its date. A marketing sticker asserts; this one testifies. It never uses a gradient, a gloss, a star, or a rosette, and it is never larger than the practitioner's name.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; margin-bottom: 40px;">
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 14px;">Plaque — profile page</div>
+          <div style="display: inline-flex; align-items: stretch; background: #FFFFFF; border: 1px solid #C3DFCB; border-left: 5px solid #186A3B; border-radius: 3px; box-shadow: 0 1px 2px rgba(58,44,26,0.06);">
+            <div style="padding: 16px 20px 16px 18px; display: flex; gap: 14px; align-items: flex-start;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 2px; flex: none;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+              <div>
+                <div style="font-weight: 700; font-size: 18px; letter-spacing: -0.005em; color: #14472B;">Verified dispensing optician</div>
+                <div style="font-size: 15px; color: #5A544B; line-height: 1.5; margin-top: 4px;">General Optical Council · reg. <span style="font-variant-numeric: tabular-nums; font-weight: 600; color: #1C1A17;">01-31842</span></div>
+                <div style="font-size: 15px; color: #5A544B; line-height: 1.5; font-variant-numeric: tabular-nums;">Last checked 11/08/2026 · re-checked weekly</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 20px;">
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Fallback — no last-checked date</div>
+            <div style="display: inline-flex; align-items: stretch; background: #FFFFFF; border: 1px solid #C3DFCB; border-left: 5px solid #186A3B; border-radius: 3px; box-shadow: 0 1px 2px rgba(58,44,26,0.06);">
+              <div style="padding: 16px 20px 16px 18px; display: flex; gap: 14px; align-items: flex-start;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 2px; flex: none;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                <div>
+                  <div style="font-weight: 700; font-size: 18px; letter-spacing: -0.005em; color: #14472B;">Verified dispensing optician</div>
+                  <div style="font-size: 15px; color: #5A544B; line-height: 1.5; margin-top: 4px;">General Optical Council · reg. <span style="font-variant-numeric: tabular-nums; font-weight: 600; color: #1C1A17;">01-31842</span></div>
+                  <div style="font-size: 15px; color: #5A544B; line-height: 1.5;">Checked weekly · <a href="#verification" style="font-weight: 600;">how Verification works</a></div>
+                </div>
+              </div>
+            </div>
+            <div style="font-size: 14px; color: #6E6252; margin-top: 10px; line-height: 1.5;">When no check timestamp exists (data migration, first import), the date line is replaced by the cadence plus a link to the method — never an empty slot, never a fabricated date, and never “recently”. Its own aria-label drops the date entirely: <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">"Verification: verified. General Optical Council 01-31842. Checked weekly against the register."</span></div>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 12px; line-height: 1.5;">Used once per profile, directly under the name. Label interpolates the Practitioner's Profession — <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">Verified {profession}</span> — never a hardcoded word. The registration number is the evidence; show it, always.</div>
+        </div>
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 14px;">Small sizes</div>
+          <div style="display: flex; flex-direction: column; gap: 16px; align-items: flex-start;">
+            <span style="display: inline-flex; align-items: center; gap: 7px; background: #E8F3EA; border: 1px solid #C3DFCB; border-radius: 3px; padding: 5px 10px 5px 8px; font-size: 15px; font-weight: 700; color: #14472B;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+              Verified
+            </span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; background: #E8F3EA; border: 1px solid #C3DFCB; border-radius: 2px; padding: 3px 8px 3px 6px; font-size: 13px; font-weight: 700; color: #14472B;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+              Verified
+            </span>
+            <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 700; color: #186A3B;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+              Verified
+            </span>
+            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px 2px 5px; background: #186A3B; color: #FFFFFF; border-radius: 2px; font-size: 12px; font-weight: 700; letter-spacing: 0.02em;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              GOC
+            </span>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 16px; line-height: 1.5;">Down to 20px tall the shield stays legible; below that the mark becomes a solid tick chip reading “GOC”, so it never degrades into an unreadable smudge. Every instance carries <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">aria-label="Verification: verified. Checked 11/08/2026."</span> — except the no-date fallback, which reads <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">aria-label="Verification: verified. Checked weekly against the General Optical Council register."</span> A label must never name a date the variant does not hold.</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 28px;">
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 14px;">In context — search result</div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; gap: 16px; align-items: baseline;">
+              <div style="font-weight: 700; font-size: 20px; letter-spacing: -0.01em;">Ravi Chandrasekaran</div>
+              <div style="font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; color: #5A544B; flex: none;">1.2 miles</div>
+            </div>
+            <div style="font-size: 17px; color: #423C34; margin-top: 4px;">Chandra Opticians, Bath</div>
+            <div style="font-size: 16px; color: #5A544B; margin-top: 2px; line-height: 1.5;">14 Bridge Street, Bath BA2 4AS</div>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px solid #EFE9DF;">
+              <span style="display: inline-flex; align-items: center; gap: 6px; background: #E8F3EA; border: 1px solid #C3DFCB; border-radius: 2px; padding: 4px 9px 4px 7px; font-size: 14px; font-weight: 700; color: #14472B;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                Verified
+              </span>
+              <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 16px; color: #1C1A17;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #186A3B;"></span>Accepting new patients</span>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 12px; line-height: 1.5;">In a list the badge drops the date — the header states “all listings re-checked weekly” once, so every row need not repeat it.</div>
+        </div>
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 14px;">The other three, same anatomy</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: inline-flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E6D3A6; border-left: 5px solid #7A4F00; border-radius: 3px; padding: 12px 16px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4F00" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <div><div style="font-weight: 700; font-size: 16px; color: #5E3E00;">Verification pending</div><div style="font-size: 14px; color: #5A544B; margin-top: 2px;">Could not reach the GOC register on 11/08/2026 · an operator will re-run this check</div></div>
+            </div>
+            <div style="display: inline-flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E9C6BF; border-left: 5px solid #96301C; border-radius: 3px; padding: 12px 16px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#96301C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path></svg>
+              <div><div style="font-weight: 700; font-size: 16px; color: #7E2817;">Not found on the register</div><div style="font-size: 14px; color: #5A544B; margin-top: 2px;">No GOC entry matches 01-31842</div></div>
+            </div>
+            <div style="display: inline-flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #DFCDC9; border-left: 5px solid #7A1F1A; border-radius: 3px; padding: 12px 16px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A1F1A" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><path d="m2 2 20 20"></path><path d="M5 5a1 1 0 0 0-1 1v7c0 5 3.5 7.5 7.67 8.94a1 1 0 0 0 .67 0c1.9-.65 3.79-1.708 5.19-3.23"></path><path d="M9.309 3.652A12.252 12.252 0 0 0 11.24 2.28a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1c0 2.114 0 4.017-.428 5.71"></path></svg>
+              <div><div style="font-weight: 700; font-size: 16px; color: #6B1B16;">Registration revoked</div><div style="font-size: 14px; color: #5A544B; margin-top: 2px;">Listing withdrawn 11/08/2026</div></div>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 16px; line-height: 1.5;">Only <strong style="color: #1C1A17; font-weight: 600;">Verified</strong> is ever public. Pending, not-found and revoked appear on the practitioner's own dashboard and in signup — consumers never see a half-checked listing.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 64px 0 0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">06 — Tokens · Tailwind v4 <span style="font-family: 'JetBrains Mono', monospace; text-transform: none; letter-spacing: 0;">@theme</span></div>
+      <p style="font-size: 18px; line-height: 1.6; color: #423C34; margin: 0 0 12px; max-width: 68ch;">Drop straight into <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px;">app.css</span> after <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px;">@import "tailwindcss"</span>. Fonts are self-hosted variable woff2; no runtime CDN call.</p>
+      <pre style="margin: 0; background: #12332F; color: #DCE8E5; border-radius: 4px; padding: 28px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.75;">@theme {
+  /* ── Type ─────────────────────────────── */
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-sans:  "Public Sans", system-ui, sans-serif;
+  --font-mono:  "JetBrains Mono", ui-monospace, monospace;
+
+  --text-label:   0.8125rem;  --text-label--line-height:   1.25;
+  --text-meta:    1rem;       --text-meta--line-height:    1.5;
+  --text-base:    1.0625rem;  --text-base--line-height:    1.6;   /* 17px, mobile body */
+  --text-body:    1.125rem;   --text-body--line-height:    1.61;  /* 18px, desktop body */
+  --text-lg:      1.1875rem;  --text-lg--line-height:      1.58;
+  --text-title:   1.25rem;    --text-title--line-height:   1.4;
+  --text-h2:      1.5rem;     --text-h2--line-height:      1.33;
+  --text-h1:      2.125rem;   --text-h1--line-height:      1.18;
+  --text-display: 2.75rem;    --text-display--line-height: 1.09;
+  --text-figure:  3rem;       --text-figure--line-height:  1.05;
+
+  --tracking-tightest: -0.02em;
+  --tracking-caps:      0.12em;
+
+  /* ── Surfaces & ink ───────────────────── */
+  --color-surface:        #FBF8F3;  /* warm paper */
+  --color-surface-raised: #FFFFFF;
+  --color-surface-sunk:   #F4EFE7;
+  --color-surface-sand:   #F2E9DA;  /* practitioner blocks */
+  --color-surface-deep:   #12332F;  /* header / footer */
+
+  --color-text:        #1C1A17;  /* 15.6:1 on surface — AAA */
+  --color-text-muted:  #5A544B;  /*  7.0:1 on surface — AAA */
+  --color-text-subtle: #6E6252;  /*  5.5:1 on surface, 4.9:1 on sand */
+  --color-text-invert: #F4EFE7;  /* 12.4:1 on surface-deep  */
+  --color-text-invert-muted: #A8C4BE;  /* 7.4:1 on surface-deep */
+
+  --color-text-body:   #423C34;  /* 10.3:1 on surface — long-form body copy */
+
+  --color-border:        #E2DBD0;
+  --color-hairline:      #EFE9DF;  /* rules inside a card */
+  --color-border-strong: #8F8574;  /* 3.4:1 on surface — field outlines, SC 1.4.11 */
+
+  /* ── Action ───────────────────────────── */
+  --color-primary:       #0D4A45;  /* white on it: 10.1:1 */
+  --color-primary-hover: #093632;
+  --color-primary-soft:  #E7F0EE;
+  /* accent is 3.56:1 on surface: AA for large text (>=24px, or >=19px bold) and non-text only.
+     The one sanctioned text use is the £29 price figure at --text-figure. Never body, never a label. */
+  --color-accent:        #B4762A;
+  --color-focus:         #0D4A45;
+  --color-focus-invert:  #E8C468;
+
+  /* ── Verification ─────────────────────── */
+  --color-verified:      #186A3B;  --color-verified-bg: #E8F3EA;  --color-verified-border: #C3DFCB;  /* 5.8:1 */
+  --color-pending:       #7A4F00;  --color-pending-bg:  #FDF3DC;  --color-pending-border:  #E6D3A6;  /* 4.8:1 */
+  --color-rejected:      #96301C;  --color-rejected-bg: #FBEAE7;  --color-rejected-border: #E9C6BF;  /* 4.8:1 */
+  --color-revoked:       #7A1F1A;  --color-revoked-bg:  #F3EBE9;  --color-revoked-border: #DFCDC9;   /* 5.9:1 */
+  --color-primary-border: #C6D6D4;                                                                   /* info alerts */
+
+  /* Ink = the same state at text weight on a white card. Use these, never the raw state hue. */
+  --color-verified-ink:  #14472B;  /* 9.3:1 on white */
+  --color-pending-ink:   #5E3E00;  /* 8.6:1 on white */
+  --color-rejected-ink:  #7E2817;  /* 7.4:1 on white */
+  --color-revoked-ink:   #6B1B16;  /* 8.5:1 on white */
+
+  /* ── Disabled & skeleton ──────────────── */
+  --color-disabled:        #E7E1D6;
+  --color-disabled-border: #C9C0B1;
+  --color-disabled-ink:    #6E6252;  /* 5.0:1 on --color-disabled */
+  --color-skeleton:        #EFE9DF;
+  --color-skeleton-sheen:  #F7F3EC;
+
+  /* ── Subscription (six provider states) ─ */
+  --color-sub-incomplete: #6E6252;
+  --color-sub-trialing:   #0D4A45;
+  --color-sub-active:     #186A3B;
+  --color-sub-past-due:   #7A4F00;   /* listing STAYS public during retries */
+  --color-sub-unpaid:     #96301C;
+  --color-sub-canceled:   #5A544B;
+
+  /* ── Space, radius, elevation ─────────── */
+  --spacing: 0.25rem;                /* 4px base; utilities scale from it */
+  --radius-xs: 2px;  --radius-sm: 3px;  --radius-md: 4px;  --radius-lg: 6px;
+
+  --shadow-sm: 0 1px 2px rgb(58 44 26 / 0.08), 0 1px 1px rgb(58 44 26 / 0.06);
+  --shadow-md: 0 4px 12px rgb(58 44 26 / 0.10), 0 1px 3px rgb(58 44 26 / 0.07);
+  --shadow-lg: 0 12px 28px rgb(58 44 26 / 0.14), 0 2px 6px rgb(58 44 26 / 0.08);
+
+  /* No --size-* namespace in v4: reference explicitly, e.g. min-h-(--touch-min). */
+  --touch-min: 2.75rem;              /* 44px minimum hit target */
+}
+
+@layer base {
+  /* Root is left alone: 1rem === the user's own browser font-size, so every --text-*
+     token renders the px it documents. The responsive step lives on body, not html —
+     stepping the root would compound into the whole rem scale. */
+  :root { color-scheme: light; }   /* dark mode is out of scope; without this, a dark OS auto-darkens selects, scrollbars and autofill */
+  html { background: var(--color-surface); color: var(--color-text); font-family: var(--font-sans); }
+  body { font-size: var(--text-base); line-height: var(--text-base--line-height); }            /* 17px */
+  @media (width >= 48rem) {
+    body { font-size: var(--text-body); line-height: var(--text-body--line-height); }           /* 18px */
+  }
+  :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+  .on-deep :focus-visible { outline-color: var(--color-focus-invert); }
+  /* Ring belongs on the visible control, not a visually-hidden input inside it. */
+  label:has(input:focus-visible) { outline: 3px solid var(--color-focus); outline-offset: -3px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+}</pre>
+
+      <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 40px 0 14px;">Badge markup — Tailwind utilities</div>
+      <pre style="margin: 0; background: #FFFFFF; border: 1px solid #E2DBD0; color: #2C2822; border-radius: 4px; padding: 24px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.7;">&lt;!-- Plaque: profile page --&gt;
+&lt;div class="inline-flex items-start gap-3.5 rounded-sm border border-verified-border
+            border-l-4 border-l-verified bg-surface-raised py-4 pl-4 pr-5 shadow-sm"
+     role="group"
+     aria-label="Verification: verified. General Optical Council 01-31842. Checked 11/08/2026."&gt;
+  &lt;ShieldCheck class="mt-0.5 size-6 shrink-0 text-verified" aria-hidden="true" /&gt;
+  &lt;div&gt;
+    &lt;p class="text-title font-bold text-[#14472B]"&gt;Verified {practitioner.profession}&lt;/p&gt;
+    &lt;p class="text-meta text-text-muted"&gt;
+      General Optical Council · reg. &lt;span class="font-semibold tabular-nums text-text"&gt;01-31842&lt;/span&gt;
+    &lt;/p&gt;
+    &lt;p class="text-meta tabular-nums text-text-muted"&gt;Last checked 11/08/2026 · re-checked weekly&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Inline: search result row --&gt;
+&lt;span class="inline-flex items-center gap-1.5 rounded-xs border border-verified-border
+             bg-verified-bg py-1 pl-1.5 pr-2.5 text-[0.875rem] font-bold text-[#14472B]"&gt;
+  &lt;ShieldCheck class="size-[15px] text-verified" aria-hidden="true" /&gt;Verified
+&lt;/span&gt;</pre>
+
+      <div style="margin-top: 40px; background: #F2E9DA; border: 1px solid #E2DBD0; border-radius: 4px; padding: 24px 28px;">
+        <div style="font-weight: 700; font-size: 17px; margin-bottom: 8px;">On dark mode</div>
+        <div style="font-size: 17px; line-height: 1.6; color: #423C34; max-width: 72ch;">Skipped for v1, deliberately. Warm paper is doing structural work here — it is what stops the site reading as clinical — and a dark inversion of it either goes muddy brown or loses the warmth entirely, while the four state colours all need re-tuning to hold 4.5:1 on a dark ground. Worth doing properly later; not worth compromising the light palette for now.</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280}}"></script>
+</body>
+</html>

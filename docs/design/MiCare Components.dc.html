@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  @font-face { font-family: "Newsreader"; src: url("/fonts/Newsreader-Variable.woff2") format("woff2-variations"); font-weight: 400 700; font-display: swap; }
+  @font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Variable.woff2") format("woff2-variations"); font-weight: 300 800; font-display: swap; }
+  @font-face { font-family: "JetBrains Mono"; src: url("/fonts/JetBrainsMono-Variable.woff2") format("woff2-variations"); font-weight: 400 600; font-display: swap; }
+  :root { color-scheme: light; }
+  body { margin: 0; background: #F4EFE7; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #0D4A45; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: #093632; }
+  :focus-visible { outline: 3px solid #0D4A45; outline-offset: 2px; border-radius: 2px; }
+  input, select, textarea, button { font: inherit; color: inherit; }
+  /* Ring must render on the visible segment, not the visually-hidden input inside it. */
+  label:has(input:focus-visible) { outline: 3px solid #0D4A45; outline-offset: -3px; border-radius: 3px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  @keyframes mc-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+</style>
+</helmet>
+
+<div style="font-family: 'Public Sans', system-ui, sans-serif; color: #1C1A17; background: #FBF8F3; min-height: 100%; padding-bottom: 96px; font-size: 17px;">
+
+  <div style="background: #12332F; color: #F4EFE7; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 10px;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+      <span style="width: 1px; height: 16px; background: rgba(244,239,231,0.35); display: inline-block;"></span>
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; color: #A8C4BE;">Components · Full library</span>
+    </div>
+    <span style="font-size: 13px; color: #A8C4BE;">Native elements only · 44px floor</span>
+  </div>
+
+  <div style="max-width: 1180px; margin: 0 auto; padding: 0 32px;">
+
+    <section style="padding: 64px 0 48px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">07 — Form controls</div>
+      <h1 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em; margin: 0 0 20px; max-width: 24ch;">Forms are the product, so they get the register treatment too.</h1>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; max-width: 1000px;">
+        <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0;">One anatomy for every field: caps label above, help text under the label (not under the input, where it gets skipped), a 48px control with a 3.4:1 outline, and error text that replaces nothing — it is added beneath, prefixed with an icon, and referenced by <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">aria-describedby</span>.</p>
+        <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0;">Required is marked in words, not with an asterisk — <em>Required</em> in the label row. Optional fields say “Optional”. A 60-year-old filling this in on a bus should never have to hunt for a legend explaining a symbol.</p>
+      </div>
+    </section>
+
+    <section style="padding: 48px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px;">
+
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 20px;">Text input — five states</div>
+
+          <div style="margin-bottom: 28px;">
+            <label for="c-name" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">Full name</label>
+            <div id="c-name-help" style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-bottom: 8px;">As it appears on the GOC register.</div>
+            <input id="c-name" type="text" aria-describedby="c-name-help" placeholder="e.g. Ravi Chandrasekaran" style="width: 100%; height: 48px; padding: 0 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-size: 17px; color: #1C1A17;" />
+          </div>
+
+          <div style="margin-bottom: 28px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px;">
+              <label for="c-goc" style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34;">GOC registration number</label>
+              <span style="font-size: 14px; font-weight: 600; color: #5A544B;">Required</span>
+            </div>
+            <div id="c-goc-help" style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-bottom: 8px;">Two digits or one to two letters, then a hyphen and four to six digits — e.g. <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600;">01-31842</span> or <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600;">D-17909</span>. Printed on your GOC certificate.</div>
+            <input id="c-goc" type="text" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-describedby="c-goc-help" value="{{ gocValue }}" onChange="{{ onGoc }}" style="width: 100%; height: 48px; padding: 0 14px; background: #FFFFFF; border: 2px solid #0D4A45; border-radius: 3px; font-size: 17px; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; box-shadow: 0 0 0 2px #FBF8F3, 0 0 0 5px #0D4A45;" />
+            <div style="font-size: 14px; color: #6E6252; margin-top: 8px; line-height: 1.45;">Focused: 2px primary border plus the 3px ring. The border thickens as well as the ring, so focus survives high-contrast mode and greyscale.</div>
+          </div>
+
+          <div style="margin-bottom: 28px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px;">
+              <label for="c-goc-err" style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34;">GOC registration number</label>
+              <span style="font-size: 14px; font-weight: 600; color: #5A544B;">Required</span>
+            </div>
+            <div id="c-goc-err-help" style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-bottom: 8px;">Two digits or one to two letters, then a hyphen and four to six digits — e.g. <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600;">01-31842</span> or <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600;">D-17909</span>.</div>
+            <input id="c-goc-err" type="text" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-invalid="true" aria-describedby="c-goc-err-help c-goc-err-msg" value="{{ gocBad }}" onChange="{{ onGocBad }}" style="width: 100%; height: 48px; padding: 0 14px; background: #FFFFFF; border: 2px solid #96301C; border-radius: 3px; font-size: 17px; font-variant-numeric: tabular-nums;" />
+            <div id="c-goc-err-msg" style="display: flex; gap: 8px; align-items: flex-start; margin-top: 8px; font-size: 16px; color: #7E2817; line-height: 1.45;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+              <span>That is not a GOC number we recognise. They look like <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600;">01-31842</span> or <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600;">D-17909</span> — check your certificate.</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 28px;">
+            <label for="c-email-dis" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6E6252; margin-bottom: 6px;">Email address</label>
+            <div style="font-size: 16px; color: #6E6252; line-height: 1.45; margin-bottom: 8px;">Locked while Verification is running.</div>
+            <input id="c-email-dis" type="email" disabled="{{ true }}" value="{{ emailValue }}" onChange="{{ noop }}" style="width: 100%; height: 48px; padding: 0 14px; background: #F4EFE7; border: 1px solid #C9C0B1; border-radius: 3px; font-size: 17px; color: #6E6252;" />
+          </div>
+
+          <div>
+            <label for="c-postcode" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 8px;">Postcode or town</label>
+            <div style="position: relative;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5A544B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 17px;"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input id="c-postcode" type="search" placeholder="SW1A 1AA or Bath" style="width: 100%; height: 56px; padding: 0 14px 0 46px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-size: 19px;" />
+            </div>
+            <div style="font-size: 14px; color: #6E6252; margin-top: 8px; line-height: 1.45;">Search field is the one 56px control — it is the primary consumer target and sits under a thumb.</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 20px;">Select, textarea, checkbox, radius, upload</div>
+
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">Profession — Phase 1</div>
+            <div style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-bottom: 10px;">One option is not a choice. Don't ship a select with a single item — it reads as a decision the user has to make and then can't.</div>
+            <div style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 3px; padding: 14px 16px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D4A45" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+              <div>
+                <div style="font-size: 17px; font-weight: 600;">Optician</div>
+                <div style="font-size: 16px; color: #5A544B; line-height: 1.45;">Checked against the General Optical Council register.</div>
+              </div>
+            </div>
+            <div style="font-size: 14px; color: #6E6252; margin-top: 8px; line-height: 1.45;">State it as a fact, carry it as <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">&lt;input type="hidden" name="profession" value="Optician"&gt;</span>, and mention the register by name — that sentence is doing more work than any dropdown would. Swap in the select below on the day a second regulator ships.</div>
+          </div>
+
+          <div style="margin-bottom: 28px;">
+            <label for="c-prof" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">Select — held for Phase 2</label>
+            <div id="c-prof-help" style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-bottom: 8px;">Sets which register we check you against.</div>
+            <div style="position: relative;">
+              <select id="c-prof" aria-describedby="c-prof-help" value="{{ profession }}" onChange="{{ onProfession }}" style="width: 100%; height: 48px; padding: 0 44px 0 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-size: 17px; appearance: none;">
+                <option>Optometrist</option>
+                <option>Dispensing optician</option>
+                <option>Student optometrist</option>
+              </select>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#423C34" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 14px; pointer-events: none;"><path d="m6 9 6 6 6-6"></path></svg>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 28px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px;">
+              <label for="c-bio" style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34;">Bio</label>
+              <span style="font-size: 14px; font-weight: 600; color: #5A544B;">Optional</span>
+            </div>
+            <div id="c-bio-help" style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-bottom: 8px;">Plain description of your Practice and what you do.</div>
+            <textarea id="c-bio" rows="4" aria-describedby="c-bio-help c-bio-count" value="{{ bio }}" onChange="{{ onBio }}" style="width: 100%; padding: 12px 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-size: 17px; line-height: 1.55; resize: vertical;"></textarea>
+            <div id="c-bio-count" style="font-size: 15px; color: #5A544B; margin-top: 6px; font-variant-numeric: tabular-nums;">{{ bioCount }} of 1,000 characters used</div>
+          </div>
+
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 10px;">Checkbox — 44px row</div>
+            <label for="c-accepting" style="display: flex; gap: 14px; align-items: flex-start; min-height: 44px; padding: 10px 12px; margin-left: -12px; border-radius: 3px; cursor: pointer; background: #FFFFFF; border: 1px solid #E2DBD0;">
+              <input id="c-accepting" type="checkbox" checked="{{ accepting }}" onChange="{{ onAccepting }}" style="width: 24px; height: 24px; margin: 0; flex: none; accent-color: #0D4A45;" />
+              <span>
+                <span style="display: block; font-size: 17px; font-weight: 600; line-height: 1.35;">Accepting new patients</span>
+                <span style="display: block; font-size: 16px; color: #5A544B; line-height: 1.45; margin-top: 2px;">Shown on your listing. Turn it off when you are full.</span>
+              </span>
+            </label>
+            <div style="font-size: 14px; color: #6E6252; margin-top: 8px; line-height: 1.45;">The whole row is the label and the whole row is the hit target — 24px box, 44px row.</div>
+          </div>
+
+          <div style="margin-bottom: 28px;">
+            <fieldset style="border: 0; padding: 0; margin: 0;">
+              <legend style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 10px; padding: 0;">Search radius</legend>
+              <div style="display: flex; gap: 0; border: 1px solid #8F8574; border-radius: 3px; overflow: hidden; background: #FFFFFF; max-width: 340px;">
+                <label style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; min-height: 48px; font-size: 17px; font-weight: 600; cursor: pointer; border-right: 1px solid #8F8574; background: {{ bg5 }}; color: {{ fg5 }};"><input type="radio" name="radius" checked="{{ is5 }}" onChange="{{ pick5 }}" style="position: absolute; opacity: 0; width: 1px; height: 1px;" /><sc-if value="{{ is5 }}" hint-placeholder-val="{{ false }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 7px;"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>5 miles</label>
+                <label style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; min-height: 48px; font-size: 17px; font-weight: 600; cursor: pointer; border-right: 1px solid #8F8574; background: {{ bg10 }}; color: {{ fg10 }};"><input type="radio" name="radius" checked="{{ is10 }}" onChange="{{ pick10 }}" style="position: absolute; opacity: 0; width: 1px; height: 1px;" /><sc-if value="{{ is10 }}" hint-placeholder-val="{{ true }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 7px;"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>10 miles</label>
+                <label style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; min-height: 48px; font-size: 17px; font-weight: 600; cursor: pointer; background: {{ bg15 }}; color: {{ fg15 }};"><input type="radio" name="radius" checked="{{ is15 }}" onChange="{{ pick15 }}" style="position: absolute; opacity: 0; width: 1px; height: 1px;" /><sc-if value="{{ is15 }}" hint-placeholder-val="{{ false }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 7px;"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>15 miles</label>
+              </div>
+              <div style="font-size: 14px; color: #6E6252; margin-top: 8px; line-height: 1.45;">Native radios, visually hidden but focusable; the selected segment carries a tick as well as the fill, so state is not colour alone.</div>
+            </fieldset>
+          </div>
+
+          <div>
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">File upload — your photo</div>
+            <div style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-bottom: 10px;">One clear, front-facing photo of <strong style="font-weight: 600;">you</strong> — the Practitioner, facing the camera, on your own. Not your Practice, not a group, not a logo. Patients use it to recognise you at the door.</div>
+            <div style="border: 2px dashed #8F8574; border-radius: 4px; background: #FFFFFF; padding: 24px; text-align: center;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5A544B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>
+              <div style="font-size: 17px; margin-top: 10px; line-height: 1.45;">Drag your photo here, or</div>
+              <label style="position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; margin-top: 12px; border: 1px solid #0D4A45; border-radius: 3px; font-size: 17px; font-weight: 600; color: #0D4A45; cursor: pointer;">Choose a photo<input type="file" accept="image/jpeg,image/png,image/webp" style="position: absolute; opacity: 0; width: 1px; height: 1px;" /></label>
+              <div style="font-size: 15px; color: #5A544B; margin-top: 14px; line-height: 1.5;">JPEG, PNG or WebP · up to 5&nbsp;MB · between 400 and 4000 pixels on each side</div>
+            </div>
+
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 22px 0 10px;">Accepted — one face found</div>
+            <div style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border: 1px solid #C3DFCB; border-left: 4px solid #186A3B; border-radius: 3px; padding: 12px 14px;">
+              <span style="width: 52px; height: 52px; border-radius: 3px; background: #E7E1D6; border: 1px solid #E2DBD0; flex: none; display: flex; align-items: center; justify-content: center; color: #6E6252; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;">Photo</span>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 16px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">ravi-chandrasekaran.jpg</div>
+                <div style="font-size: 15px; color: #5A544B; font-variant-numeric: tabular-nums;">1.8 MB · 1200 × 1600 · one face found</div>
+              </div>
+              <button type="button" style="min-height: 44px; padding: 0 14px; background: transparent; border: 0; font-size: 16px; font-weight: 600; color: #7E2817; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Replace</button>
+            </div>
+
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 22px 0 10px;">Rejected — no face found</div>
+            <div style="background: #FFFFFF; border: 1px solid #E9C6BF; border-left: 4px solid #96301C; border-radius: 3px; padding: 14px 16px;">
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#96301C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path></svg>
+                <div>
+                  <div style="font-size: 17px; font-weight: 700; color: #7E2817; line-height: 1.4;">We could not find a face in that photo</div>
+                  <div style="font-size: 16px; color: #423C34; line-height: 1.5; margin-top: 4px;">This needs to be a photo of you facing the camera — not your shopfront, your logo, or a photo taken from behind. Good light, head and shoulders, nothing covering your face.</div>
+                  <button type="button" style="min-height: 44px; margin-top: 6px; padding: 0; background: transparent; border: 0; font-size: 16px; font-weight: 600; color: #0D4A45; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Choose a different photo</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 22px 0 10px;">Rejected — more than one face</div>
+            <div style="background: #FFFFFF; border: 1px solid #E9C6BF; border-left: 4px solid #96301C; border-radius: 3px; padding: 14px 16px;">
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#96301C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M18 21a8 8 0 0 0-16 0"></path><circle cx="10" cy="8" r="5"></circle><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"></path></svg>
+                <div>
+                  <div style="font-size: 17px; font-weight: 700; color: #7E2817; line-height: 1.4;">We found 3 faces in that photo</div>
+                  <div style="font-size: 16px; color: #423C34; line-height: 1.5; margin-top: 4px;">Your listing shows one Practitioner, so the photo has to show one person — you. Team photos are lovely; they belong on your own website.</div>
+                  <button type="button" style="min-height: 44px; margin-top: 6px; padding: 0; background: transparent; border: 0; font-size: 16px; font-weight: 600; color: #0D4A45; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Choose a different photo</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: flex-start; margin-top: 16px; font-size: 16px; color: #7E2817; line-height: 1.45;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+              <span>Other rejections use the same row: <strong style="font-weight: 600;">7.2&nbsp;MB — the limit is 5&nbsp;MB</strong>; <strong style="font-weight: 600;">280 × 280 — needs to be at least 400 pixels on each side</strong>; <strong style="font-weight: 600;">HEIC is not supported — save it as a JPEG</strong>. Always the measurement, then the fix.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 56px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">08 — Buttons</div>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 12px;">Four variants, three sizes, none below 44px.</h2>
+      <p style="font-size: 18px; line-height: 1.6; color: #423C34; margin: 0 0 36px; max-width: 70ch;">Square-ish corners (3px), 600 weight, no gradient, no transform on hover — hover darkens the fill, active darkens further. Sizes are 44 / 48 / 56px tall, so “small” is still a legal touch target rather than a decorative chip.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); gap: 24px;">
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 16px;">Primary</div>
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+            <button type="button" style="display: inline-flex; align-items: center; height: 56px; padding: 0 26px; background: #0D4A45; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 19px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #093632;">Search opticians</button>
+            <button type="button" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; background: #0D4A45; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #093632;">List your Practice</button>
+            <button type="button" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; background: #0D4A45; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 16px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #093632;">Save</button>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 14px; line-height: 1.45;">White on #0D4A45 — 10.1:1.</div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 16px;">Secondary</div>
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+            <button type="button" style="display: inline-flex; align-items: center; height: 56px; padding: 0 26px; background: #FFFFFF; color: #0D4A45; border: 2px solid #0D4A45; border-radius: 3px; font-size: 19px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #E7F0EE;">Manage billing</button>
+            <button type="button" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; background: #FFFFFF; color: #0D4A45; border: 2px solid #0D4A45; border-radius: 3px; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #E7F0EE;">Edit profile</button>
+            <button type="button" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; background: #FFFFFF; color: #0D4A45; border: 2px solid #0D4A45; border-radius: 3px; font-size: 16px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #E7F0EE;">Change radius</button>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 14px; line-height: 1.45;">2px border so the outline itself clears 3:1 as a UI boundary.</div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 16px;">Ghost</div>
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+            <button type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 56px; padding: 0 14px; background: transparent; color: #0D4A45; border: 0; border-radius: 3px; font-size: 19px; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;" style-hover="background: #E7F0EE;">How Verification works</button>
+            <button type="button" style="display: inline-flex; align-items: center; height: 48px; padding: 0 16px; background: transparent; color: #0D4A45; border: 0; border-radius: 3px; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;" style-hover="background: #E7F0EE;">Skip for now</button>
+            <button type="button" style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px; background: transparent; color: #0D4A45; border: 0; border-radius: 3px; font-size: 16px; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;" style-hover="background: #E7F0EE;">Cancel</button>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 14px; line-height: 1.45;">Underlined, because a bare coloured word is not a button to everyone.</div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 16px;">Destructive</div>
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+            <button type="button" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; background: #96301C; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #7E2817;">Cancel subscription</button>
+            <button type="button" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; background: #FFFFFF; color: #7E2817; border: 2px solid #96301C; border-radius: 3px; font-size: 16px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #FBEAE7;">Delete listing</button>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 14px; line-height: 1.45;">White on #96301C — 6.4:1. Always behind a confirmation step, never the default in a pair.</div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 16px;">Loading &amp; disabled</div>
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+            <button type="button" aria-busy="true" style="display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px; background: #093632; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: progress;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56" opacity="0.9"></path></svg>
+              Checking the register…
+            </button>
+            <button type="button" disabled="{{ true }}" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; background: #E7E1D6; color: #6E6252; border: 0; border-radius: 3px; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: not-allowed;">Continue to payment</button>
+            <div style="font-size: 16px; color: #5A544B; line-height: 1.45;">Loading keeps its width, states what it is doing, and stays focusable so the label is announced.</div>
+          </div>
+        </div>
+
+        <div style="background: #12332F; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #A8C4BE; margin-bottom: 16px;">On surface-deep</div>
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+            <button type="button" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; background: #F4EFE7; color: #12332F; border: 0; border-radius: 3px; font-size: 16px; font-weight: 700; white-space: nowrap; cursor: pointer;">List your Practice</button>
+            <button type="button" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; background: transparent; color: #F4EFE7; border: 1.5px solid rgba(244,239,231,0.55); border-radius: 3px; font-size: 16px; font-weight: 600; white-space: nowrap; cursor: pointer;">Sign in</button>
+          </div>
+          <div style="font-size: 14px; color: #A8C4BE; margin-top: 14px; line-height: 1.45;">Header pair. Focus ring flips to #E8C468 here.</div>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 40px 0 14px;">Markup — input and button</div>
+      <pre style="margin: 0; background: #FFFFFF; border: 1px solid #E2DBD0; color: #2C2822; border-radius: 4px; padding: 24px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.7;">&lt;!-- Field: label · help · control · error --&gt;
+&lt;div class="flex flex-col"&gt;
+  &lt;div class="mb-1.5 flex items-baseline justify-between gap-3"&gt;
+    &lt;label for="goc" class="text-label font-bold uppercase tracking-caps text-text-body"&gt;
+      GOC registration number
+    &lt;/label&gt;
+    &lt;span class="text-[0.875rem] font-semibold text-text-muted"&gt;Required&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;p id="goc-help" class="mb-2 text-meta text-text-muted"&gt;
+    Two digits or one to two letters, then a hyphen and four to six digits.
+  &lt;/p&gt;
+  &lt;input id="goc" name="gocNumber" autocapitalize="characters" autocorrect="off" required
+         aria-describedby={error ? "goc-help goc-error" : "goc-help"}
+         aria-invalid={error ? true : undefined}
+         class="h-12 rounded-sm border bg-surface-raised px-3.5 text-base tabular-nums
+                border-border-strong aria-invalid:border-2 aria-invalid:border-rejected
+                focus-visible:border-2 focus-visible:border-primary" /&gt;
+  {error &amp;&amp; (
+    &lt;p id="goc-error" class="mt-2 flex items-start gap-2 text-meta text-rejected-ink"&gt;
+      &lt;TriangleAlert class="mt-0.5 size-[19px] shrink-0" aria-hidden="true" /&gt;{error}
+    &lt;/p&gt;
+  )}
+&lt;/div&gt;
+
+&lt;!-- Button: variant × size, 44px floor --&gt;
+&lt;button type="submit" disabled={pending}
+        aria-busy={pending || undefined}
+        class="inline-flex items-center gap-2.5 rounded-sm bg-primary px-5.5 text-base
+               font-semibold text-white min-h-(--touch-min) h-12 whitespace-nowrap
+               hover:bg-primary-hover disabled:bg-disabled disabled:text-disabled-ink"&gt;
+  {pending &amp;&amp; &lt;LoaderCircle class="size-[19px] animate-spin" aria-hidden="true" /&gt;}
+  {pending ? "Checking the register…" : "Continue to payment"}
+&lt;/button&gt;</pre>
+    </section>
+
+    <section style="padding: 56px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">13 — Practitioner result card</div>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 12px;">Distance is the ranking, so distance is typeset like a fact.</h2>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 32px; max-width: 72ch;">Name first, then Practice, then address; distance sits top-right in tabular figures where the eye lands after the name. The whole card is one link — no “View profile” button competing with the row, no secondary actions. Rows are separated by hairlines, not gaps, so a list of eight reads as a register page rather than eight floating objects.</p>
+
+      <div style="display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+        <div style="flex: 1; min-width: 460px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">1280 · list of three</div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; overflow: hidden;">
+            <a href="#profile" style="display: block; padding: 22px 24px; text-decoration: none; color: inherit; border-bottom: 1px solid #EFE9DF;" style-hover="background: #FBF8F3;">
+              <div style="display: flex; gap: 20px;">
+                <span style="width: 72px; height: 72px; border-radius: 3px; background: #E7E1D6; border: 1px solid #E2DBD0; flex: none; display: flex; align-items: center; justify-content: center; color: #6E6252; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;">Photo</span>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; justify-content: space-between; gap: 16px; align-items: baseline;">
+                    <span style="font-size: 20px; font-weight: 700; letter-spacing: -0.01em;">Ravi Chandrasekaran</span>
+                    <span style="font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; color: #423C34; flex: none;">1.2 miles</span>
+                  </div>
+                  <div style="font-size: 17px; color: #423C34; margin-top: 3px;">Chandra Opticians</div>
+                  <div style="font-size: 16px; color: #5A544B; margin-top: 2px; line-height: 1.5;">14 Bridge Street, Bath BA2 4AS</div>
+                  <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 12px;">
+                    <span style="display: inline-flex; align-items: center; gap: 6px; background: #E8F3EA; border: 1px solid #C3DFCB; border-radius: 2px; padding: 4px 9px 4px 7px; font-size: 14px; font-weight: 700; color: #14472B;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                      Verified
+                    </span>
+                    <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 16px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #186A3B; flex: none;"></span>Accepting new patients</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+            <a href="#profile" style="display: block; padding: 22px 24px; text-decoration: none; color: inherit; border-bottom: 1px solid #EFE9DF;" style-hover="background: #FBF8F3;">
+              <div style="display: flex; gap: 20px;">
+                <span style="width: 72px; height: 72px; border-radius: 3px; background: #E7E1D6; border: 1px solid #E2DBD0; flex: none; display: flex; align-items: center; justify-content: center; color: #6E6252; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;">Photo</span>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; justify-content: space-between; gap: 16px; align-items: baseline;">
+                    <span style="font-size: 20px; font-weight: 700; letter-spacing: -0.01em;">Alison Grieve</span>
+                    <span style="font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; color: #423C34; flex: none;">2.8 miles</span>
+                  </div>
+                  <div style="font-size: 17px; color: #423C34; margin-top: 3px;">Grieve &amp; Daughter Opticians</div>
+                  <div style="font-size: 16px; color: #5A544B; margin-top: 2px; line-height: 1.5;">3 High Street, Batheaston, Bath BA1 7AL</div>
+                  <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 12px;">
+                    <span style="display: inline-flex; align-items: center; gap: 6px; background: #E8F3EA; border: 1px solid #C3DFCB; border-radius: 2px; padding: 4px 9px 4px 7px; font-size: 14px; font-weight: 700; color: #14472B;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                      Verified
+                    </span>
+                    <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 16px; color: #423C34;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #8F8574; flex: none;"></span>Not accepting new patients</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+            <a href="#profile" style="display: block; padding: 22px 24px; text-decoration: none; color: inherit;" style-hover="background: #FBF8F3;">
+              <div style="display: flex; gap: 20px;">
+                <span style="width: 72px; height: 72px; border-radius: 3px; background: #E7E1D6; border: 1px solid #E2DBD0; flex: none; display: flex; align-items: center; justify-content: center; color: #6E6252; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;">Photo</span>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; justify-content: space-between; gap: 16px; align-items: baseline;">
+                    <span style="font-size: 20px; font-weight: 700; letter-spacing: -0.01em;">Tomasz Wieczorek</span>
+                    <span style="font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; color: #423C34; flex: none;">6.4 miles</span>
+                  </div>
+                  <div style="font-size: 17px; color: #423C34; margin-top: 3px;">Wieczorek Eyecare</div>
+                  <div style="font-size: 16px; color: #5A544B; margin-top: 2px; line-height: 1.5;">Unit 4, Wellow Business Park, Radstock BA3 2QT</div>
+                  <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 12px;">
+                    <span style="display: inline-flex; align-items: center; gap: 6px; background: #E8F3EA; border: 1px solid #C3DFCB; border-radius: 2px; padding: 4px 9px 4px 7px; font-size: 14px; font-weight: 700; color: #14472B;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                      Verified
+                    </span>
+                    <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 16px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #186A3B; flex: none;"></span>Accepting new patients</span>
+                    <span style="font-size: 16px; color: #5A544B;">Polish, English</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 12px; line-height: 1.5;">“Not accepting new patients” keeps the same dot geometry in border-strong — the wording carries the meaning, the colour only reinforces it. Hover tints the row to paper; focus draws the standard ring inside the row.</div>
+        </div>
+
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">390 · stacked</div>
+          <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FFFFFF; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <a href="#profile" style="display: block; padding: 18px 16px; text-decoration: none; color: inherit; border-bottom: 1px solid #EFE9DF;">
+              <div style="display: flex; gap: 14px; align-items: flex-start;">
+                <span style="width: 60px; height: 60px; border-radius: 3px; background: #E7E1D6; border: 1px solid #E2DBD0; flex: none; display: flex; align-items: center; justify-content: center; color: #6E6252; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;">Photo</span>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 19px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3;">Ravi Chandrasekaran</div>
+                  <div style="font-size: 17px; color: #423C34; margin-top: 2px;">Chandra Opticians</div>
+                  <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 6px;">
+                    <span style="font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums;">1.2 miles</span>
+                    <span style="font-size: 16px; color: #5A544B;">· Bath BA2 4AS</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+                <span style="display: inline-flex; align-items: center; gap: 6px; background: #E8F3EA; border: 1px solid #C3DFCB; border-radius: 2px; padding: 4px 9px 4px 7px; font-size: 14px; font-weight: 700; color: #14472B;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                  Verified
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 16px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #186A3B; flex: none;"></span>Accepting new patients</span>
+              </div>
+            </a>
+            <a href="#profile" style="display: block; padding: 18px 16px; text-decoration: none; color: inherit;">
+              <div style="display: flex; gap: 14px; align-items: flex-start;">
+                <span style="width: 60px; height: 60px; border-radius: 3px; background: #E7E1D6; border: 1px solid #E2DBD0; flex: none; display: flex; align-items: center; justify-content: center; color: #6E6252; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;">Photo</span>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 19px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3;">Alison Grieve</div>
+                  <div style="font-size: 17px; color: #423C34; margin-top: 2px;">Grieve &amp; Daughter Opticians</div>
+                  <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 6px;">
+                    <span style="font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums;">2.8 miles</span>
+                    <span style="font-size: 16px; color: #5A544B;">· Batheaston BA1 7AL</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+                <span style="display: inline-flex; align-items: center; gap: 6px; background: #E8F3EA; border: 1px solid #C3DFCB; border-radius: 2px; padding: 4px 9px 4px 7px; font-size: 14px; font-weight: 700; color: #14472B;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                  Verified
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 16px; color: #423C34;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #8F8574; flex: none;"></span>Not accepting</span>
+              </div>
+            </a>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 12px; line-height: 1.5; width: 390px;">At 390 the distance moves out of the corner and onto its own baseline with the town — a right-aligned figure next to a wrapping name is unreadable on a phone.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 56px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">14 — Status readout tile</div>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 32px; max-width: 72ch;">A caps label, one large tabular figure, and at most one line of context. The Click-through count is the tile that justifies £29, so it gets the 48px figure and the sand ground; everything else on the dashboard stays on white and stays smaller. Never two figures in one tile.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); gap: 16px;">
+        <div style="background: #F2E9DA; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34;">Click-throughs</div>
+          <div style="font-size: 48px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 10px;">1,284</div>
+          <div style="font-size: 16px; color: #423C34; line-height: 1.45; margin-top: 6px;">This billing cycle · since 11/07/2026</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B;">Verification</div>
+          <div style="display: flex; align-items: center; gap: 9px; margin-top: 12px;">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            <span style="font-size: 26px; font-weight: 700; letter-spacing: -0.01em; color: #14472B;">Verified</span>
+          </div>
+          <div style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-top: 8px; font-variant-numeric: tabular-nums;">Last checked 11/08/2026</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B;">Subscription</div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #186A3B; flex: none;"></span>
+            <span style="font-size: 26px; font-weight: 700; letter-spacing: -0.01em;">Active</span>
+          </div>
+          <div style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-top: 8px; font-variant-numeric: tabular-nums;">£29/month · next payment 03/09/2026</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 22px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B;">Profile views</div>
+          <div style="font-size: 48px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 10px; color: #423C34;">3,910</div>
+          <div style="font-size: 16px; color: #5A544B; line-height: 1.45; margin-top: 6px;">This billing cycle</div>
+        </div>
+      </div>
+      <div style="font-size: 14px; color: #6E6252; margin-top: 14px; line-height: 1.5; max-width: 74ch;">Figures are never coloured for sentiment — no green “up”, no red “down”. A directory does not editorialise its own numbers, and a Practitioner who had a quiet month does not need a red number to tell them.</div>
+    </section>
+
+    <section style="padding: 56px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">15 — Inline alerts</div>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 32px; max-width: 72ch;">Same anatomy as the badge — hairline border, 4px tone edge, glyph, bold first line, plain second line — so an alert reads as the same species of object as a Verification record. Error and warning alerts carry <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">role="alert"</span>; info and success are polite regions.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: #FFFFFF; border: 1px solid #C6D6D4; border-left: 4px solid #0D4A45; border-radius: 3px; padding: 16px 18px; display: flex; gap: 12px;">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#0D4A45" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+          <div>
+            <div style="font-size: 17px; font-weight: 700; line-height: 1.4;">Results are ordered by distance from BA2 4AS</div>
+            <div style="font-size: 16px; color: #423C34; line-height: 1.5; margin-top: 3px;">Nobody can pay to appear higher in this list.</div>
+          </div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #C3DFCB; border-left: 4px solid #186A3B; border-radius: 3px; padding: 16px 18px; display: flex; gap: 12px;">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+          <div>
+            <div style="font-size: 17px; font-weight: 700; line-height: 1.4; color: #14472B;">Your listing is live</div>
+            <div style="font-size: 16px; color: #423C34; line-height: 1.5; margin-top: 3px;">Verified against the GOC register on 11/08/2026. We check again every week.</div>
+          </div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E6D3A6; border-left: 4px solid #7A4F00; border-radius: 3px; padding: 16px 18px; display: flex; gap: 12px;">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7A4F00" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+          <div>
+            <div style="font-size: 17px; font-weight: 700; line-height: 1.4; color: #5E3E00;">Your last payment did not go through</div>
+            <div style="font-size: 16px; color: #423C34; line-height: 1.5; margin-top: 3px;">Your listing is <strong style="font-weight: 600;">still visible</strong>. We will retry until 25/08/2026 — you can also <a href="#billing" style="font-weight: 600;">update your card now</a>.</div>
+          </div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E9C6BF; border-left: 4px solid #96301C; border-radius: 3px; padding: 16px 18px; display: flex; gap: 12px;">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#96301C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6"></path><path d="m9 9 6 6"></path></svg>
+          <div>
+            <div style="font-size: 17px; font-weight: 700; line-height: 1.4; color: #7E2817;">We could not save your profile</div>
+            <div style="font-size: 16px; color: #423C34; line-height: 1.5; margin-top: 3px;">Two fields need attention: your GOC number and your photo. Nothing else was lost.</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 32px 0 12px;">390</div>
+      <div style="width: 390px; display: flex; flex-direction: column; gap: 12px;">
+        <div style="background: #FFFFFF; border: 1px solid #E6D3A6; border-left: 4px solid #7A4F00; border-radius: 3px; padding: 14px 16px; display: flex; gap: 10px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4F00" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+          <div>
+            <div style="font-size: 17px; font-weight: 700; line-height: 1.35; color: #5E3E00;">Your last payment did not go through</div>
+            <div style="font-size: 16px; color: #423C34; line-height: 1.5; margin-top: 3px;">Your listing is still visible. We will retry until 25/08/2026.</div>
+            <a href="#billing" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; font-weight: 600;">Update your card</a>
+          </div>
+        </div>
+      </div>
+      <div style="font-size: 14px; color: #6E6252; margin-top: 12px; line-height: 1.5; max-width: 74ch;">On mobile the inline link becomes a 44px row of its own rather than a link inside a sentence — a link inside wrapping body text is the single hardest thing to hit one-handed.</div>
+    </section>
+
+    <section style="padding: 56px 0 56px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">16 — Empty, error, loading</div>
+      <div style="display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+        <div style="flex: 1; min-width: 480px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Empty state — a destination, not an apology</div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 36px 40px;">
+            <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 30px; line-height: 1.18; letter-spacing: -0.01em; margin: 0 0 10px; max-width: 30ch;">No verified opticians within 10 miles of SW1A 1AA — yet.</h3>
+            <p style="font-size: 18px; line-height: 1.6; color: #423C34; margin: 0 0 8px; max-width: 60ch;">We only list Practitioners we have checked against the General Optical Council register, and we would rather show you nothing than show you someone we cannot vouch for.</p>
+            <p style="font-size: 18px; line-height: 1.6; color: #423C34; margin: 0 0 24px; max-width: 60ch;">Tell us where you are and we will email you once a verified optician lists near you. One email, then nothing until there is news.</p>
+            <div style="background: #F2E9DA; border: 1px solid #E2DBD0; border-radius: 3px; padding: 22px 24px; max-width: 560px;">
+              <label for="c-notify" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 6px;">Email address</label>
+              <div id="c-notify-help" style="font-size: 16px; color: #423C34; line-height: 1.45; margin-bottom: 10px;">We will send one message to confirm, and one when someone lists near <strong style="font-weight: 600;">SW1A 1AA</strong>. Nothing else, ever.</div>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <input id="c-notify" type="email" aria-describedby="c-notify-help" placeholder="you@example.co.uk" style="flex: 1; min-width: 240px; height: 52px; padding: 0 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-size: 18px;" />
+                <button type="button" style="display: inline-flex; align-items: center; height: 52px; padding: 0 24px; background: #0D4A45; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 18px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #093632;">Tell me when</button>
+              </div>
+              <div style="font-size: 15px; color: #423C34; line-height: 1.5; margin-top: 12px;">You can unsubscribe from the confirmation email itself. <a href="#privacy" style="font-weight: 600;">How we handle your data</a>.</div>
+            </div>
+            <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-top: 28px; padding-top: 24px; border-top: 1px solid #EFE9DF;">
+              <a href="#radius" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 17px; font-weight: 600;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle></svg>
+                Search 15 miles instead
+              </a>
+              <a href="#verification" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 17px; font-weight: 600;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                What we check, and how
+              </a>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 12px; line-height: 1.5;">The double opt-in is stated up front — “one message to confirm” — so the confirmation email is expected rather than suspicious. The heading names the postcode and ends in “yet”.</div>
+
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 36px 0 12px;">Confirmed — after the double opt-in</div>
+          <div style="background: #FFFFFF; border: 1px solid #C3DFCB; border-left: 4px solid #186A3B; border-radius: 4px; padding: 22px 24px; display: flex; gap: 14px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+            <div>
+              <div style="font-size: 19px; font-weight: 700; color: #14472B; line-height: 1.35;">You are on the list for SW1A 1AA</div>
+              <div style="font-size: 17px; color: #423C34; line-height: 1.55; margin-top: 4px; max-width: 56ch;">Confirmed 11/08/2026. We will email <strong style="font-weight: 600;">j.okafor@example.co.uk</strong> the day a verified optician lists within 10 miles. <a href="#unsubscribe" style="font-weight: 600;">Remove me</a>.</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Empty state · 390</div>
+          <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; background: #FFFFFF; padding: 24px 16px; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 26px; line-height: 1.2; letter-spacing: -0.01em; margin: 0 0 10px;">No verified opticians within 10 miles of SW1A 1AA — yet.</h3>
+            <p style="font-size: 17px; line-height: 1.55; color: #423C34; margin: 0 0 18px;">We only list Practitioners checked against the GOC register. Tell us where you are and we will email you when one lists near you.</p>
+            <div style="background: #F2E9DA; border: 1px solid #E2DBD0; border-radius: 3px; padding: 16px;">
+              <label for="c-notify-m" style="display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #423C34; margin-bottom: 8px;">Email address</label>
+              <input id="c-notify-m" type="email" placeholder="you@example.co.uk" style="width: 100%; height: 52px; padding: 0 14px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-size: 18px;" />
+              <button type="button" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; height: 52px; margin-top: 10px; background: #0D4A45; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 18px; font-weight: 600; cursor: pointer;">Tell me when</button>
+              <div style="font-size: 15px; color: #423C34; line-height: 1.5; margin-top: 10px;">One email to confirm, one when there is news.</div>
+            </div>
+            <a href="#radius" style="display: flex; align-items: center; gap: 8px; min-height: 48px; margin-top: 14px; font-size: 17px; font-weight: 600;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle></svg>
+              Search 15 miles instead
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 32px; margin-top: 44px;">
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Error state — something on our side</div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 32px;">
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7A4F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 4px;"><path d="M12 2v4"></path><path d="m16.2 7.8 2.9-2.9"></path><path d="M18 12h4"></path><path d="m16.2 16.2 2.9 2.9"></path><path d="M12 18v4"></path><path d="m4.9 19.1 2.9-2.9"></path><path d="M2 12h4"></path><path d="m4.9 4.9 2.9 2.9"></path></svg>
+              <div>
+                <h3 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 26px; line-height: 1.2; margin: 0 0 8px; max-width: 28ch;">We could not load these results</h3>
+                <p style="font-size: 17px; line-height: 1.55; color: #423C34; margin: 0 0 6px; max-width: 52ch;">Something failed at our end, not yours — your search is still in the box above. Try again in a moment.</p>
+                <p style="font-size: 16px; color: #5A544B; line-height: 1.5; margin: 0 0 18px; font-variant-numeric: tabular-nums;">Reference <span style="font-family: 'JetBrains Mono', monospace;">SRCH-8F31C2</span> · 11/08/2026 14:02</p>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                  <button type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; background: #0D4A45; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
+                    Try again
+                  </button>
+                  <a href="#contact" style="display: inline-flex; align-items: center; height: 48px; padding: 0 16px; font-size: 17px; font-weight: 600;">Report this</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 12px; line-height: 1.5;">Own the failure in the first sentence, keep the user's input, give a reference they can quote. No cartoon, no “oops”.</div>
+        </div>
+
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Loading skeleton — result rows</div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; overflow: hidden;" aria-busy="true" aria-live="polite">
+            <div style="padding: 22px 24px; border-bottom: 1px solid #EFE9DF; display: flex; gap: 20px;">
+              <span style="width: 72px; height: 72px; border-radius: 3px; flex: none; background: linear-gradient(100deg, #EFE9DF 20%, #F7F3EC 40%, #EFE9DF 60%); background-size: 200% 100%; animation: mc-shimmer 1.6s linear infinite;"></span>
+              <div style="flex: 1;">
+                <span style="display: block; width: 58%; height: 20px; border-radius: 2px; background: linear-gradient(100deg, #EFE9DF 20%, #F7F3EC 40%, #EFE9DF 60%); background-size: 200% 100%; animation: mc-shimmer 1.6s linear infinite;"></span>
+                <span style="display: block; width: 42%; height: 16px; margin-top: 10px; border-radius: 2px; background: linear-gradient(100deg, #EFE9DF 20%, #F7F3EC 40%, #EFE9DF 60%); background-size: 200% 100%; animation: mc-shimmer 1.6s linear infinite;"></span>
+                <span style="display: block; width: 70%; height: 16px; margin-top: 8px; border-radius: 2px; background: linear-gradient(100deg, #EFE9DF 20%, #F7F3EC 40%, #EFE9DF 60%); background-size: 200% 100%; animation: mc-shimmer 1.6s linear infinite;"></span>
+                <span style="display: block; width: 128px; height: 24px; margin-top: 14px; border-radius: 2px; background: linear-gradient(100deg, #EFE9DF 20%, #F7F3EC 40%, #EFE9DF 60%); background-size: 200% 100%; animation: mc-shimmer 1.6s linear infinite;"></span>
+              </div>
+            </div>
+            <div style="padding: 22px 24px; border-bottom: 1px solid #EFE9DF; display: flex; gap: 20px; opacity: 0.72;">
+              <span style="width: 72px; height: 72px; border-radius: 3px; flex: none; background: #EFE9DF;"></span>
+              <div style="flex: 1;">
+                <span style="display: block; width: 48%; height: 20px; border-radius: 2px; background: #EFE9DF;"></span>
+                <span style="display: block; width: 38%; height: 16px; margin-top: 10px; border-radius: 2px; background: #EFE9DF;"></span>
+                <span style="display: block; width: 64%; height: 16px; margin-top: 8px; border-radius: 2px; background: #EFE9DF;"></span>
+                <span style="display: block; width: 128px; height: 24px; margin-top: 14px; border-radius: 2px; background: #EFE9DF;"></span>
+              </div>
+            </div>
+            <div style="padding: 22px 24px; display: flex; gap: 20px; opacity: 0.45;">
+              <span style="width: 72px; height: 72px; border-radius: 3px; flex: none; background: #EFE9DF;"></span>
+              <div style="flex: 1;">
+                <span style="display: block; width: 52%; height: 20px; border-radius: 2px; background: #EFE9DF;"></span>
+                <span style="display: block; width: 34%; height: 16px; margin-top: 10px; border-radius: 2px; background: #EFE9DF;"></span>
+                <span style="display: block; width: 60%; height: 16px; margin-top: 8px; border-radius: 2px; background: #EFE9DF;"></span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 12px; line-height: 1.5;">Skeletons mirror the real row's geometry exactly, fade down the list, and only the first shimmers — three shimmering rows is a light show. Container carries <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">aria-busy</span> with a visually-hidden “Searching for verified opticians near BA2 4AS…”, and the whole animation is suppressed under <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">prefers-reduced-motion</span>.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 48px 0 0;">
+      <div style="background: #F2E9DA; border: 1px solid #E2DBD0; border-radius: 4px; padding: 24px 28px;">
+        <div style="font-weight: 700; font-size: 17px; margin-bottom: 8px;">Corrections applied to Foundations</div>
+        <ul style="margin: 0; padding-left: 20px; font-size: 17px; line-height: 1.6; color: #423C34; max-width: 82ch;">
+          <li style="margin-bottom: 6px;"><span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--color-border-strong</span> → <strong style="font-weight: 600;">#8F8574</strong> (3.4:1 on surface). Used on every field outline above.</li>
+          <li style="margin-bottom: 6px;"><span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--color-text-subtle</span> → <strong style="font-weight: 600;">#6E6252</strong> — 5.5:1 on surface, 4.9:1 on sand, so it is safe on both.</li>
+          <li style="margin-bottom: 6px;">Root size is <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">106.25%</span> / <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">112.5%</span>; browser preference still scales everything.</li>
+          <li style="margin-bottom: 6px;"><span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--touch-min</span> replaces <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--size-touch</span>, referenced as <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">min-h-(--touch-min)</span>.</li>
+          <li style="margin-bottom: 6px;">Fonts self-hosted via <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">@font-face</span> pointing at <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">/fonts/*-Variable.woff2</span>; no CDN link in either file.</li>
+          <li style="margin-bottom: 6px;">Pending copy no longer implies a check in flight; six subscription states with public-visibility stated; badge label interpolates Profession; no-date badge fallback added.</li>
+          <li style="margin-bottom: 6px;">GOC field accepts <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">/^(?:\d{2}|[A-Z]{1,2})-\d{4,6}$/</span> — help text, example and error copy all updated; <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">inputmode="numeric"</span> dropped, <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">autocapitalize="characters"</span> added.</li>
+          <li style="margin-bottom: 6px;">Upload is the Practitioner's own photo, with no-face and multi-face rejection states; JPEG / PNG / WebP, 5&nbsp;MB, 400–4000px. Segment and upload labels are <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">position: relative</span> and take the ring via <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">label:has(input:focus-visible)</span>.</li>
+          <li style="margin-bottom: 6px;">Bio limit 1,000; moderation claim removed; Phase-1 Profession is a stated fact plus a hidden field, with the select held for Phase 2.</li>
+          <li>New tokens cover every previously-arbitrary hex: <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--color-text-body</span>, <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--color-{verified,pending,rejected,revoked}-ink</span>, <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--color-disabled{,-border,-ink}</span>, <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--color-hairline</span>, <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--color-text-invert-muted</span>, <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--color-primary-border</span>, <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">--color-skeleton{,-sheen}</span>. No component ships a <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">text-[#hex]</span>.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280}}">
+class Component extends DCLogic {
+  state = {
+    accepting: true,
+    radius: 10,
+    profession: "Dispensing optician",
+    goc: "01-31842",
+    gocBad: "3184",
+    bio: "Independent Practice on Bridge Street since 1998. NHS and private sight tests, contact lens fitting, and low-vision assessments."
+  };
+  renderVals() {
+    const s = this.state;
+    const on = (r) => s.radius === r;
+    return {
+      noop: () => {},
+      accepting: s.accepting,
+      onAccepting: (e) => this.setState({ accepting: e.target.checked }),
+      profession: s.profession,
+      onProfession: (e) => this.setState({ profession: e.target.value }),
+      gocValue: s.goc,
+      onGoc: (e) => this.setState({ goc: e.target.value }),
+      gocBad: s.gocBad,
+      onGocBad: (e) => this.setState({ gocBad: e.target.value }),
+      emailValue: "ravi@chandraopticians.co.uk",
+      bio: s.bio,
+      onBio: (e) => this.setState({ bio: e.target.value.slice(0, 1000) }),
+      bioCount: s.bio.length,
+      is5: on(5), is10: on(10), is15: on(15),
+      pick5: () => this.setState({ radius: 5 }),
+      pick10: () => this.setState({ radius: 10 }),
+      pick15: () => this.setState({ radius: 15 }),
+      bg5: on(5) ? "#0D4A45" : "#FFFFFF",
+      bg10: on(10) ? "#0D4A45" : "#FFFFFF",
+      bg15: on(15) ? "#0D4A45" : "#FFFFFF",
+      fg5: on(5) ? "#FFFFFF" : "#1C1A17",
+      fg10: on(10) ? "#FFFFFF" : "#1C1A17",
+      fg15: on(15) ? "#FFFFFF" : "#1C1A17"
+    };
+  }
+}
+</script>
+</body>
+</html>
