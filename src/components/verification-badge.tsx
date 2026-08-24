@@ -1,0 +1,183 @@
+import { Clock, CircleX, ShieldCheck, ShieldOff } from 'lucide-react'
+
+import type { ComponentType } from 'react'
+import type { VerificationStatus } from '../visibility'
+
+// The badge behaves like an entry in a register: squared corners, a hairline
+// rule, a hard left edge in the state colour, and — critically — it always
+// cites its source and its date. A marketing sticker asserts; this one
+// testifies.
+//
+// Two rules hold it together. Every state carries its own glyph and its own
+// words, so nothing rides on colour alone. And the label restates only what
+// the badge actually holds: with no check date it names the cadence instead,
+// because a label must never cite a date the variant does not render.
+
+const REGISTER = 'General Optical Council'
+
+/** Day-first, the form a UK reader reads a record date in. */
+const DATE_FORMAT = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+})
+
+type StatusPlate = {
+  /** The one word the inline badge shows. */
+  word: string
+  headline: (profession: string) => string
+  /** The dated line on the plaque, or its dateless replacement. */
+  record: (date: string | undefined) => string
+  /** The closing sentence of the label. */
+  cadence: (date: string | undefined) => string
+  Glyph: ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' }>
+  /** Hairline, left edge, headline ink and glyph, in the state's tone. */
+  tone: string
+  glyphTone: string
+  inlineTone: string
+}
+
+const STATUS_PLATE: Readonly<Record<VerificationStatus, StatusPlate>> = {
+  verified: {
+    word: 'Verified',
+    // Never a hardcoded word: the plaque names the Profession it verified.
+    headline: (profession) => `Verified ${profession}`,
+    record: (date) =>
+      date === undefined
+        ? 'Checked weekly · '
+        : `Last checked ${date} · re-checked weekly`,
+    cadence: (date) =>
+      date === undefined
+        ? 'Checked weekly against the register.'
+        : `Checked ${date}.`,
+    Glyph: ShieldCheck,
+    tone: 'border-verified-border border-l-verified text-verified-ink',
+    glyphTone: 'text-verified',
+    inlineTone: 'border-verified-border bg-verified-bg text-verified-ink',
+  },
+  pending: {
+    word: 'Pending',
+    headline: () => 'Verification pending',
+    record: (date) =>
+      date === undefined
+        ? 'An operator will re-run this check'
+        : `Could not reach the register on ${date} · an operator will re-run this check`,
+    cadence: (date) =>
+      date === undefined
+        ? 'An operator will re-run this check.'
+        : `Last attempted ${date}.`,
+    Glyph: Clock,
+    tone: 'border-pending-border border-l-pending text-pending-ink',
+    glyphTone: 'text-pending',
+    inlineTone: 'border-pending-border bg-pending-bg text-pending-ink',
+  },
+  rejected: {
+    word: 'Not found',
+    headline: () => 'Not found on the register',
+    record: (date) =>
+      date === undefined
+        ? 'No entry matches this number'
+        : `No entry matched when we checked on ${date}`,
+    cadence: (date) =>
+      date === undefined ? 'No entry matches this number.' : `Checked ${date}.`,
+    Glyph: CircleX,
+    tone: 'border-rejected-border border-l-rejected text-rejected-ink',
+    glyphTone: 'text-rejected',
+    inlineTone: 'border-rejected-border bg-rejected-bg text-rejected-ink',
+  },
+  revoked: {
+    word: 'Revoked',
+    headline: () => 'Registration revoked',
+    record: (date) =>
+      date === undefined
+        ? 'Listing withdrawn after a register check'
+        : `Listing withdrawn ${date}`,
+    cadence: (date) =>
+      date === undefined
+        ? 'Withdrawn after a register check.'
+        : `Withdrawn ${date}.`,
+    Glyph: ShieldOff,
+    tone: 'border-revoked-border border-l-revoked text-revoked-ink',
+    glyphTone: 'text-revoked',
+    inlineTone: 'border-revoked-border bg-revoked-bg text-revoked-ink',
+  },
+}
+
+export type VerificationBadgeVariant = 'plaque' | 'inline'
+
+export type VerificationBadgeProps = {
+  status: VerificationStatus
+  /** Interpolated into the verified headline — never a hardcoded word. */
+  profession: string
+  registrationNumber: string
+  /** Absent on a record imported before checks began. */
+  lastCheckedAt?: Date
+  variant?: VerificationBadgeVariant
+  /** Where "how Verification works" points, when there is no date to show. */
+  methodHref?: string
+}
+
+export function VerificationBadge({
+  status,
+  profession,
+  registrationNumber,
+  lastCheckedAt,
+  variant = 'plaque',
+  methodHref = '#verification',
+}: VerificationBadgeProps) {
+  const plate = STATUS_PLATE[status]
+  const date =
+    lastCheckedAt === undefined ? undefined : DATE_FORMAT.format(lastCheckedAt)
+  const ariaLabel = `Verification: ${status}. ${REGISTER} ${registrationNumber}. ${plate.cadence(date)}`
+  const { Glyph } = plate
+
+  // In a list the badge drops the date — the header states "all listings
+  // re-checked weekly" once, so every row need not repeat it.
+  if (variant === 'inline') {
+    return (
+      <span
+        role="group"
+        aria-label={ariaLabel}
+        className={`inline-flex items-center gap-1.5 rounded-xs border py-1 pr-2.5 pl-1.5 text-[0.875rem] font-bold ${plate.inlineTone}`}
+      >
+        <Glyph
+          className={`size-[15px] shrink-0 ${plate.glyphTone}`}
+          aria-hidden="true"
+        />
+        {plate.word}
+      </span>
+    )
+  }
+
+  return (
+    <div
+      role="group"
+      aria-label={ariaLabel}
+      className={`inline-flex items-start gap-3.5 rounded-sm border border-l-4 bg-surface-raised py-4 pr-5 pl-4 shadow-sm ${plate.tone}`}
+    >
+      <Glyph
+        className={`mt-0.5 size-6 shrink-0 ${plate.glyphTone}`}
+        aria-hidden="true"
+      />
+      <div>
+        <p className="text-title font-bold">{plate.headline(profession)}</p>
+        <p className="text-meta text-text-muted">
+          {REGISTER} · reg.{' '}
+          <span className="font-semibold tabular-nums text-text">
+            {registrationNumber}
+          </span>
+        </p>
+        <p className="text-meta tabular-nums text-text-muted">
+          {plate.record(date)}
+          {/* Never an empty slot, never a fabricated date: when there is no
+              check timestamp the cadence stands in, with a link to the method. */}
+          {status === 'verified' && date === undefined && (
+            <a href={methodHref} className="font-semibold">
+              how Verification works
+            </a>
+          )}
+        </p>
+      </div>
+    </div>
+  )
+}
