@@ -1,15 +1,179 @@
 @import 'tailwindcss';
 
-* {
-  box-sizing: border-box;
+/* Self-hosted variable woff2, resolved from node_modules at build time — no
+   runtime call to an external font host. */
+@import '@fontsource-variable/newsreader';
+@import '@fontsource-variable/public-sans';
+
+@theme {
+  /* ── Type ─────────────────────────────── */
+  --font-serif: 'Newsreader Variable', Georgia, serif;
+  --font-sans: 'Public Sans Variable', system-ui, sans-serif;
+
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.25;
+  --text-meta: 1rem;
+  --text-meta--line-height: 1.5;
+  --text-base: 1.0625rem; /* 17px, mobile body */
+  --text-base--line-height: 1.6;
+  --text-body: 1.125rem; /* 18px, desktop body */
+  --text-body--line-height: 1.61;
+  --text-lg: 1.1875rem;
+  --text-lg--line-height: 1.58;
+  --text-title: 1.25rem;
+  --text-title--line-height: 1.4;
+  --text-h2: 1.5rem;
+  --text-h2--line-height: 1.33;
+  --text-h1: 2.125rem;
+  --text-h1--line-height: 1.18;
+  --text-display: 2.75rem;
+  --text-display--line-height: 1.09;
+  --text-figure: 3rem;
+  --text-figure--line-height: 1.05;
+
+  --tracking-tightest: -0.02em;
+  --tracking-caps: 0.12em;
+
+  /* ── Surfaces ─────────────────────────── */
+  --color-surface: #fbf8f3; /* warm paper */
+  --color-surface-raised: #ffffff;
+  --color-surface-sunk: #f4efe7;
+  --color-surface-sand: #f2e9da; /* practitioner blocks */
+  --color-surface-deep: #12332f; /* header / footer */
+
+  /* ── Ink ──────────────────────────────── */
+  --color-text: #1c1a17; /* 15.6:1 on surface — AAA */
+  --color-text-body: #423c34; /* 10.3:1 on surface — long-form body copy */
+  --color-text-muted: #5a544b; /* 7.0:1 on surface — AAA */
+  --color-text-subtle: #6e6252; /* 5.5:1 on surface, 4.9:1 on sand */
+  --color-text-invert: #f4efe7; /* 12.4:1 on surface-deep */
+  --color-text-invert-muted: #a8c4be; /* 7.4:1 on surface-deep */
+
+  /* ── Borders ──────────────────────────── */
+  --color-border: #e2dbd0;
+  --color-hairline: #efe9df; /* rules inside a card */
+  --color-border-strong: #8f8574; /* 3.4:1 on surface — field outlines, SC 1.4.11 */
+
+  /* ── Action ───────────────────────────── */
+  --color-primary: #0d4a45; /* white on it: 10.1:1 */
+  --color-primary-hover: #093632;
+  --color-primary-soft: #e7f0ee;
+  /* accent is 3.56:1 on surface: AA for large text (>=24px, or >=19px bold) and
+     non-text only. The one sanctioned text use is the £29 price figure at
+     --text-figure. Never body, never a label. */
+  --color-accent: #b4762a;
+  --color-focus: #0d4a45;
+  --color-focus-invert: #e8c468;
+
+  /* ── Verification ─────────────────────── */
+  --color-verified: #186a3b; /* 5.8:1 */
+  --color-verified-bg: #e8f3ea;
+  --color-verified-border: #c3dfcb;
+  --color-pending: #7a4f00; /* 4.8:1 */
+  --color-pending-bg: #fdf3dc;
+  --color-pending-border: #e6d3a6;
+  --color-rejected: #96301c; /* 4.8:1 */
+  --color-rejected-bg: #fbeae7;
+  --color-rejected-border: #e9c6bf;
+  --color-revoked: #7a1f1a; /* 5.9:1 */
+  --color-revoked-bg: #f3ebe9;
+  --color-revoked-border: #dfcdc9;
+  --color-primary-border: #c6d6d4; /* info alerts */
+
+  /* Ink = the same state at text weight on a white card. Use these, never the
+     raw state hue. */
+  --color-verified-ink: #14472b; /* 9.3:1 on white */
+  --color-pending-ink: #5e3e00; /* 8.6:1 on white */
+  --color-rejected-ink: #7e2817; /* 7.4:1 on white */
+  --color-revoked-ink: #6b1b16; /* 8.5:1 on white */
+
+  /* ── Disabled & skeleton ──────────────── */
+  --color-disabled: #e7e1d6;
+  --color-disabled-border: #c9c0b1;
+  --color-disabled-ink: #6e6252; /* 5.0:1 on --color-disabled */
+  --color-skeleton: #efe9df;
+  --color-skeleton-sheen: #f7f3ec;
+
+  /* ── Subscription (six provider states) ─ */
+  --color-sub-incomplete: #6e6252;
+  --color-sub-trialing: #0d4a45;
+  --color-sub-active: #186a3b;
+  --color-sub-past-due: #7a4f00; /* listing STAYS public during retries */
+  --color-sub-unpaid: #96301c;
+  --color-sub-canceled: #5a544b;
+
+  /* ── Space, radius, elevation ─────────── */
+  --spacing: 0.25rem; /* 4px base; utilities scale from it */
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+
+  --shadow-sm: 0 1px 2px rgb(58 44 26 / 0.08), 0 1px 1px rgb(58 44 26 / 0.06);
+  --shadow-md: 0 4px 12px rgb(58 44 26 / 0.1), 0 1px 3px rgb(58 44 26 / 0.07);
+  --shadow-lg: 0 12px 28px rgb(58 44 26 / 0.14), 0 2px 6px rgb(58 44 26 / 0.08);
+
+  /* No --size-* namespace in v4: reference explicitly, e.g. min-h-(--touch-min). */
+  --touch-min: 2.75rem; /* 44px minimum hit target */
 }
 
-html,
-body,
-#app {
-  min-height: 100%;
-}
+@layer base {
+  /* Dark mode is out of scope for v1; without this a dark OS auto-darkens
+     selects, scrollbars and autofill against the warm-paper palette. */
+  :root {
+    color-scheme: light;
+  }
 
-body {
-  margin: 0;
+  /* The root is left alone: 1rem stays the browser's own font size, so every
+     --text-* token renders the px it documents and a partially-sighted
+     consumer's chosen size still wins. The responsive step lives on body —
+     stepping the root would compound through the whole rem scale. */
+  html {
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+  }
+
+  html,
+  body,
+  #app {
+    min-height: 100%;
+  }
+
+  body {
+    font-size: var(--text-base); /* 17px */
+    line-height: var(--text-base--line-height);
+  }
+
+  @media (width >= 48rem) {
+    body {
+      font-size: var(--text-body); /* 18px */
+      line-height: var(--text-body--line-height);
+    }
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .on-deep :focus-visible {
+    outline-color: var(--color-focus-invert);
+  }
+
+  /* The ring belongs on the visible control, not a visually-hidden input
+     inside it. */
+  label:has(input:focus-visible) {
+    outline: 3px solid var(--color-focus);
+    outline-offset: -3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }

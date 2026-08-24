@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  @font-face { font-family: "Newsreader"; src: url("/fonts/Newsreader-Variable.woff2") format("woff2-variations"); font-weight: 400 700; font-display: swap; }
+  @font-face { font-family: "Public Sans"; src: url("/fonts/PublicSans-Variable.woff2") format("woff2-variations"); font-weight: 300 800; font-display: swap; }
+  @font-face { font-family: "JetBrains Mono"; src: url("/fonts/JetBrainsMono-Variable.woff2") format("woff2-variations"); font-weight: 400 600; font-display: swap; }
+  :root { color-scheme: light; }
+  body { margin: 0; background: #F4EFE7; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #0D4A45; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: #093632; }
+  :focus-visible { outline: 3px solid #0D4A45; outline-offset: 2px; border-radius: 2px; }
+  .on-deep :focus-visible { outline-color: #E8C468; }
+</style>
+</helmet>
+
+<div style="font-family: 'Public Sans', system-ui, sans-serif; color: #1C1A17; background: #FBF8F3; min-height: 100%; padding-bottom: 96px; font-size: 17px;">
+
+  <div style="background: #12332F; color: #F4EFE7; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 10px;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+      <span style="width: 1px; height: 16px; background: rgba(244,239,231,0.35); display: inline-block;"></span>
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; color: #A8C4BE;">Global shell · 1280 &amp; 390</span>
+    </div>
+    <span style="font-size: 13px; color: #A8C4BE;">No hamburger. Deliberately.</span>
+  </div>
+
+  <div style="max-width: 1240px; margin: 0 auto; padding: 0 32px;">
+
+    <section style="padding: 64px 0 48px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">09 — Wordmark</div>
+      <h1 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em; margin: 0 0 20px; max-width: 26ch;">A weight change, not a logo.</h1>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 40px; max-width: 68ch;">The wordmark is one word of Newsreader with a weight break: <strong style="font-weight: 600;">Mi</strong> at 600, <em style="font-style: normal;">Care</em> at 400, −0.01em tracking. No symbol, no tick, no eye. The company that verifies other people's credentials should not be the one with a swoosh — and a purely typographic mark survives being rendered at 24px on a five-year-old Android at 1× DPI.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 26px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 22px;">Sizes — 40 / 24 / 18px</div>
+          <div style="display: flex; flex-direction: column; gap: 22px; align-items: flex-start;">
+            <span style="font-family: 'Newsreader', Georgia, serif; font-size: 40px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+            <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+            <span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; letter-spacing: -0.005em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 20px; line-height: 1.45;">24px is the header lockup. Below 18px the weight break stops reading — use the mark instead.</div>
+        </div>
+
+        <div style="background: #12332F; border-radius: 4px; padding: 26px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #A8C4BE; margin-bottom: 22px;">On surface-deep</div>
+          <div style="display: flex; flex-direction: column; gap: 22px; align-items: flex-start; color: #F4EFE7;">
+            <span style="font-family: 'Newsreader', Georgia, serif; font-size: 40px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+            <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+          </div>
+          <div style="font-size: 14px; color: #A8C4BE; margin-top: 20px; line-height: 1.45;">#F4EFE7 on #12332F — 12.4:1. The only two grounds the wordmark ever sits on.</div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-radius: 4px; padding: 26px;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 22px;">Mark — favicon &amp; app icon</div>
+          <div style="display: flex; gap: 20px; align-items: flex-end;">
+            <span style="width: 64px; height: 64px; border-radius: 6px; background: #12332F; color: #F4EFE7; display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', Georgia, serif; font-size: 34px; font-weight: 600; letter-spacing: -0.02em;">Mi</span>
+            <span style="width: 32px; height: 32px; border-radius: 4px; background: #12332F; color: #F4EFE7; display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', Georgia, serif; font-size: 17px; font-weight: 600; letter-spacing: -0.02em;">Mi</span>
+            <span style="width: 16px; height: 16px; border-radius: 2px; background: #12332F; color: #F4EFE7; display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', Georgia, serif; font-size: 9px; font-weight: 600; letter-spacing: -0.02em;">Mi</span>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 20px; line-height: 1.45;">Ship 16 / 32 / 180 / 512px as SVG plus PNG fallbacks. At 16px the “Mi” is a shape, not a reading — which is all a favicon ever is.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 56px 0 48px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">10 — Header · 1280px</div>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 32px; max-width: 72ch;">64px tall, surface-deep, sticky. Consumer navigation on the left of the divider, Practitioner business on the right — the two audiences share a bar but never share a region, so neither has to read the other's links.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Signed out</div>
+          <div class="on-deep" style="background: #12332F; border-radius: 4px; overflow: hidden;">
+            <div style="height: 64px; padding: 0 24px; display: flex; align-items: center; gap: 28px;">
+              <a href="#top" style="display: inline-flex; align-items: center; min-height: 44px; font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1; color: #F4EFE7; text-decoration: none; flex: none;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></a>
+              <nav style="display: flex; flex: none; align-items: center; gap: 22px;">
+                <a href="#search" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #F4EFE7; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                  Find an optician
+                </a>
+                <a href="#verification" style="display: inline-flex; align-items: center; min-height: 44px; color: #DCE8E5; font-size: 17px; white-space: nowrap; text-decoration: none;">How Verification works</a>
+              </nav>
+              <span style="flex: 1;"></span>
+              <a href="#signup" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; background: #F4EFE7; color: #12332F; border-radius: 3px; font-size: 16px; font-weight: 700; text-decoration: none; white-space: nowrap;">List your Practice</a>
+              <a href="#signin" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; color: #F4EFE7; font-size: 16px; font-weight: 600; text-decoration: none; border: 1.5px solid rgba(244,239,231,0.55); border-radius: 3px; white-space: nowrap;">Sign in</a>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Signed in — Practitioner</div>
+          <div class="on-deep" style="background: #12332F; border-radius: 4px; overflow: hidden;">
+            <div style="height: 64px; padding: 0 24px; display: flex; align-items: center; gap: 28px;">
+              <a href="#top" style="display: inline-flex; align-items: center; min-height: 44px; font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1; color: #F4EFE7; text-decoration: none; flex: none;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></a>
+              <nav style="display: flex; flex: none; align-items: center; gap: 22px;">
+                <a href="#search" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #F4EFE7; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                  Find an optician
+                </a>
+                <a href="#verification" style="display: inline-flex; align-items: center; min-height: 44px; color: #DCE8E5; font-size: 17px; white-space: nowrap; text-decoration: none;">How Verification works</a>
+              </nav>
+              <span style="flex: 1;"></span>
+              <a href="#dashboard" style="display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 18px; background: #F4EFE7; color: #12332F; border-radius: 3px; font-size: 16px; font-weight: 700; text-decoration: none; white-space: nowrap;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>
+                Dashboard
+              </a>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 10px; line-height: 1.45;">Signed in, “List your Practice” and “Sign in” collapse into a single Dashboard button — the bar holds four items in both states and never grows a fifth. The link to the public profile belongs on the dashboard, which is where the Practitioner is heading anyway.</div>
+        </div>
+
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">With persistent search — every page below the homepage</div>
+          <div class="on-deep" style="background: #12332F; border-radius: 4px 4px 0 0;">
+            <div style="height: 64px; padding: 0 24px; display: flex; align-items: center; gap: 28px;">
+              <a href="#top" style="display: inline-flex; align-items: center; min-height: 44px; font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1; color: #F4EFE7; text-decoration: none; flex: none;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></a>
+              <span style="flex: 1;"></span>
+              <a href="#verification" style="display: inline-flex; align-items: center; min-height: 44px; color: #DCE8E5; font-size: 16px; white-space: nowrap; text-decoration: none;">How Verification works</a>
+              <a href="#signup" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; background: #F4EFE7; color: #12332F; border-radius: 3px; font-size: 16px; font-weight: 700; text-decoration: none; white-space: nowrap;">List your Practice</a>
+              <a href="#signin" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; color: #F4EFE7; font-size: 16px; font-weight: 600; text-decoration: none; border: 1.5px solid rgba(244,239,231,0.55); border-radius: 3px;">Sign in</a>
+            </div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E2DBD0; border-top: 0; border-radius: 0 0 4px 4px; padding: 16px 24px; display: flex; align-items: center; gap: 12px;">
+            <div style="position: relative; flex: 1 1 320px; min-width: 240px; max-width: 420px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5A544B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 13px; top: 14px;"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="search" value="{{ postcode }}" onChange="{{ onPostcode }}" aria-label="Postcode or town" style="width: 100%; height: 48px; padding: 0 14px 0 42px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-size: 17px;" />
+            </div>
+            <div style="display: flex; border: 1px solid #8F8574; border-radius: 3px; overflow: hidden; background: #FFFFFF;">
+              <span style="display: flex; align-items: center; min-height: 48px; padding: 0 16px; font-size: 16px; font-weight: 600; border-right: 1px solid #8F8574;">5</span>
+              <span style="display: flex; align-items: center; min-height: 48px; padding: 0 16px; font-size: 16px; font-weight: 700; background: #0D4A45; color: #FFFFFF; border-right: 1px solid #8F8574;">10</span>
+              <span style="display: flex; align-items: center; min-height: 48px; padding: 0 16px; font-size: 16px; font-weight: 600;">15</span>
+            </div>
+            <span style="font-size: 16px; color: #5A544B; white-space: nowrap;">miles</span>
+            <button type="button" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; background: #0D4A45; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer;" style-hover="background: #093632;">Search</button>
+            <span style="font-size: 16px; color: #5A544B; white-space: nowrap; margin-left: auto;">Ordered by distance</span>
+          </div>
+          <div style="font-size: 14px; color: #6E6252; margin-top: 10px; line-height: 1.45;">The search row is a second band on white, not inside the green — so it reads as the page's control surface and can stick independently of the bar.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 56px 0 48px; border-bottom: 1px solid #E2DBD0;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">11 — Header · 390px</div>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 12px; max-width: 30ch;">No drawer, no hamburger, no bottom bar.</h2>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 16px; max-width: 74ch;">There are three consumer destinations on this site and one of them is the page you are on. A hamburger would hide two links behind a gesture, cost a tap, and put a 24px icon in front of a user who came here because their eyes are not what they were. So: a <strong style="font-weight: 600;">two-row wrapped header</strong>. Row one is identity and account, 56px. Row two is the search control, full width, 56px — the only thing a consumer needs, permanently under their thumb.</p>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 36px; max-width: 74ch;">“List your Practice” is not in the mobile header. Practitioners arrive from the homepage pitch or a link, deliberately, usually on a desktop with a card to hand — they do not need it on every consumer screen. It lives in the footer and in the homepage section, at full size.</p>
+
+      <div style="display: flex; gap: 32px; flex-wrap: wrap;">
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Signed out · 390</div>
+          <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <div class="on-deep" style="background: #12332F;">
+              <div style="height: 56px; padding: 0 16px; display: flex; align-items: center; gap: 12px;">
+                <a href="#top" style="display: inline-flex; align-items: center; min-height: 44px; font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1; color: #F4EFE7; text-decoration: none;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></a>
+                <span style="flex: 1;"></span>
+                <a href="#signin" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; color: #F4EFE7; font-size: 16px; font-weight: 600; text-decoration: none; border: 1.5px solid rgba(244,239,231,0.55); border-radius: 3px;">Sign in</a>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border-bottom: 1px solid #E2DBD0; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px;">
+              <div style="position: relative;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5A544B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 17px;"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input type="search" placeholder="Postcode or town" aria-label="Postcode or town" style="width: 100%; height: 56px; padding: 0 14px 0 46px; background: #FFFFFF; border: 1px solid #8F8574; border-radius: 3px; font-size: 18px;" />
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <div style="display: flex; flex: 1; border: 1px solid #8F8574; border-radius: 3px; overflow: hidden;">
+                  <span style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 48px; font-size: 16px; font-weight: 600; border-right: 1px solid #8F8574;">5 mi</span>
+                  <span style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 48px; font-size: 16px; font-weight: 700; background: #0D4A45; color: #FFFFFF; border-right: 1px solid #8F8574;">10 mi</span>
+                  <span style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 48px; font-size: 16px; font-weight: 600;">15 mi</span>
+                </div>
+                <button type="button" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; background: #0D4A45; color: #FFFFFF; border: 0; border-radius: 3px; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer;">Search</button>
+              </div>
+            </div>
+            <div style="padding: 20px 16px; font-size: 17px; color: #5A544B; line-height: 1.5;">Page content starts here. Total chrome: 56 + 128px.</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin-bottom: 12px;">Signed in · 390</div>
+          <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; background: #FBF8F3; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+            <div class="on-deep" style="background: #12332F;">
+              <div style="height: 56px; padding: 0 16px; display: flex; align-items: center; gap: 12px;">
+                <a href="#top" style="display: inline-flex; align-items: center; min-height: 44px; font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1; color: #F4EFE7; text-decoration: none;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></a>
+                <span style="flex: 1;"></span>
+                <a href="#dashboard" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; background: #F4EFE7; color: #12332F; border-radius: 3px; font-size: 16px; font-weight: 700; text-decoration: none;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>
+                  Dashboard
+                </a>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border-bottom: 1px solid #E2DBD0; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: inline-flex; align-items: center; gap: 6px; background: #E8F3EA; border: 1px solid #C3DFCB; border-radius: 2px; padding: 4px 9px 4px 7px; font-size: 14px; font-weight: 700; color: #14472B;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#186A3B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                Verified
+              </span>
+              <span style="font-size: 16px; color: #5A544B;">Chandra Opticians</span>
+            </div>
+            <div style="padding: 20px 16px; font-size: 17px; color: #5A544B; line-height: 1.5;">Signed-in Practitioners get their own status strip instead of the search row — they are not here to search.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 56px 0 48px;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #6E6252; margin-bottom: 20px;">12 — Footer</div>
+      <p style="font-size: 18px; line-height: 1.61; color: #423C34; margin: 0 0 32px; max-width: 72ch;">Surface-deep, three columns at 1280 and stacked at 390. The footer is where the site states its own terms of trade — the “no paid placement” sentence lives here permanently, not as a marketing line on the homepage.</p>
+
+      <div class="on-deep" style="background: #12332F; border-radius: 4px; padding: 48px 40px 32px; color: #F4EFE7;">
+        <div style="display: grid; grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 1fr)); gap: 40px;">
+          <div>
+            <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+            <p style="font-size: 16px; line-height: 1.55; color: #A8C4BE; margin: 14px 0 0; max-width: 32ch;">A directory of independent healthcare Practitioners, checked against their statutory regulator every week.</p>
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #A8C4BE; margin-bottom: 14px;">Find care</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <a href="#search" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">Find an optician</a>
+              <a href="#verification" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">How Verification works</a>
+              <a href="#report" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">Report a listing</a>
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #A8C4BE; margin-bottom: 14px;">For Practitioners</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <a href="#signup" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">List your Practice — £29/month</a>
+              <a href="#signin" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">Sign in</a>
+              <a href="#help" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">Help for Practitioners</a>
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #A8C4BE; margin-bottom: 14px;">MiCare</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <a href="#about" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">About</a>
+              <a href="#privacy" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">Privacy policy</a>
+              <a href="#terms" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">Terms</a>
+              <a href="#accessibility" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">Accessibility</a>
+              <a href="#contact" style="display: inline-flex; align-items: center; min-height: 44px; color: #F4EFE7; font-size: 17px; text-decoration: none;">Contact</a>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: 36px; padding-top: 24px; border-top: 1px solid rgba(244,239,231,0.22); display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: baseline;">
+          <span style="font-size: 16px; color: #A8C4BE;">© 2026 MiCare Ltd · Registered in England and Wales 15482910</span>
+          <span style="flex: 1;"></span>
+          <span style="font-size: 16px; color: #F4EFE7; font-weight: 600;">Nothing on MiCare is a paid placement. Results are ordered by distance.</span>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5A544B; margin: 40px 0 12px;">Footer · 390</div>
+      <div style="width: 390px; border: 1px solid #E2DBD0; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 12px rgba(58,44,26,0.10), 0 1px 3px rgba(58,44,26,0.07);">
+        <div class="on-deep" style="background: #12332F; padding: 28px 16px 20px; color: #F4EFE7;">
+          <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; letter-spacing: -0.01em; line-height: 1;"><span style="font-weight: 600;">Mi</span><span style="font-weight: 400;">Care</span></span>
+          <p style="font-size: 16px; line-height: 1.55; color: #A8C4BE; margin: 12px 0 24px;">Checked against the regulator every week. Nothing here is a paid placement.</p>
+          <a href="#signup" style="display: flex; align-items: center; justify-content: center; min-height: 52px; background: #F4EFE7; color: #12332F; border-radius: 3px; font-size: 17px; font-weight: 700; text-decoration: none; margin-bottom: 24px;">List your Practice — £29/month</a>
+          <div style="display: flex; flex-direction: column;">
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #A8C4BE; margin-bottom: 6px;">Find care</div>
+            <a href="#search" style="display: flex; align-items: center; min-height: 48px; color: #F4EFE7; font-size: 17px; text-decoration: none; border-bottom: 1px solid rgba(244,239,231,0.14);">Find an optician</a>
+            <a href="#verification" style="display: flex; align-items: center; min-height: 48px; color: #F4EFE7; font-size: 17px; text-decoration: none; border-bottom: 1px solid rgba(244,239,231,0.14);">How Verification works</a>
+            <a href="#report" style="display: flex; align-items: center; min-height: 48px; color: #F4EFE7; font-size: 17px; text-decoration: none; border-bottom: 1px solid rgba(244,239,231,0.14);">Report a listing</a>
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #A8C4BE; margin: 22px 0 6px;">MiCare</div>
+            <a href="#about" style="display: flex; align-items: center; min-height: 48px; color: #F4EFE7; font-size: 17px; text-decoration: none; border-bottom: 1px solid rgba(244,239,231,0.14);">About</a>
+            <a href="#privacy" style="display: flex; align-items: center; min-height: 48px; color: #F4EFE7; font-size: 17px; text-decoration: none; border-bottom: 1px solid rgba(244,239,231,0.14);">Privacy policy</a>
+            <a href="#terms" style="display: flex; align-items: center; min-height: 48px; color: #F4EFE7; font-size: 17px; text-decoration: none; border-bottom: 1px solid rgba(244,239,231,0.14);">Terms</a>
+            <a href="#accessibility" style="display: flex; align-items: center; min-height: 48px; color: #F4EFE7; font-size: 17px; text-decoration: none; border-bottom: 1px solid rgba(244,239,231,0.14);">Accessibility</a>
+            <a href="#contact" style="display: flex; align-items: center; min-height: 48px; color: #F4EFE7; font-size: 17px; text-decoration: none;">Contact</a>
+          </div>
+          <div style="font-size: 15px; color: #A8C4BE; margin-top: 24px; line-height: 1.5;">© 2026 MiCare Ltd · Registered in England and Wales 15482910</div>
+        </div>
+      </div>
+      <div style="font-size: 14px; color: #6E6252; margin-top: 12px; line-height: 1.45; max-width: 72ch;">Mobile footer links are 48px rows with hairline rules — a list you can hit, not a column of underlined text. The Practitioner CTA is promoted to the top of the footer, because on mobile this is the one place it appears.</div>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280}}">
+class Component extends DCLogic {
+  state = { postcode: "BA2 4AS" };
+  renderVals() {
+    return {
+      postcode: this.state.postcode,
+      onPostcode: (e) => this.setState({ postcode: e.target.value })
+    };
+  }
+}
+</script>
+</body>
+</html>
