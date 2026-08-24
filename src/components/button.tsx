@@ -33,6 +33,23 @@ const BASE_CLASSES =
 const DISABLED_CLASSES =
   'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-disabled disabled:text-disabled-ink disabled:no-underline'
 
+/**
+ * The chrome a button wears, as classes. Exported because one thing on the
+ * site is a primary button and cannot be a `<button>`: the profile's "Book an
+ * appointment" leaves for the Practitioner's own site through /go, so it has
+ * to be an anchor the browser navigates. It wears this rather than a
+ * hand-typed copy of it.
+ */
+export function buttonClasses({
+  variant = 'primary',
+  size = 'md',
+}: {
+  variant?: ButtonVariant
+  size?: ButtonSize
+} = {}): string {
+  return [BASE_CLASSES, VARIANT_CLASSES[variant], SIZE_CLASSES[size]].join(' ')
+}
+
 export type ButtonProps = ComponentPropsWithoutRef<'button'> & {
   variant?: ButtonVariant
   size?: ButtonSize
@@ -61,9 +78,7 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={[
-        BASE_CLASSES,
-        VARIANT_CLASSES[variant],
-        SIZE_CLASSES[size],
+        buttonClasses({ variant, size }),
         DISABLED_CLASSES,
         loading ? 'cursor-progress' : '',
         className,

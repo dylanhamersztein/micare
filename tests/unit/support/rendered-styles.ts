@@ -5,7 +5,11 @@
 // the literal declarations. A test can then assert the pixels, not the class
 // string.
 
-import { compileStyles, customProperties } from './design-system'
+import {
+  compileStyles,
+  customProperties,
+  resolveVariables,
+} from './design-system'
 
 /** Escapes a Tailwind class into the form it takes inside a CSS selector. */
 function escapeClass(className: string): string {
@@ -55,36 +59,44 @@ function ruleBody(css: string, selector: string): string | undefined {
 
 /** The declarations directly in a rule body, with `var()` references resolved. */
 function ownDeclarations(css: string, body: string): Record<string, string> {
+  // A custom property the rule sets itself wins over the same name declared
+  // anywhere else — which is how Tailwind's composed utilities work: the
+  // `tabular-nums` rule sets `--tw-numeric-spacing` beside the
+  // `font-variant-numeric` that reads it, over a global reset to `initial`.
   const properties = customProperties(css)
   const declarations: Record<string, string> = {}
-  let depth = 0
 
-  // Only the top level of the body counts: a nested `&:hover` block belongs to
-  // the hover state, not to the resting element.
-  for (const line of body.split('\n')) {
-    const declaration =
-      depth === 0 ? /^\s*([\w-]+):\s*([^;{]+);/.exec(line) : null
+  for (const [property, value] of ownLines(body)) {
+    if (property.startsWith('--')) properties.set(property, value)
+  }
 
-    if (declaration !== null) {
-      declarations[declaration[1]] = resolve(declaration[2], properties)
-    }
-
-    depth += (line.match(/\{/g) ?? []).length
-    depth -= (line.match(/\}/g) ?? []).length
+  for (const [property, value] of ownLines(body)) {
+    declarations[property] = resolveVariables(value, properties)
   }
 
   return declarations
 }
 
-/** Substitutes `var(--token)` references until a literal value remains. */
-function resolve(value: string, properties: Map<string, string>): string {
-  return value.replace(/var\(\s*(--[\w-]+)\s*\)/g, (whole, name: string) => {
-    const declared = properties.get(name)
+/**
+ * The property/value pairs at the top level of a rule body. A nested `&:hover`
+ * block belongs to the hover state, not to the resting element, so its
+ * declarations are skipped.
+ */
+function ownLines(body: string): Array<[string, string]> {
+  const lines: Array<[string, string]> = []
+  let depth = 0
 
-    return declared === undefined || declared === 'initial'
-      ? whole
-      : resolve(declared, properties)
-  })
+  for (const line of body.split('\n')) {
+    const declaration =
+      depth === 0 ? /^\s*([\w-]+):\s*([^;{]+);/.exec(line) : null
+
+    if (declaration !== null) lines.push([declaration[1], declaration[2]])
+
+    depth += (line.match(/\{/g) ?? []).length
+    depth -= (line.match(/\}/g) ?? []).length
+  }
+
+  return lines
 }
 
 /**
@@ -111,9 +123,10 @@ export function declarationsFor(
 
 /**
  * The declarations a Tailwind variant adds — `disabled`, `hover`,
- * `focus-visible`, `aria-invalid`. Every variant compiles to exactly one
- * nested block inside its class rule, whatever selector that block uses, so
- * reading the nested block reads the variant.
+ * `focus-visible`, `aria-invalid`. A variant compiles to a chain of nested
+ * blocks inside its class rule — `hover:` is `&:hover` wrapped again in
+ * `@media (hover: hover)` — so the declarations live at the bottom of the
+ * chain, whatever selectors it is made of.
  */
 export function variantDeclarations(
   css: string,
@@ -128,13 +141,25 @@ export function variantDeclarations(
     const body = ruleBody(css, `.${escapeClass(className)}`)
     if (body === undefined) continue
 
-    const nested = /\{([\s\S]*)\}/.exec(body)
-    if (nested !== null) {
-      Object.assign(declarations, ownDeclarations(css, nested[1]))
-    }
+    Object.assign(declarations, ownDeclarations(css, innermost(body)))
   }
 
   return declarations
+}
+
+/** Descends through wrapper blocks to the one that carries the declarations. */
+function innermost(body: string): string {
+  let current = body
+
+  while (ownLines(current).length === 0) {
+    const nested = /\{([\s\S]*)\}/.exec(current)
+
+    if (nested === null) return current
+
+    current = nested[1]
+  }
+
+  return current
 }
 
 /**

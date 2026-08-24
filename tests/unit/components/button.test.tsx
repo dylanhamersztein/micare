@@ -8,7 +8,7 @@ import {
   declarationsFor,
   variantDeclarations,
 } from '../support/rendered-styles'
-import { Button } from '../../../src/components/button'
+import { Button, buttonClasses } from '../../../src/components/button'
 import type { ButtonSize, ButtonVariant } from '../../../src/components/button'
 
 // The paint each variant is specified to produce, straight from the design's
@@ -200,5 +200,43 @@ describe('Button', () => {
       expect((button as HTMLButtonElement).disabled).toBe(true)
       expect(button.getAttribute('aria-busy')).toBeNull()
     })
+  })
+})
+
+// One conversion action on the Practitioner profile leaves the site through
+// /go, so it has to be an anchor doing a full navigation — but it is still the
+// page's primary button and must not be a second, hand-typed copy of one.
+describe('a link wearing the button chrome', () => {
+  it('paints the same primary plate a Button does', async () => {
+    render(
+      <a href="/go?p=a1b2c3d4" className={buttonClasses({ size: 'lg' })}>
+        Book an appointment
+      </a>,
+    )
+
+    const link = screen.getByRole('link')
+    const css = await compileStylesFor(link)
+    const declarations = declarationsFor(css, link)
+
+    expect(declarations['background-color']).toBe('#0d4a45')
+    expect(declarations['color']).toBe('#fff')
+    expect(pxAtDefaultRoot(declarations['height'])).toBe(56)
+  })
+
+  it('is the same chrome the Button itself wears, not a copy of it', () => {
+    render(
+      <Button variant="secondary" size="sm">
+        Save
+      </Button>,
+    )
+
+    const worn = screen.getByRole('button').className
+
+    for (const className of buttonClasses({
+      variant: 'secondary',
+      size: 'sm',
+    }).split(' ')) {
+      expect(worn.split(' ')).toContain(className)
+    }
   })
 })

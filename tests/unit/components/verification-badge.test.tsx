@@ -218,6 +218,29 @@ describe('VerificationBadge', () => {
     })
   })
 
+  // Neither the search result nor the public profile payload carries a GOC
+  // number — the register check is what made the Practitioner visible, but the
+  // number itself never reaches the browser. The badge has to say so honestly
+  // rather than leave a blank where the evidence goes.
+  describe('inline, with no registration number to cite', () => {
+    it('still states the status in words', () => {
+      const { container } = render(
+        <VerificationBadge variant="inline" status="verified" />,
+      )
+
+      expect(container.textContent).toBe('Verified')
+    })
+
+    it('cites the register but names no number it was not given', () => {
+      render(<VerificationBadge variant="inline" status="verified" />)
+
+      expect(label()).toBe(
+        'Verification: verified. General Optical Council. Checked weekly against the register.',
+      )
+      expect(label()).not.toContain(REGISTRATION)
+    })
+  })
+
   describe('every status', () => {
     function renderStatus(
       status: VerificationStatus,

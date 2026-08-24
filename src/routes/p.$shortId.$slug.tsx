@@ -1,6 +1,14 @@
 import { createFileRoute, notFound, redirect } from '@tanstack/react-router'
 
+import {
+  NoticePage,
+  STANDALONE_LINK_CLASSES,
+  VerificationBadge,
+  buttonClasses,
+} from '#/components'
 import { getProfile } from '../server/profile'
+
+import type { ReactNode } from 'react'
 import type { PublicProfile } from '../slug'
 
 export const Route = createFileRoute('/p/$shortId/$slug')({
@@ -32,6 +40,25 @@ function ProfilePage() {
   return <Profile profile={data.profile} />
 }
 
+/** One block of the record: a caps heading over its content. */
+function Section({
+  heading,
+  children,
+  ...props
+}: {
+  heading: string
+  children: ReactNode
+} & { 'data-testid'?: string }) {
+  return (
+    <section className="border-t border-hairline pt-5" {...props}>
+      <h2 className="text-label font-bold tracking-caps text-text-muted uppercase">
+        {heading}
+      </h2>
+      <div className="mt-2">{children}</div>
+    </section>
+  )
+}
+
 function Profile({ profile }: { profile: PublicProfile }) {
   const addressParts = [
     profile.practiceAddressLine1,
@@ -42,127 +69,148 @@ function Profile({ profile }: { profile: PublicProfile }) {
   ].filter(Boolean)
 
   return (
-    <div className="mx-auto max-w-2xl p-8">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold">{profile.fullName}</h1>
-        <span
-          className="mt-2 inline-block rounded bg-green-100 px-2 py-0.5 text-sm font-medium text-green-800"
-          data-testid="profile-verified"
-        >
-          ✓ Verified
-        </span>
+    <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+      <header className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-7">
+        {profile.photoUrl && (
+          <img
+            src={profile.photoUrl}
+            alt={profile.fullName}
+            className="size-32 shrink-0 rounded-md border border-border object-cover"
+            data-testid="profile-photo"
+          />
+        )}
+        <div>
+          <h1 className="font-serif text-h1 font-medium tracking-tightest">
+            {profile.fullName}
+          </h1>
+          {/* The list variant, not the plaque: the public profile payload
+              carries no registration number or check date, and the badge must
+              never cite evidence it was not given (ADR-0017). */}
+          <p className="mt-3" data-testid="profile-verified">
+            <VerificationBadge variant="inline" status="verified" />
+          </p>
+          <p className="mt-3 text-meta text-text-muted">
+            Checked against the General Optical Council register, and re-checked
+            weekly.
+          </p>
+        </div>
       </header>
 
-      {profile.photoUrl && (
-        <img
-          src={profile.photoUrl}
-          alt={profile.fullName}
-          className="mb-6 h-40 w-40 rounded-full object-cover"
-          data-testid="profile-photo"
-        />
+      {profile.bio && (
+        <p className="mt-7 max-w-[62ch] text-text-body">{profile.bio}</p>
       )}
 
-      {profile.bio && <p className="mb-6 text-gray-700">{profile.bio}</p>}
-
-      <section className="mb-6" data-testid="profile-practice">
-        <h2 className="text-lg font-semibold">Practice</h2>
-        {profile.practiceName && <p>{profile.practiceName}</p>}
-        {addressParts.length > 0 && (
-          <p className="text-sm text-gray-700">{addressParts.join(', ')}</p>
-        )}
-      </section>
-
-      <section className="mb-6" data-testid="profile-hours">
-        <h2 className="text-lg font-semibold">Opening hours</h2>
-        {profile.byAppointmentOnly ? (
-          <p>By appointment only</p>
-        ) : profile.openingHours ? (
-          <dl>
-            {Object.entries(profile.openingHours).map(([day, hours]) => (
-              <div key={day} className="flex gap-2">
-                <dt className="font-medium">{day}</dt>
-                <dd>{hours}</dd>
-              </div>
-            ))}
-          </dl>
-        ) : (
-          <p className="text-sm text-gray-600">
-            Contact the Practice for opening hours.
-          </p>
-        )}
-      </section>
-
-      {profile.services.length > 0 && (
-        <section className="mb-6" data-testid="profile-services">
-          <h2 className="text-lg font-semibold">Services</h2>
-          <ul className="list-disc pl-5">
-            {profile.services.map((service) => (
-              <li key={service}>{service}</li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {profile.languages.length > 0 && (
-        <section className="mb-6" data-testid="profile-languages">
-          <h2 className="text-lg font-semibold">Languages</h2>
-          <p>{profile.languages.join(', ')}</p>
-        </section>
-      )}
-
-      {profile.accessibilityNotes && (
-        <section className="mb-6" data-testid="profile-accessibility">
-          <h2 className="text-lg font-semibold">Accessibility</h2>
-          <p>{profile.accessibilityNotes}</p>
-        </section>
-      )}
-
-      <p className="mb-6" data-testid="profile-accepting">
-        {profile.acceptingNewPatients
-          ? 'Accepting new patients'
-          : 'Not currently accepting new patients'}
-      </p>
-
-      {/* A plain anchor, not a <Link>: /go redirects off-site, so the browser
+      {/* One primary action, and nothing on the page competes with it.
+          A plain anchor, not a <Link>: /go redirects off-site, so the browser
           must do a full navigation rather than a client-side route change. */}
-      <a
-        href={`/go?p=${profile.shortId}`}
-        className="inline-block rounded bg-black px-4 py-2 text-white"
-        data-testid="profile-book"
-      >
-        Book an appointment
-      </a>
-    </div>
+      <div className="mt-7">
+        <a
+          href={`/go?p=${profile.shortId}`}
+          className={buttonClasses({ size: 'lg' })}
+          data-testid="profile-book"
+        >
+          Book an appointment
+        </a>
+        <p
+          className="mt-2 text-meta text-text-muted"
+          data-testid="profile-accepting"
+        >
+          {profile.acceptingNewPatients
+            ? 'Accepting new patients'
+            : 'Not currently accepting new patients'}
+        </p>
+      </div>
+
+      <div className="mt-9 flex flex-col gap-5">
+        <Section heading="Practice" data-testid="profile-practice">
+          {profile.practiceName && (
+            <p className="font-semibold">{profile.practiceName}</p>
+          )}
+          {addressParts.length > 0 && (
+            <p className="text-text-body">{addressParts.join(', ')}</p>
+          )}
+        </Section>
+
+        <Section heading="Opening hours" data-testid="profile-hours">
+          {profile.byAppointmentOnly ? (
+            <p>By appointment only</p>
+          ) : profile.openingHours ? (
+            <dl className="flex flex-col gap-1">
+              {Object.entries(profile.openingHours).map(([day, hours]) => (
+                <div key={day} className="flex gap-3">
+                  <dt className="w-28 shrink-0 font-semibold">{day}</dt>
+                  <dd className="tabular-nums text-text-body">{hours}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <p className="text-text-body">
+              Contact the Practice for opening hours.
+            </p>
+          )}
+        </Section>
+
+        {profile.services.length > 0 && (
+          <Section heading="Services" data-testid="profile-services">
+            <ul className="list-disc pl-5 text-text-body marker:text-text-subtle">
+              {profile.services.map((service) => (
+                <li key={service}>{service}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        {profile.languages.length > 0 && (
+          <Section heading="Languages" data-testid="profile-languages">
+            <p className="text-text-body">{profile.languages.join(', ')}</p>
+          </Section>
+        )}
+
+        {profile.accessibilityNotes && (
+          <Section heading="Accessibility" data-testid="profile-accessibility">
+            <p className="text-text-body">{profile.accessibilityNotes}</p>
+          </Section>
+        )}
+      </div>
+    </main>
   )
 }
 
 function NotListed() {
   return (
-    <div className="mx-auto max-w-2xl p-8" data-testid="profile-not-listed">
-      <h1 className="text-2xl font-bold">
-        This Practitioner is not currently listed
-      </h1>
-      <p className="mt-2 text-gray-700">
+    <NoticePage
+      tone="problem"
+      eyebrow="Not listed"
+      title="This Practitioner is not currently listed"
+      data-testid="profile-not-listed"
+    >
+      <p>
         Their profile is not available right now. They may have paused or ended
         their MiCare listing.
       </p>
-      <a href="/search" className="mt-4 inline-block underline">
-        Search for another Practitioner
-      </a>
-    </div>
+      <p>
+        <a href="/search" className={STANDALONE_LINK_CLASSES}>
+          Search for another Practitioner
+        </a>
+      </p>
+    </NoticePage>
   )
 }
 
 function ProfileNotFound() {
   return (
-    <div className="mx-auto max-w-2xl p-8" data-testid="profile-not-found">
-      <h1 className="text-2xl font-bold">Profile not found</h1>
-      <p className="mt-2 text-gray-700">
-        We couldn&apos;t find a Practitioner profile at this address.
+    <NoticePage
+      tone="problem"
+      eyebrow="Not found"
+      title="Profile not found"
+      data-testid="profile-not-found"
+    >
+      <p>We couldn&apos;t find a Practitioner profile at this address.</p>
+      <p>
+        <a href="/search" className={STANDALONE_LINK_CLASSES}>
+          Search for a Practitioner
+        </a>
       </p>
-      <a href="/search" className="mt-4 inline-block underline">
-        Search for a Practitioner
-      </a>
-    </div>
+    </NoticePage>
   )
 }

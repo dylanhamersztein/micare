@@ -55,7 +55,7 @@ function indexOfTopLevelComma(value: string): number {
 }
 
 /** Substitutes `var(--token, fallback)` references until a literal value remains. */
-function resolveVariables(
+export function resolveVariables(
   value: string,
   variables: Map<string, string>,
 ): string {
