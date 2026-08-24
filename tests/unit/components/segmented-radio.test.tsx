@@ -152,4 +152,15 @@ describe('SegmentedRadio', () => {
       pxAtDefaultRoot(declarationsFor(css, label)['min-height']),
     ).toBeGreaterThanOrEqual(44)
   })
+
+  // At 390px the three segments get about 106px each. The selected one also
+  // carries a tick, and with the roomier padding "5 miles" broke onto a second
+  // line — doubling the height of the row it sits in.
+  it('keeps a segment label on one line once the tick is beside it', async () => {
+    const { container } = renderRadius(5)
+    const selected = container.querySelector('label')!
+    const css = await compileStylesFor(selected)
+
+    expect(declarationsFor(css, selected)['white-space']).toBe('nowrap')
+  })
 })

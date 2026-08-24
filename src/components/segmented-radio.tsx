@@ -49,8 +49,11 @@ export function SegmentedRadio<TValue extends string | number>({
               key={option.value}
               htmlFor={`${id}-${index}`}
               className={[
-                'relative flex flex-1 cursor-pointer items-center justify-center gap-1.5',
-                'min-h-(--touch-min) px-3 py-2 text-base font-semibold',
+                'relative flex flex-1 cursor-pointer items-center justify-center gap-1',
+                // Nowrap with tight padding: at 390px each segment gets about
+                // 106px, and the selected one spends 17 of them on its tick.
+                'min-h-(--touch-min) px-2 py-2 text-base font-semibold whitespace-nowrap',
+                'sm:gap-1.5 sm:px-3',
                 'has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-focus has-[:focus-visible]:-outline-offset-3',
                 index < options.length - 1
                   ? 'border-r border-border-strong'
