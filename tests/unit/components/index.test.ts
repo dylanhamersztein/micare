@@ -14,6 +14,8 @@ const PRIMITIVES = [
   'PractitionerResultCard',
   'SegmentedRadio',
   'SignupOutcome',
+  'SiteFooter',
+  'SiteHeader',
   'StatusReadout',
   'SubscriptionBadge',
   'Select',
@@ -21,6 +23,7 @@ const PRIMITIVES = [
   'Textarea',
   'VerificationBadge',
   'VerificationWait',
+  'Wordmark',
 ]
 
 describe('the components barrel', () => {

@@ -31,6 +31,10 @@ const BORDERS: Readonly<Record<string, string>> = {
   border: '#e2dbd0',
   hairline: '#efe9df', // rules inside a card
   'border-strong': '#8f8574', // 3.4:1 on surface — field outlines, SC 1.4.11
+  // The two rules the shell draws on surface-deep, where none of the warm
+  // borders above are visible at all.
+  'hairline-invert': '#445c58', // rules inside the footer
+  'outline-invert': '#8e9a94', // 5.1:1 on surface-deep — control outlines
 }
 
 const ACTION: Readonly<Record<string, string>> = {
