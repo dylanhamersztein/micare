@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { profileEditorInputSchema } from '../../src/profile-editor-input'
+import {
+  PROFILE_FIELD_LIMITS,
+  profileEditorInputSchema,
+} from '../../src/profile-editor-input'
 
 const VALID_BASE = {
   practiceName: 'Smith Optical',
@@ -91,4 +94,40 @@ describe('profileEditorInputSchema', () => {
     expect(result.success).toBe(false)
     expect(result.error?.issues[0].path).toEqual(['bookingLinkUrl'])
   })
+})
+
+// The editor states each limit in its help text. Stating it is only honest if
+// it is the same number the schema enforces, so both read it from here.
+describe('PROFILE_FIELD_LIMITS', () => {
+  const LIMITED = [
+    ['practiceName', 'practiceName'],
+    ['practiceAddressLine1', 'practiceAddressLine1'],
+    ['practiceAddressLine2', 'practiceAddressLine2'],
+    ['practiceAddressLine3', 'practiceAddressLine3'],
+    ['practiceTown', 'practiceTown'],
+    ['bio', 'bio'],
+    ['accessibilityNotes', 'accessibilityNotes'],
+  ] as const
+
+  for (const [field] of LIMITED) {
+    const limit = PROFILE_FIELD_LIMITS[field]
+
+    it(`accepts ${field} at its stated ${limit}-character limit`, () => {
+      expect(
+        profileEditorInputSchema.safeParse({
+          ...VALID_BASE,
+          [field]: 'a'.repeat(limit),
+        }).success,
+      ).toBe(true)
+    })
+
+    it(`rejects ${field} one character over its stated limit`, () => {
+      expect(
+        profileEditorInputSchema.safeParse({
+          ...VALID_BASE,
+          [field]: 'a'.repeat(limit + 1),
+        }).success,
+      ).toBe(false)
+    })
+  }
 })

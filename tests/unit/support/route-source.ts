@@ -52,8 +52,15 @@ const STOCK_PALETTE_UTILITY = String.raw`\b(?:bg|text|border|decoration|divide|o
 /** A route the design system has claimed, and what must survive the claiming. */
 export type GuardedRoute = {
   file: string
-  /** Every marker the E2E suite navigates this route by. */
+  /** Every marker the E2E suite navigates this route by, typed out in full. */
   markers: ReadonlyArray<string>
+  /**
+   * Markers the route builds from a template — seven opening-hours rows are
+   * one expression, not seven attributes. The template is all the guard can
+   * see, so the template is what it holds onto, with one marker it produces
+   * named for the reader.
+   */
+  templatedMarkers?: ReadonlyArray<{ example: string; template: string }>
   /** Whether the route carries a form that must announce its hydration. */
   hydrates?: true
 }
@@ -70,22 +77,31 @@ export function stockPaletteUtilities(source: string): Array<string> {
 
 /** Runs both guards over every route in a slice's migration. */
 export function describeRouteGuards(routes: ReadonlyArray<GuardedRoute>): void {
-  describe.each(routes)('$file', ({ file, markers, hydrates }) => {
-    it('reaches for MiCare tokens, never the stock Tailwind palette', async () => {
-      expect(stockPaletteUtilities(await routeSource(file))).toEqual([])
-    })
-
-    for (const marker of markers) {
-      it(`still carries the ${marker} marker the E2E suite navigates by`, async () => {
-        expect(await routeSource(file)).toContain(`data-testid="${marker}"`)
+  describe.each(routes)(
+    '$file',
+    ({ file, markers, templatedMarkers, hydrates }) => {
+      it('reaches for MiCare tokens, never the stock Tailwind palette', async () => {
+        expect(stockPaletteUtilities(await routeSource(file))).toEqual([])
       })
-    }
 
-    it.runIf(hydrates)(
-      'keeps the hydration marker that stops a click racing the native submit',
-      async () => {
-        expect(await routeSource(file)).toContain('data-hydrated=')
-      },
-    )
-  })
+      for (const marker of markers) {
+        it(`still carries the ${marker} marker the E2E suite navigates by`, async () => {
+          expect(await routeSource(file)).toContain(`data-testid="${marker}"`)
+        })
+      }
+
+      for (const { example, template } of templatedMarkers ?? []) {
+        it(`still builds the ${example} marker the E2E suite navigates by`, async () => {
+          expect(await routeSource(file)).toContain(template)
+        })
+      }
+
+      it.runIf(hydrates)(
+        'keeps the hydration marker that stops a click racing the native submit',
+        async () => {
+          expect(await routeSource(file)).toContain('data-hydrated=')
+        },
+      )
+    },
+  )
 }
