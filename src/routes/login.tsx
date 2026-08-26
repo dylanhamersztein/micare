@@ -1,7 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { z } from 'zod'
 
+import {
+  Alert,
+  Button,
+  Field,
+  STANDALONE_LINK_CLASSES,
+  TEXT_LINK_CLASSES,
+  TextInput,
+} from '#/components'
 import { requestMagicLink } from '../server/auth'
 
 const searchSchema = z.object({
@@ -49,88 +57,102 @@ function LoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-md p-8">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold">Sign in to MiCare</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Enter your email and we&apos;ll send you a one-time sign-in link. No
-          password needed.
+    <main className="mx-auto w-full max-w-md px-4 py-10 sm:px-6 sm:py-12">
+      <header>
+        <Link to="/" className={STANDALONE_LINK_CLASSES}>
+          ← MiCare home
+        </Link>
+        <h1 className="mt-3 font-serif text-h1 font-medium tracking-tightest text-balance">
+          Sign in to MiCare
+        </h1>
+        <p className="mt-2 text-text-body">
+          Enter your email and we will send you a one-time sign-in link. There
+          is no password to remember.
         </p>
       </header>
 
       {error === 'invalid-link' && (
-        <div
-          className="mb-4 rounded border border-red-300 bg-red-50 p-3 text-sm"
-          data-testid="login-link-error"
-        >
-          That sign-in link is invalid or has expired. Request a new one below.
+        <div className="mt-6" data-testid="login-link-error">
+          <Alert tone="warning" title="That link no longer works">
+            Sign-in links expire, and each one can only be used once. Request a
+            new one below.
+          </Alert>
         </div>
       )}
 
       {state.kind === 'sent' ? (
-        <div
-          className="rounded border border-green-300 bg-green-50 p-3 text-sm"
-          data-testid="login-sent"
-        >
-          Check your email for a sign-in link.
+        <div className="mt-6" data-testid="login-sent">
+          <Alert tone="success" title="Check your email">
+            If that address belongs to a MiCare account, a sign-in link is on
+            its way. It works once, and only for a short while.
+          </Alert>
         </div>
       ) : (
         <form
           onSubmit={onSubmit}
-          className="flex flex-col gap-4"
+          className="mt-6 flex flex-col gap-5 rounded-md border border-border bg-surface-raised p-5 sm:p-6"
           data-testid="login-form"
           data-hydrated={hydrated ? 'true' : undefined}
         >
-          <label className="flex flex-col text-sm">
-            Email
-            <input
+          <Field
+            label="Email address"
+            help="The address you signed up with."
+            requirement="required"
+            error={
+              state.kind === 'error' ? (
+                <span data-testid="login-invalid">{state.message}</span>
+              ) : undefined
+            }
+          >
+            <TextInput
               type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="you@example.co.uk"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 rounded border px-2 py-1"
               data-testid="login-email"
             />
-          </label>
+          </Field>
 
-          {state.kind === 'error' && (
-            <p className="text-sm text-red-600" data-testid="login-invalid">
-              {state.message}
-            </p>
-          )}
-
-          <button
+          <Button
             type="submit"
-            disabled={state.kind === 'submitting'}
-            className="self-start rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+            size="lg"
+            loading={state.kind === 'submitting'}
+            loadingLabel="Sending…"
             data-testid="login-submit"
           >
-            {state.kind === 'submitting' ? 'Sending…' : 'Email me a link'}
-          </button>
+            Email me a link
+          </Button>
         </form>
       )}
 
       {state.kind === 'mock' && (
-        <div
-          className="mt-4 rounded border border-blue-300 bg-blue-50 p-3 text-sm"
-          data-testid="login-mock-panel"
-        >
-          <p className="mb-2 font-semibold">Dev mode (AUTH_MOCK=true)</p>
-          <p>
+        <div className="mt-6" data-testid="login-mock-panel">
+          <Alert tone="info" title="Dev mode (AUTH_MOCK=true)">
             No email was sent. Use your one-time sign-in link:{' '}
             {/* Plain anchor (not router Link) so it triggers a full-page
                 navigation to the server-route handler, exactly like a real
                 emailed link. */}
             <a
               href={state.magicLinkPath}
-              className="underline"
+              className={TEXT_LINK_CLASSES}
               data-testid="dev-magic-link"
             >
               Sign in
             </a>
-          </p>
+          </Alert>
         </div>
       )}
-    </div>
+
+      <p className="mt-6 text-meta text-text-muted">
+        Not listed yet?{' '}
+        <Link to="/signup" className={TEXT_LINK_CLASSES}>
+          List your Practice
+        </Link>
+        .
+      </p>
+    </main>
   )
 }

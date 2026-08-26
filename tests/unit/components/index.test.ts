@@ -11,10 +11,12 @@ const PRIMITIVES = [
   'NoticePage',
   'PractitionerResultCard',
   'SegmentedRadio',
+  'SignupOutcome',
   'Select',
   'TextInput',
   'Textarea',
   'VerificationBadge',
+  'VerificationWait',
 ]
 
 describe('the components barrel', () => {
