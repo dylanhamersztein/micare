@@ -2,6 +2,16 @@ import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { z } from 'zod'
 
+import {
+  Alert,
+  Button,
+  Field,
+  PractitionerResultCard,
+  SegmentedRadio,
+  STANDALONE_LINK_CLASSES,
+  TEXT_LINK_CLASSES,
+  TextInput,
+} from '#/components'
 import { ALLOWED_RADII_MILES } from '../search-input'
 import type { AllowedRadiusMiles } from '../search-input'
 import { notifyInputSchema } from '../notify-input'
@@ -40,6 +50,14 @@ export const Route = createFileRoute('/search')({
   },
   component: SearchPage,
 })
+
+const RADIUS_OPTIONS = ALLOWED_RADII_MILES.map((miles) => ({
+  value: miles,
+  label: `${miles} miles`,
+}))
+
+const EYEBROW_CLASSES =
+  'text-label font-bold tracking-caps text-text-muted uppercase'
 
 // The empty-results CTA. A search that found nobody is the one moment a
 // consumer is provably interested and provably unserved, so it is the only
@@ -105,18 +123,20 @@ function NotifyMeForm({ searchedFor }: { searchedFor: string }) {
 
   if (state.kind === 'submitted') {
     return (
-      <div className="mt-6 rounded border p-4" data-testid="notify-submitted">
-        <h2 className="font-semibold">Check your inbox</h2>
-        <p className="mt-1 text-sm text-gray-700">
+      <div
+        className="rounded-md border border-border bg-surface-sand p-6"
+        data-testid="notify-submitted"
+      >
+        <Alert tone="info" title="Check your inbox">
           We&apos;ve sent you a link to confirm. We&apos;ll only email you once
           a verified Practitioner lists near {postcode}, and every email has a
           one-click unsubscribe.
-        </p>
+        </Alert>
         {state.confirmPath && (
-          <p className="mt-3 text-sm">
+          <p className="mt-4">
             <a
               href={state.confirmPath}
-              className="underline"
+              className={TEXT_LINK_CLASSES}
               data-testid="notify-dev-confirm"
             >
               Dev: confirm without email
@@ -128,55 +148,116 @@ function NotifyMeForm({ searchedFor }: { searchedFor: string }) {
   }
 
   return (
-    <div className="mt-6 rounded border p-4">
-      <h2 className="font-semibold">Tell me when someone lists here</h2>
-      <p className="mt-1 text-sm text-gray-700">
+    // Sand rather than white: the capture is the point of this screen, not a
+    // form bolted under an apology, so it is the one block that changes colour.
+    <div className="rounded-md border border-border bg-surface-sand p-6">
+      <h2 className="font-serif text-h2 font-semibold">
+        Tell me when someone lists here
+      </h2>
+      <p className="mt-1.5 text-text-body">
         Leave your email and we&apos;ll let you know when a verified
         Practitioner joins near you.
       </p>
       <form
         onSubmit={onSubmit}
-        className="mt-3 flex flex-wrap items-end gap-3"
+        className="mt-5 flex flex-col gap-4"
         data-testid="notify-form"
         data-hydrated={hydrated ? 'true' : undefined}
       >
-        <label className="flex flex-col text-sm">
-          Email
-          <input
+        <Field
+          label="Email address"
+          help="We send one message to confirm it, then nothing until there is news."
+          requirement="required"
+        >
+          <TextInput
             type="email"
             name="notify-email"
+            autoComplete="email"
+            placeholder="you@example.co.uk"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 rounded border px-2 py-1"
             data-testid="notify-email"
           />
-        </label>
-        <label className="flex flex-col text-sm">
-          Postcode
-          <input
-            type="text"
+        </Field>
+        <Field label="Postcode" requirement="required">
+          <TextInput
             name="notify-postcode"
+            autoComplete="postal-code"
+            className="tabular-nums"
             value={postcode}
             onChange={(e) => setPostcode(e.target.value)}
             required
-            className="mt-1 rounded border px-2 py-1"
             data-testid="notify-postcode"
           />
-        </label>
-        <button
+        </Field>
+        <Button
           type="submit"
-          disabled={state.kind === 'submitting'}
-          className="rounded bg-black px-3 py-1 text-white disabled:opacity-50"
+          size="lg"
+          loading={state.kind === 'submitting'}
+          loadingLabel="Sending…"
           data-testid="notify-submit"
         >
-          {state.kind === 'submitting' ? 'Sending…' : 'Notify me'}
-        </button>
+          Notify me
+        </Button>
       </form>
+      {/* ADR-0012: the double opt-in and the one-click unsubscribe are the
+          promise, not filler — they stay on the screen that asks. */}
+      <p className="mt-4 text-meta text-text-body">
+        A confirmation email arrives in a minute or two. Until you click the
+        link in it we hold nothing. No newsletter, no partners, unsubscribe in
+        one click.
+      </p>
       {state.kind === 'error' && (
-        <p className="mt-2 text-sm text-red-600" data-testid="notify-error">
-          {state.message}
-        </p>
+        <div className="mt-4" data-testid="notify-error">
+          <Alert tone="error" title={state.message} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+// An empty register page is evidence, not an apology: nothing within the
+// radius means exactly one thing, and saying so plainly is the proposition.
+function EmptyResults({
+  searchedFor,
+  radiusMiles,
+}: {
+  searchedFor: string
+  radiusMiles: AllowedRadiusMiles
+}) {
+  const wider = ALLOWED_RADII_MILES.filter((miles) => miles > radiusMiles)
+
+  return (
+    <div data-testid="search-empty">
+      <p className={EYEBROW_CLASSES}>
+        0 results · {searchedFor} · within {radiusMiles} miles
+      </p>
+      <h2 className="mt-3 font-serif text-h1 font-medium tracking-tightest text-balance">
+        No verified Practitioner within {radiusMiles} miles of {searchedFor} —
+        yet.
+      </h2>
+      <p className="mt-4 max-w-[56ch] text-text-body">
+        We only list Practitioners we have checked against the General Optical
+        Council register, and we would rather show you nothing than show you
+        someone we cannot vouch for.
+      </p>
+      <div className="mt-7">
+        <NotifyMeForm searchedFor={searchedFor} />
+      </div>
+      {wider.length > 0 && (
+        <div className="mt-7 flex flex-wrap gap-x-7 gap-y-1 border-t border-hairline pt-5">
+          {wider.map((miles) => (
+            <Link
+              key={miles}
+              to="/search"
+              search={{ q: searchedFor, radius: miles }}
+              className={STANDALONE_LINK_CLASSES}
+            >
+              Search {miles} miles instead
+            </Link>
+          ))}
+        </div>
       )}
     </div>
   )
@@ -198,124 +279,104 @@ function SearchPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl p-8">
-      <header className="mb-6">
-        <Link to="/" className="text-sm underline">
+    <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+      <header>
+        <Link to="/" className={TEXT_LINK_CLASSES}>
           ← MiCare home
         </Link>
-        <h1 className="mt-2 text-3xl font-bold">Find a Practitioner</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="mt-3 font-serif text-h1 font-medium tracking-tightest">
+          Find a Practitioner
+        </h1>
+        <p className="mt-2 max-w-[60ch] text-text-body">
           Enter a UK postcode or a city/town name and a radius to see verified
           Practitioners near you, ordered by distance from your search.
         </p>
       </header>
 
+      {/* The controls stay on the page with what was searched still in them:
+          a consumer widening a radius should never retype their postcode. */}
       <form
         onSubmit={onSubmit}
-        className="flex flex-wrap items-end gap-3"
+        className="mt-7 flex flex-col gap-5 rounded-md border border-border bg-surface-raised p-5 sm:p-6"
         data-testid="search-form"
       >
-        <label className="flex flex-col text-sm">
-          Postcode or city
-          <input
-            type="text"
+        <Field label="Postcode or city" requirement="required">
+          <TextInput
+            size="search"
             name="q"
+            autoComplete="postal-code"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             required
-            className="mt-1 rounded border px-2 py-1"
             data-testid="search-query"
           />
-        </label>
-        <label className="flex flex-col text-sm">
-          Radius
-          <select
+        </Field>
+        <div data-testid="search-radius">
+          <SegmentedRadio
+            legend="Search radius"
             name="radius"
+            options={RADIUS_OPTIONS}
             value={radius}
-            onChange={(e) =>
-              setRadius(Number(e.target.value) as AllowedRadiusMiles)
-            }
-            className="mt-1 rounded border px-2 py-1"
-            data-testid="search-radius"
-          >
-            {ALLOWED_RADII_MILES.map((r) => (
-              <option key={r} value={r}>
-                {r} miles
-              </option>
-            ))}
-          </select>
-        </label>
-        <button
+            onChange={setRadius}
+          />
+        </div>
+        <Button
           type="submit"
-          className="rounded bg-black px-3 py-1 text-white"
+          size="lg"
+          className="w-full sm:w-auto sm:self-start"
           data-testid="search-submit"
         >
           Search
-        </button>
+        </Button>
       </form>
 
-      <section className="mt-8" data-testid="search-results">
+      <section className="mt-9" data-testid="search-results">
         {loaderData.kind === 'idle' && (
-          <p className="text-sm text-gray-600">
+          <p className="text-text-body">
             Enter a postcode or city above to start searching.
           </p>
         )}
         {loaderData.kind === 'location-not-found' && (
-          <p className="text-sm text-red-600" data-testid="search-no-location">
-            We couldn&apos;t find that location. Please check the spelling and
-            try again.
-          </p>
+          <div data-testid="search-no-location">
+            <Alert tone="warning" title="We couldn't find that location">
+              Please check the spelling and try again.
+            </Alert>
+          </div>
         )}
         {loaderData.kind === 'error' && (
-          <p className="text-sm text-red-600" data-testid="search-error">
-            Something went wrong while searching. Please try again.
-          </p>
+          <div data-testid="search-error">
+            <Alert tone="error" title="We could not load these results">
+              Something went wrong while searching. Please try again.
+            </Alert>
+          </div>
         )}
         {loaderData.kind === 'ok' && loaderData.results.length === 0 && (
-          <>
-            <p className="text-sm text-gray-600" data-testid="search-empty">
-              No verified Practitioners within {params.radius} miles of{' '}
-              {params.q}.
-            </p>
-            <NotifyMeForm searchedFor={params.q ?? ''} />
-          </>
+          <EmptyResults
+            searchedFor={params.q ?? ''}
+            radiusMiles={params.radius ?? 5}
+          />
         )}
         {loaderData.kind === 'ok' && loaderData.results.length > 0 && (
-          <ul className="space-y-4">
-            {loaderData.results.map((practitioner) => (
-              <li
-                key={practitioner.id}
-                className="rounded border p-4"
-                data-testid={`search-result-${practitioner.shortId}`}
-              >
-                <h2 className="text-lg font-semibold">
-                  {practitioner.fullName}
-                </h2>
-                {practitioner.practiceName && (
-                  <p className="text-sm">{practitioner.practiceName}</p>
-                )}
-                <p className="text-sm text-gray-700">
-                  {[
-                    practitioner.practiceAddressLine1,
-                    practitioner.practiceTown,
-                    practitioner.practicePostcode,
-                  ]
-                    .filter(Boolean)
-                    .join(', ')}
-                </p>
-                <p className="mt-1 text-sm">
-                  {practitioner.distanceMiles.toFixed(1)} miles away
-                </p>
-                <p className="text-sm">
-                  {practitioner.acceptingNewPatients
-                    ? 'Accepting new patients'
-                    : 'Not currently accepting new patients'}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <>
+            {/* Stated once for the whole list, which is why no row repeats it. */}
+            <p className={EYEBROW_CLASSES}>
+              {loaderData.results.length}{' '}
+              {loaderData.results.length === 1 ? 'result' : 'results'} ·{' '}
+              {params.q} · within {params.radius} miles · all listings
+              re-checked weekly
+            </p>
+            <ul className="mt-3 overflow-hidden rounded-md border border-border bg-surface-raised">
+              {loaderData.results.map((practitioner) => (
+                <PractitionerResultCard
+                  key={practitioner.id}
+                  result={practitioner}
+                  data-testid={`search-result-${practitioner.shortId}`}
+                />
+              ))}
+            </ul>
+          </>
         )}
       </section>
-    </div>
+    </main>
   )
 }

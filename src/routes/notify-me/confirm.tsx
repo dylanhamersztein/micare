@@ -6,6 +6,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 
+import { NoticePage, STANDALONE_LINK_CLASSES } from '#/components'
 import { confirmNotifyMe } from '../../server/notify'
 
 const searchSchema = z.object({ token: z.string().trim().min(1).optional() })
@@ -25,33 +26,43 @@ function NotifyConfirmPage() {
 
   if (outcome.kind !== 'confirmed') {
     return (
-      <div className="mx-auto max-w-2xl p-8" data-testid="notify-invalid">
-        <h1 className="text-2xl font-bold">This link didn&apos;t work</h1>
-        <p className="mt-2 text-gray-700">
+      <NoticePage
+        tone="problem"
+        eyebrow="Link not recognised"
+        title="This link didn't work"
+        data-testid="notify-invalid"
+      >
+        <p>
           It may have been mistyped, or it may belong to a subscription that no
           longer exists. Search again to sign up.
         </p>
-        <p className="mt-4">
-          <Link to="/search" className="underline">
+        <p>
+          <Link to="/search" className={STANDALONE_LINK_CLASSES}>
             Back to search
           </Link>
         </p>
-      </div>
+      </NoticePage>
     )
   }
 
   return (
-    <div className="mx-auto max-w-2xl p-8" data-testid="notify-confirmed">
-      <h1 className="text-2xl font-bold">You&apos;re on the list</h1>
-      <p className="mt-2 text-gray-700">
+    <NoticePage
+      tone="affirm"
+      eyebrow="Confirmed"
+      title="You're on the list"
+      data-testid="notify-confirmed"
+    >
+      {/* ADR-0012: the one-click unsubscribe promise is load-bearing, so it is
+          restated at the moment the subscription becomes real. */}
+      <p>
         We&apos;ll email you when a verified Practitioner lists near your
         postcode. Every email we send has a one-click unsubscribe link.
       </p>
-      <p className="mt-4">
-        <Link to="/search" className="underline">
+      <p>
+        <Link to="/search" className={STANDALONE_LINK_CLASSES}>
           Back to search
         </Link>
       </p>
-    </div>
+    </NoticePage>
   )
 }

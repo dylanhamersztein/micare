@@ -25,7 +25,7 @@ const DATE_FORMAT = new Intl.DateTimeFormat('en-GB', {
 type StatusPlate = {
   /** The one word the inline badge shows. */
   word: string
-  headline: (profession: string) => string
+  headline: (profession: string | undefined) => string
   /** The dated line on the plaque, or its dateless replacement. */
   record: (date: string | undefined) => string
   /** The closing sentence of the label. */
@@ -41,7 +41,8 @@ const STATUS_PLATE: Readonly<Record<VerificationStatus, StatusPlate>> = {
   verified: {
     word: 'Verified',
     // Never a hardcoded word: the plaque names the Profession it verified.
-    headline: (profession) => `Verified ${profession}`,
+    headline: (profession) =>
+      profession === undefined ? 'Verified' : `Verified ${profession}`,
     record: (date) =>
       date === undefined
         ? 'Checked weekly · '
@@ -108,8 +109,13 @@ export type VerificationBadgeVariant = 'plaque' | 'inline'
 export type VerificationBadgeProps = {
   status: VerificationStatus
   /** Interpolated into the verified headline — never a hardcoded word. */
-  profession: string
-  registrationNumber: string
+  profession?: string
+  /**
+   * The evidence, where the payload rendering the badge carries it. The public
+   * search result and profile do not, so the badge omits the citation rather
+   * than leaving a blank where a number belongs.
+   */
+  registrationNumber?: string
   /** Absent on a record imported before checks began. */
   lastCheckedAt?: Date
   variant?: VerificationBadgeVariant
@@ -128,7 +134,14 @@ export function VerificationBadge({
   const plate = STATUS_PLATE[status]
   const date =
     lastCheckedAt === undefined ? undefined : DATE_FORMAT.format(lastCheckedAt)
-  const ariaLabel = `Verification: ${status}. ${REGISTER} ${registrationNumber}. ${plate.cadence(date)}`
+  // The label is composed from what the badge actually holds: naming a
+  // registration number it was never given is the same fabrication as naming a
+  // check date it does not have.
+  const cited =
+    registrationNumber === undefined
+      ? REGISTER
+      : `${REGISTER} ${registrationNumber}`
+  const ariaLabel = `Verification: ${status}. ${cited}. ${plate.cadence(date)}`
   const { Glyph } = plate
 
   // In a list the badge drops the date — the header states "all listings
@@ -162,10 +175,15 @@ export function VerificationBadge({
       <div>
         <p className="text-title font-bold">{plate.headline(profession)}</p>
         <p className="text-meta text-text-muted">
-          {REGISTER} · reg.{' '}
-          <span className="font-semibold tabular-nums text-text">
-            {registrationNumber}
-          </span>
+          {REGISTER}
+          {registrationNumber !== undefined && (
+            <>
+              {' · reg. '}
+              <span className="font-semibold tabular-nums text-text">
+                {registrationNumber}
+              </span>
+            </>
+          )}
         </p>
         <p className="text-meta tabular-nums text-text-muted">
           {plate.record(date)}

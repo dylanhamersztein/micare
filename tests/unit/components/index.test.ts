@@ -8,6 +8,8 @@ const PRIMITIVES = [
   'Alert',
   'Button',
   'Field',
+  'NoticePage',
+  'PractitionerResultCard',
   'SegmentedRadio',
   'Select',
   'TextInput',

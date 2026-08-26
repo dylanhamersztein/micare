@@ -6,6 +6,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 
+import { NoticePage, STANDALONE_LINK_CLASSES } from '#/components'
 import { unsubscribeFromNotifyMe } from '../../server/notify'
 
 const searchSchema = z.object({ token: z.string().trim().min(1).optional() })
@@ -25,34 +26,42 @@ function NotifyUnsubscribePage() {
 
   if (outcome.kind !== 'unsubscribed') {
     return (
-      <div className="mx-auto max-w-2xl p-8" data-testid="notify-invalid">
-        <h1 className="text-2xl font-bold">This link didn&apos;t work</h1>
-        <p className="mt-2 text-gray-700">
+      <NoticePage
+        tone="problem"
+        eyebrow="Link not recognised"
+        title="This link didn't work"
+        data-testid="notify-invalid"
+      >
+        <p>
           It may have been mistyped, or it may belong to a subscription that no
           longer exists. If you keep receiving emails, reply to one and
           we&apos;ll remove you by hand.
         </p>
-        <p className="mt-4">
-          <Link to="/search" className="underline">
+        <p>
+          <Link to="/search" className={STANDALONE_LINK_CLASSES}>
             Back to search
           </Link>
         </p>
-      </div>
+      </NoticePage>
     )
   }
 
   return (
-    <div className="mx-auto max-w-2xl p-8" data-testid="notify-unsubscribed">
-      <h1 className="text-2xl font-bold">Unsubscribed</h1>
-      <p className="mt-2 text-gray-700">
+    <NoticePage
+      tone="affirm"
+      eyebrow="Unsubscribed"
+      title="You're off the list"
+      data-testid="notify-unsubscribed"
+    >
+      <p>
         You won&apos;t hear from MiCare about this postcode again. Nothing else
         is needed.
       </p>
-      <p className="mt-4">
-        <Link to="/search" className="underline">
+      <p>
+        <Link to="/search" className={STANDALONE_LINK_CLASSES}>
           Back to search
         </Link>
       </p>
-    </div>
+    </NoticePage>
   )
 }
