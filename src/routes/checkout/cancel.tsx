@@ -1,22 +1,29 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 
+import { buttonClasses, NoticePage } from '#/components'
+
 export const Route = createFileRoute('/checkout/cancel')({
   component: CheckoutCancelPage,
 })
 
 function CheckoutCancelPage() {
   return (
-    <div className="mx-auto max-w-2xl p-8" data-testid="checkout-cancel">
-      <h1 className="text-2xl font-bold">Payment cancelled</h1>
-      <p className="mt-2 text-gray-700">
-        You didn&apos;t finish payment, so we haven&apos;t set up your
-        subscription. You can pick up where you left off from the signup page.
+    <NoticePage
+      tone="problem"
+      eyebrow="Payment cancelled"
+      title="Nothing has been charged"
+      data-testid="checkout-cancel"
+    >
+      <p>
+        You left the payment step before it finished, so no subscription has
+        started and your card has not been charged. Your registration check
+        still stands — you can pick up where you left off whenever you like.
       </p>
-      <p className="mt-4">
-        <Link to="/signup" className="rounded bg-black px-4 py-2 text-white">
+      <p>
+        <Link to="/signup" className={buttonClasses({ size: 'lg' })}>
           Back to signup
         </Link>
       </p>
-    </div>
+    </NoticePage>
   )
 }

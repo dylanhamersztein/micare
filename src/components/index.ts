@@ -10,6 +10,8 @@ export type { ButtonProps, ButtonSize, ButtonVariant } from './button'
 export { Field, useFieldWiring } from './field'
 export type { FieldProps, FieldRequirement, FieldWiring } from './field'
 
+export { withUnbrokenFigures } from './figures'
+
 export { STANDALONE_LINK_CLASSES, TEXT_LINK_CLASSES } from './link'
 
 export { NoticePage } from './notice-page'
@@ -27,6 +29,9 @@ export type {
 export { Select } from './select'
 export type { SelectProps } from './select'
 
+export { SignupOutcome } from './signup-outcome'
+export type { SignupOutcomeProps } from './signup-outcome'
+
 export { TextInput } from './text-input'
 export type { TextInputProps, TextInputSize } from './text-input'
 
@@ -38,3 +43,6 @@ export type {
   VerificationBadgeProps,
   VerificationBadgeVariant,
 } from './verification-badge'
+
+export { VerificationWait } from './verification-wait'
+export type { VerificationWaitProps } from './verification-wait'

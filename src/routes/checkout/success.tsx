@@ -1,25 +1,32 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 
+import { buttonClasses, NoticePage } from '#/components'
+
 export const Route = createFileRoute('/checkout/success')({
   component: CheckoutSuccessPage,
 })
 
 function CheckoutSuccessPage() {
   return (
-    <div className="mx-auto max-w-2xl p-8" data-testid="checkout-success">
-      <h1 className="text-2xl font-bold">Payment received</h1>
-      <p className="mt-2 text-gray-700">
-        Thanks — your subscription is being activated. Your profile editor will
-        be ready in a moment.
+    <NoticePage
+      tone="affirm"
+      eyebrow="Payment received"
+      title="Your subscription is starting"
+      data-testid="checkout-success"
+    >
+      <p>
+        Thanks — we are activating your £29-a-month subscription now. The next
+        step is your profile: your photo, your Practice details and your opening
+        hours. Nothing appears in search until you have filled it in.
       </p>
-      <p className="mt-4">
+      <p>
         <Link
           to="/practitioner/profile-editor"
-          className="rounded bg-black px-4 py-2 text-white"
+          className={buttonClasses({ size: 'lg' })}
         >
           Continue to your profile editor
         </Link>
       </p>
-    </div>
+    </NoticePage>
   )
 }

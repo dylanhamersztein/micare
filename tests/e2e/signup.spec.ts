@@ -44,7 +44,11 @@ test('an unreadable register result shows the pending panel', async ({
   await fillAndSubmit(page, '99-000003')
 
   await expect(page.getByTestId('signup-pending')).toBeVisible()
-  await expect(page.getByTestId('signup-pending')).toContainText('follow up')
+  // ADR-0019: the pending copy names the operator re-run and promises no
+  // background retry, because there is none.
+  await expect(page.getByTestId('signup-pending')).toContainText(
+    'Nothing retries in the background',
+  )
 })
 
 test('an invalid GOC number is rejected before submitting', async ({

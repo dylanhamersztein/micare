@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
 import { VerificationBadge } from '../../../src/components/verification-badge'
+import { compileStylesFor, declarationsFor } from '../support/rendered-styles'
+
 import type { VerificationStatus } from '../../../src/visibility'
 
 const STATUSES: ReadonlyArray<VerificationStatus> = [
@@ -302,5 +304,21 @@ describe('VerificationBadge', () => {
 
       expect(new Set(glyphs).size).toBe(STATUSES.length)
     })
+  })
+})
+
+describe('the cited registration number', () => {
+  // At 390px the plaque's second line is narrow enough for the browser to take
+  // the break opportunity a registration number offers at its hyphen, and
+  // `reg. 01-` / `31842` reads as two numbers rather than the one it cites.
+  it('stays on one line, hyphen and all', async () => {
+    render(
+      <VerificationBadge status="verified" registrationNumber="01-31842" />,
+    )
+
+    const number = screen.getByText('01-31842')
+    const css = await compileStylesFor(number)
+
+    expect(declarationsFor(css, number)['white-space']).toBe('nowrap')
   })
 })

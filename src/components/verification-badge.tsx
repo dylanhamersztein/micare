@@ -179,7 +179,10 @@ export function VerificationBadge({
           {registrationNumber !== undefined && (
             <>
               {' · reg. '}
-              <span className="font-semibold tabular-nums text-text">
+              {/* A registration number offers a break at its hyphen, and at
+                  390px the plaque's second line is narrow enough for the
+                  browser to take it: `reg. 01-` / `31842` cites two numbers. */}
+              <span className="font-semibold whitespace-nowrap tabular-nums text-text">
                 {registrationNumber}
               </span>
             </>
