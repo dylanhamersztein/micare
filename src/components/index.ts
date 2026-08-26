@@ -38,6 +38,12 @@ export type { SelectProps } from './select'
 export { SignupOutcome } from './signup-outcome'
 export type { SignupOutcomeProps } from './signup-outcome'
 
+export { SiteFooter } from './site-footer'
+export type { LegalLink, SiteFooterProps } from './site-footer'
+
+export { SiteHeader } from './site-header'
+export type { SiteHeaderProps } from './site-header'
+
 export { StatusReadout } from './status-readout'
 export type { StatusReadoutProps } from './status-readout'
 
@@ -58,3 +64,5 @@ export type {
 
 export { VerificationWait } from './verification-wait'
 export type { VerificationWaitProps } from './verification-wait'
+
+export { Wordmark } from './wordmark'

@@ -33,6 +33,7 @@
 
   --tracking-tightest: -0.02em;
   --tracking-caps: 0.12em;
+  --tracking-wordmark: -0.01em; /* the mark only, at every size it is set */
 
   /* ── Surfaces ─────────────────────────── */
   --color-surface: #fbf8f3; /* warm paper */
@@ -53,6 +54,10 @@
   --color-border: #e2dbd0;
   --color-hairline: #efe9df; /* rules inside a card */
   --color-border-strong: #8f8574; /* 3.4:1 on surface — field outlines, SC 1.4.11 */
+  /* The shell's header and footer sit on surface-deep, where every border
+     above disappears. These two are the same two jobs, inverted. */
+  --color-hairline-invert: #445c58; /* rules inside the footer */
+  --color-outline-invert: #8e9a94; /* 5.1:1 on surface-deep — control outlines */
 
   /* ── Action ───────────────────────────── */
   --color-primary: #0d4a45; /* white on it: 10.1:1 */

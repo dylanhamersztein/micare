@@ -58,6 +58,10 @@ function DashboardPage() {
 
   async function onSignOut() {
     await signOut()
+    // The shell reads the session in the root loader, which a client-side
+    // navigation does not re-run — without this the header would keep offering
+    // a dashboard the Practitioner has just signed out of.
+    await router.invalidate()
     await router.navigate({ to: '/login' })
   }
 
