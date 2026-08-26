@@ -5,6 +5,8 @@ import {
   MAX_BYTES,
   MAX_DIMENSION,
   MIN_DIMENSION,
+  PHOTO_CONSTRAINTS_HELP,
+  PHOTO_SUBJECT_HELP,
   isAllowedMimeType,
   isWithinByteSize,
   isWithinDimensions,
@@ -74,5 +76,38 @@ describe('isWithinDimensions', () => {
   it('rejects a too-large photo on either axis', () => {
     expect(isWithinDimensions({ width: 4001, height: 400 })).toBe(false)
     expect(isWithinDimensions({ width: 400, height: 4001 })).toBe(false)
+  })
+})
+
+// The editor's photo guidance is the policy stated in words. It is derived
+// from the constants above rather than typed out beside them, so a limit can
+// never be raised in code and left wrong on the screen.
+describe('PHOTO_CONSTRAINTS_HELP', () => {
+  it('names every format the policy allows, in the words a Practitioner uses', () => {
+    expect(PHOTO_CONSTRAINTS_HELP).toContain('JPEG, PNG or WebP')
+  })
+
+  it('states the size cap the policy enforces', () => {
+    expect(PHOTO_CONSTRAINTS_HELP).toContain(
+      `up to ${MAX_BYTES / 1024 / 1024} MB`,
+    )
+  })
+
+  it('states both dimension bounds the policy enforces', () => {
+    expect(PHOTO_CONSTRAINTS_HELP).toContain(
+      `between ${MIN_DIMENSION} and ${MAX_DIMENSION} pixels on each side`,
+    )
+  })
+})
+
+describe('PHOTO_SUBJECT_HELP', () => {
+  it('asks for the Practitioner, not the Practice', () => {
+    expect(PHOTO_SUBJECT_HELP).toContain('Practitioner')
+    expect(PHOTO_SUBJECT_HELP).toContain('Not your Practice')
+  })
+
+  it('asks for one front-facing face, which is what the check enforces', () => {
+    expect(PHOTO_SUBJECT_HELP).toContain('front-facing')
+    expect(PHOTO_SUBJECT_HELP).toContain('on your own')
   })
 })

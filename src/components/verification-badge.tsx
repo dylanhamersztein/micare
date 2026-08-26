@@ -31,7 +31,9 @@ type StatusPlate = {
   /** The closing sentence of the label. */
   cadence: (date: string | undefined) => string
   Glyph: ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' }>
-  /** Hairline, left edge, headline ink and glyph, in the state's tone. */
+  /** The state at text weight on a white card — never the raw state hue. */
+  ink: string
+  /** Hairline and left edge, in the state's tone. */
   tone: string
   glyphTone: string
   inlineTone: string
@@ -52,9 +54,10 @@ const STATUS_PLATE: Readonly<Record<VerificationStatus, StatusPlate>> = {
         ? 'Checked weekly against the register.'
         : `Checked ${date}.`,
     Glyph: ShieldCheck,
-    tone: 'border-verified-border border-l-verified text-verified-ink',
+    ink: 'text-verified-ink',
+    tone: 'border-verified-border border-l-verified',
     glyphTone: 'text-verified',
-    inlineTone: 'border-verified-border bg-verified-bg text-verified-ink',
+    inlineTone: 'border-verified-border bg-verified-bg',
   },
   pending: {
     word: 'Pending',
@@ -68,9 +71,10 @@ const STATUS_PLATE: Readonly<Record<VerificationStatus, StatusPlate>> = {
         ? 'An operator will re-run this check.'
         : `Last attempted ${date}.`,
     Glyph: Clock,
-    tone: 'border-pending-border border-l-pending text-pending-ink',
+    ink: 'text-pending-ink',
+    tone: 'border-pending-border border-l-pending',
     glyphTone: 'text-pending',
-    inlineTone: 'border-pending-border bg-pending-bg text-pending-ink',
+    inlineTone: 'border-pending-border bg-pending-bg',
   },
   rejected: {
     word: 'Not found',
@@ -82,9 +86,10 @@ const STATUS_PLATE: Readonly<Record<VerificationStatus, StatusPlate>> = {
     cadence: (date) =>
       date === undefined ? 'No entry matches this number.' : `Checked ${date}.`,
     Glyph: CircleX,
-    tone: 'border-rejected-border border-l-rejected text-rejected-ink',
+    ink: 'text-rejected-ink',
+    tone: 'border-rejected-border border-l-rejected',
     glyphTone: 'text-rejected',
-    inlineTone: 'border-rejected-border bg-rejected-bg text-rejected-ink',
+    inlineTone: 'border-rejected-border bg-rejected-bg',
   },
   revoked: {
     word: 'Revoked',
@@ -98,13 +103,14 @@ const STATUS_PLATE: Readonly<Record<VerificationStatus, StatusPlate>> = {
         ? 'Withdrawn after a register check.'
         : `Withdrawn ${date}.`,
     Glyph: ShieldOff,
-    tone: 'border-revoked-border border-l-revoked text-revoked-ink',
+    ink: 'text-revoked-ink',
+    tone: 'border-revoked-border border-l-revoked',
     glyphTone: 'text-revoked',
-    inlineTone: 'border-revoked-border bg-revoked-bg text-revoked-ink',
+    inlineTone: 'border-revoked-border bg-revoked-bg',
   },
 }
 
-export type VerificationBadgeVariant = 'plaque' | 'inline'
+export type VerificationBadgeVariant = 'plaque' | 'inline' | 'readout'
 
 export type VerificationBadgeProps = {
   status: VerificationStatus
@@ -144,6 +150,27 @@ export function VerificationBadge({
   const ariaLabel = `Verification: ${status}. ${cited}. ${plate.cadence(date)}`
   const { Glyph } = plate
 
+  // On the Practitioner's own dashboard the badge sits inside a status
+  // readout tile that already draws the border and already states the caps
+  // label. All the tile wants is the glyph, the word and the state's ink.
+  if (variant === 'readout') {
+    return (
+      <span
+        role="group"
+        aria-label={ariaLabel}
+        className={`inline-flex items-center gap-2.5 ${plate.ink}`}
+      >
+        <Glyph
+          className={`size-6 shrink-0 ${plate.glyphTone}`}
+          aria-hidden="true"
+        />
+        <span className="text-h2 font-bold tracking-tightest">
+          {plate.word}
+        </span>
+      </span>
+    )
+  }
+
   // In a list the badge drops the date — the header states "all listings
   // re-checked weekly" once, so every row need not repeat it.
   if (variant === 'inline') {
@@ -151,7 +178,7 @@ export function VerificationBadge({
       <span
         role="group"
         aria-label={ariaLabel}
-        className={`inline-flex items-center gap-1.5 rounded-xs border py-1 pr-2.5 pl-1.5 text-[0.875rem] font-bold ${plate.inlineTone}`}
+        className={`inline-flex items-center gap-1.5 rounded-xs border py-1 pr-2.5 pl-1.5 text-[0.875rem] font-bold ${plate.inlineTone} ${plate.ink}`}
       >
         <Glyph
           className={`size-[15px] shrink-0 ${plate.glyphTone}`}

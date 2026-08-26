@@ -3,7 +3,11 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
 import { VerificationBadge } from '../../../src/components/verification-badge'
-import { compileStylesFor, declarationsFor } from '../support/rendered-styles'
+import {
+  compileStylesFor,
+  declarationsFor,
+  lengthInPx,
+} from '../support/rendered-styles'
 
 import type { VerificationStatus } from '../../../src/visibility'
 
@@ -320,5 +324,73 @@ describe('the cited registration number', () => {
     const css = await compileStylesFor(number)
 
     expect(declarationsFor(css, number)['white-space']).toBe('nowrap')
+  })
+})
+
+// A third variant for the Practitioner's own dashboard, where the badge sits
+// inside a status readout tile that already draws the border and already
+// states the caps label. All the tile needs from the badge is the glyph, the
+// word and the state's ink — at the weight the design gives a dashboard state.
+describe('the readout variant', () => {
+  function renderReadout(status: VerificationStatus) {
+    return render(
+      <VerificationBadge
+        status={status}
+        variant="readout"
+        profession="optometrist"
+        registrationNumber={REGISTRATION}
+        lastCheckedAt={CHECKED_ON}
+      />,
+    )
+  }
+
+  for (const status of STATUSES) {
+    it(`states ${status} in the same word the inline badge uses`, () => {
+      const inline = render(
+        <VerificationBadge status={status} variant="inline" />,
+      )
+      const word = inline.container.textContent
+      inline.unmount()
+
+      const { container } = renderReadout(status)
+
+      expect(container.textContent).toBe(word)
+    })
+  }
+
+  it('draws no border of its own — the tile around it already has one', async () => {
+    const { container } = renderReadout('verified')
+    const badge = container.firstElementChild!
+    const css = await compileStylesFor(badge)
+
+    expect(declarationsFor(css, badge)['border-style']).toBeUndefined()
+  })
+
+  it('sets the word at the weight a dashboard state deserves', async () => {
+    const { container } = renderReadout('verified')
+    const word = screen.getByText('Verified')
+    const css = await compileStylesFor(container.firstElementChild!)
+
+    expect(lengthInPx(declarationsFor(css, word)['font-size'])).toBe(24)
+  })
+
+  it('gives each status its own ink, never one shape in four colours', async () => {
+    const inks: Array<string> = []
+
+    for (const status of STATUSES) {
+      const { container, unmount } = renderReadout(status)
+      const css = await compileStylesFor(container.firstElementChild!)
+      inks.push(declarationsFor(css, container.querySelector('span')!)['color'])
+      unmount()
+    }
+
+    expect(new Set(inks).size).toBe(STATUSES.length)
+  })
+
+  it('still cites the register and the check date to a screen reader', () => {
+    renderReadout('verified')
+
+    expect(label()).toContain('General Optical Council 01-31842')
+    expect(label()).toContain('11/08/2026')
   })
 })

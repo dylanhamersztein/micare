@@ -3,14 +3,30 @@ import { useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 
 import {
+  Alert,
+  Button,
+  Checkbox,
+  Field,
+  FileUpload,
+  NoticePage,
+  STANDALONE_LINK_CLASSES,
+  TextInput,
+  Textarea,
+} from '#/components'
+import {
   ALLOWED_MIME_TYPES,
   MAX_BYTES,
+  PHOTO_CONSTRAINTS_HELP,
+  PHOTO_SUBJECT_HELP,
   isAllowedMimeType,
 } from '../../photo-policy'
 import { photoCheckMessage } from '../../photo-check-result'
 import type { PhotoCheckOutcome } from '../../photo-check-result'
 import { profileCompleteness } from '../../profile-completeness'
-import { profileEditorInputSchema } from '../../profile-editor-input'
+import {
+  PROFILE_FIELD_LIMITS,
+  profileEditorInputSchema,
+} from '../../profile-editor-input'
 import type { ProfileEditorInput } from '../../profile-editor-input'
 import { submitProfilePhoto } from '../../server/photo-upload'
 import { loadProfile } from '../../server/profile-load'
@@ -27,6 +43,14 @@ const DAYS = [
   'Sunday',
 ] as const
 type Day = (typeof DAYS)[number]
+
+/** 1,000 rather than 1000: a limit is a number a person has to hold in mind. */
+const LIMIT_FORMAT = new Intl.NumberFormat('en-GB')
+
+/** The limit the schema enforces, said in the words the field's help uses. */
+function upTo(limit: number): string {
+  return `Up to ${LIMIT_FORMAT.format(limit)} characters.`
+}
 
 const searchSchema = z.object({
   short_id: z.string().trim().min(1).optional(),
@@ -62,36 +86,41 @@ function ProfileEditorPage() {
 
   if (loaderData.kind === 'no-short-id') {
     return (
-      <div
-        className="mx-auto max-w-2xl p-8"
+      <NoticePage
+        tone="problem"
+        eyebrow="We can’t identify you"
+        title="We can’t find your account"
         data-testid="profile-editor-no-short-id"
       >
-        <h1 className="text-2xl font-bold">We can&apos;t find your account</h1>
-        <p className="mt-2 text-gray-700">
+        <p>
           Open the link from your payment confirmation email, or finish signup
           first so we can identify your profile.
         </p>
-        <p className="mt-4">
-          <Link to="/signup" className="underline">
+        <p>
+          <Link to="/signup" className={STANDALONE_LINK_CLASSES}>
             Start signup
           </Link>
         </p>
-      </div>
+      </NoticePage>
     )
   }
 
   if (loaderData.kind === 'unknown') {
     return (
-      <div
-        className="mx-auto max-w-2xl p-8"
+      <NoticePage
+        tone="problem"
+        eyebrow="We can’t identify you"
+        title="We can’t find your account"
         data-testid="profile-editor-unknown"
       >
-        <h1 className="text-2xl font-bold">We can&apos;t find your account</h1>
-        <p className="mt-2 text-gray-700">
-          The profile <code>{loaderData.shortId}</code> doesn&apos;t match any
-          Practitioner on MiCare. Double-check the link.
+        <p>
+          The profile{' '}
+          <code className="rounded-xs bg-surface-sunk px-1.5 py-0.5 font-mono text-meta">
+            {loaderData.shortId}
+          </code>{' '}
+          doesn’t match any Practitioner on MiCare. Double-check the link.
         </p>
-      </div>
+      </NoticePage>
     )
   }
 
@@ -259,11 +288,7 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
     }
   }
 
-  async function onPhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
-    event.target.value = ''
-    if (!file) return
-
+  async function onPhotoChosen(file: File) {
     // Some browsers (Linux/WSL without xdg-mime) report file.type as an
     // empty string for valid JPEGs. Only reject up front when the browser
     // confidently reports a disallowed MIME; otherwise let the server
@@ -321,289 +346,402 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
   )
 
   return (
-    <div className="mx-auto max-w-2xl p-8">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold">Your profile</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Fill in the required fields to go live on MiCare. Polish fields are
-          optional but help consumers choose you.
+    <main className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+      <header>
+        <h1 className="font-serif text-h1 font-medium tracking-tightest text-balance">
+          Your profile
+        </h1>
+        <p className="mt-2 max-w-[56ch] text-text-body">
+          Fill in the required fields to go live on MiCare. The polish fields
+          are optional, but they are what a consumer reads when choosing between
+          two verified Practitioners.
         </p>
       </header>
 
-      {!requiredFieldsComplete && (
-        <div
-          className="mb-4 rounded border border-amber-300 bg-amber-50 p-3 text-sm"
-          data-testid="completeness-required-banner"
-        >
-          Required fields missing — your listing is hidden until you fill them
-          in.
-        </div>
-      )}
+      <div className="mt-6 flex flex-col gap-3">
+        {!requiredFieldsComplete && (
+          <div data-testid="completeness-required-banner">
+            <Alert tone="warning" title="Required fields are still missing">
+              Your listing stays hidden from consumers until they are filled in.
+            </Alert>
+          </div>
+        )}
 
-      {requiredFieldsComplete && completeness.filled < completeness.total && (
-        <div
-          className="mb-4 rounded border border-blue-300 bg-blue-50 p-3 text-sm"
-          data-testid="completeness-polish-banner"
-        >
-          {completeness.filled}/{completeness.total} polish fields filled.
-          {completeness.missing.length > 0 && (
-            <> Add a {completeness.missing[0]} to reach 100%.</>
-          )}
-        </div>
-      )}
+        {requiredFieldsComplete && completeness.filled < completeness.total && (
+          <div data-testid="completeness-polish-banner">
+            <Alert
+              tone="info"
+              title={`${completeness.filled} of ${completeness.total} polish fields filled`}
+            >
+              {completeness.missing.length > 0
+                ? `Add a ${completeness.missing[0]} to reach 100%.`
+                : 'Your listing is as complete as it gets.'}
+            </Alert>
+          </div>
+        )}
 
-      {state.kind === 'saved' && state.visible && (
-        <div
-          className="mb-4 rounded border border-green-300 bg-green-50 p-3 text-sm"
-          data-testid="profile-saved-visible"
-        >
-          Saved — your profile is live on MiCare.
-        </div>
-      )}
-      {state.kind === 'saved' && !state.visible && (
-        <div
-          className="mb-4 rounded border border-amber-300 bg-amber-50 p-3 text-sm"
-          data-testid="profile-saved-hidden"
-        >
-          Saved, but your profile is not yet live. Check your subscription
-          status with the billing portal.
-        </div>
-      )}
-      {state.kind === 'postcode-not-found' && (
-        <div
-          className="mb-4 rounded border border-red-300 bg-red-50 p-3 text-sm"
-          data-testid="profile-postcode-not-found"
-        >
-          We couldn&apos;t find that postcode. Please double-check it.
-        </div>
-      )}
-      {state.kind === 'server-error' && (
-        <div
-          className="mb-4 rounded border border-red-300 bg-red-50 p-3 text-sm"
-          data-testid="profile-server-error"
-        >
-          {state.message}
-        </div>
-      )}
+        {state.kind === 'saved' && state.visible && (
+          <div data-testid="profile-saved-visible">
+            <Alert
+              tone="success"
+              title="Saved — your profile is live on MiCare"
+            >
+              Consumers searching near your postcode can find you now.
+            </Alert>
+          </div>
+        )}
+        {state.kind === 'saved' && !state.visible && (
+          <div data-testid="profile-saved-hidden">
+            <Alert
+              tone="warning"
+              title="Saved, but your profile is not live yet"
+            >
+              Check your subscription status on your dashboard, and use the
+              billing portal if a payment needs attention.
+            </Alert>
+          </div>
+        )}
+        {state.kind === 'postcode-not-found' && (
+          <div data-testid="profile-postcode-not-found">
+            <Alert tone="error" title="We couldn’t find that postcode">
+              Nothing was saved. Please double-check it and try again.
+            </Alert>
+          </div>
+        )}
+        {state.kind === 'server-error' && (
+          <div data-testid="profile-server-error">
+            <Alert tone="error" title="We couldn’t save your profile">
+              {state.message}
+            </Alert>
+          </div>
+        )}
+      </div>
 
       <form
         onSubmit={onSubmit}
-        className="flex flex-col gap-4"
+        // zod reports every field at once and the page shows every one of
+        // them. The browser's own validator would stop at the first empty
+        // required control, show its bubble, and never let this handler run.
+        noValidate
+        className="mt-7 flex flex-col gap-7 rounded-md border border-border bg-surface-raised p-5 sm:p-6"
         data-testid="profile-editor"
         data-hydrated={hydrated ? 'true' : undefined}
       >
-        <fieldset className="flex flex-col gap-3">
-          <legend className="text-sm font-semibold uppercase text-gray-500">
+        <fieldset className="m-0 border-0 p-0">
+          <legend className="mb-4 p-0 text-label font-bold tracking-caps text-text-muted uppercase">
             Required
           </legend>
 
-          <Field
-            label="Practice name"
-            error={errorFor('practiceName')}
-            testId="profile-practice-name"
-            value={practiceName}
-            onChange={setPracticeName}
-          />
-          <Field
-            label="Address line 1"
-            error={errorFor('practiceAddressLine1')}
-            testId="profile-address-line1"
-            value={addressLine1}
-            onChange={setAddressLine1}
-          />
-          <Field
-            label="Address line 2 (optional)"
-            testId="profile-address-line2"
-            value={addressLine2}
-            onChange={setAddressLine2}
-          />
-          <Field
-            label="Address line 3 (optional)"
-            testId="profile-address-line3"
-            value={addressLine3}
-            onChange={setAddressLine3}
-          />
-          <Field
-            label="Postcode"
-            error={errorFor('practicePostcode')}
-            testId="profile-postcode"
-            value={postcode}
-            onChange={setPostcode}
-            placeholder="EC2V 6AA"
-          />
-          <Field
-            label="Town"
-            error={errorFor('practiceTown')}
-            testId="profile-town"
-            value={town}
-            onChange={setTown}
-          />
-          <Field
-            label="Booking link URL"
-            error={errorFor('bookingLinkUrl')}
-            testId="profile-booking-link"
-            value={bookingLinkUrl}
-            onChange={setBookingLinkUrl}
-            placeholder="https://yourpractice.example/book"
-          />
+          <div className="flex flex-col gap-5">
+            <Field
+              label="Practice name"
+              requirement="required"
+              help={`As it appears above your door. ${upTo(PROFILE_FIELD_LIMITS.practiceName)}`}
+              error={
+                errorFor('practiceName') && (
+                  <span data-testid="profile-practice-name-error">
+                    {errorFor('practiceName')}
+                  </span>
+                )
+              }
+            >
+              <TextInput
+                value={practiceName}
+                onChange={(e) => setPracticeName(e.target.value)}
+                data-testid="profile-practice-name"
+              />
+            </Field>
 
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
+            <Field
+              label="Address line 1"
+              requirement="required"
+              help={upTo(PROFILE_FIELD_LIMITS.practiceAddressLine1)}
+              error={
+                errorFor('practiceAddressLine1') && (
+                  <span data-testid="profile-address-line1-error">
+                    {errorFor('practiceAddressLine1')}
+                  </span>
+                )
+              }
+            >
+              <TextInput
+                value={addressLine1}
+                onChange={(e) => setAddressLine1(e.target.value)}
+                data-testid="profile-address-line1"
+              />
+            </Field>
+
+            <Field
+              label="Address line 2"
+              requirement="optional"
+              help={upTo(PROFILE_FIELD_LIMITS.practiceAddressLine2)}
+            >
+              <TextInput
+                value={addressLine2}
+                onChange={(e) => setAddressLine2(e.target.value)}
+                data-testid="profile-address-line2"
+              />
+            </Field>
+
+            <Field
+              label="Address line 3"
+              requirement="optional"
+              help={upTo(PROFILE_FIELD_LIMITS.practiceAddressLine3)}
+            >
+              <TextInput
+                value={addressLine3}
+                onChange={(e) => setAddressLine3(e.target.value)}
+                data-testid="profile-address-line3"
+              />
+            </Field>
+
+            <Field
+              label="Postcode"
+              requirement="required"
+              help="The postcode consumers search against, so it has to be the Practice’s own."
+              error={
+                errorFor('practicePostcode') && (
+                  <span data-testid="profile-postcode-error">
+                    {errorFor('practicePostcode')}
+                  </span>
+                )
+              }
+            >
+              <TextInput
+                value={postcode}
+                onChange={(e) => setPostcode(e.target.value)}
+                placeholder="EC2V 6AA"
+                autoCapitalize="characters"
+                autoCorrect="off"
+                spellCheck={false}
+                data-testid="profile-postcode"
+              />
+            </Field>
+
+            <Field
+              label="Town"
+              requirement="required"
+              help={upTo(PROFILE_FIELD_LIMITS.practiceTown)}
+              error={
+                errorFor('practiceTown') && (
+                  <span data-testid="profile-town-error">
+                    {errorFor('practiceTown')}
+                  </span>
+                )
+              }
+            >
+              <TextInput
+                value={town}
+                onChange={(e) => setTown(e.target.value)}
+                data-testid="profile-town"
+              />
+            </Field>
+
+            <Field
+              label="Booking link"
+              requirement="required"
+              help="Where “Book an appointment” sends a consumer. Must start with http:// or https://."
+              error={
+                errorFor('bookingLinkUrl') && (
+                  <span data-testid="profile-booking-link-error">
+                    {errorFor('bookingLinkUrl')}
+                  </span>
+                )
+              }
+            >
+              <TextInput
+                type="url"
+                value={bookingLinkUrl}
+                onChange={(e) => setBookingLinkUrl(e.target.value)}
+                placeholder="https://yourpractice.example/book"
+                data-testid="profile-booking-link"
+              />
+            </Field>
+
+            <Checkbox
+              label="By appointment only"
+              help="Hides opening hours on your listing. Use it instead of hours, not as well as."
               checked={byAppointmentOnly}
               onChange={(e) => setByAppointmentOnly(e.target.checked)}
               data-testid="profile-by-appointment"
             />
-            By appointment only (hides opening hours)
-          </label>
 
-          {!byAppointmentOnly && (
-            <div
-              className="flex flex-col gap-2"
-              data-testid="profile-opening-hours"
-            >
-              <span className="text-sm">Opening hours</span>
-              {DAYS.map((day) => (
-                <label
-                  key={day}
-                  className="grid grid-cols-[120px_1fr] items-center gap-2 text-sm"
-                >
-                  <span>{day}</span>
-                  <input
-                    type="text"
-                    value={hours[day]}
-                    onChange={(e) =>
-                      setHours((h) => ({ ...h, [day]: e.target.value }))
-                    }
-                    placeholder="9:00-17:30 or Closed"
-                    className="rounded border px-2 py-1"
-                    data-testid={`profile-hours-${day.toLowerCase()}`}
-                  />
-                </label>
-              ))}
-            </div>
-          )}
+            {!byAppointmentOnly && (
+              <fieldset
+                className="m-0 border-0 p-0"
+                data-testid="profile-opening-hours"
+              >
+                <legend className="p-0 text-label font-bold tracking-caps text-text-body uppercase">
+                  Opening hours
+                </legend>
+                <p className="mt-1.5 mb-4 text-meta text-text-muted">
+                  One line a day, written as you would write it on the door —
+                  “9:00-17:30”, or “Closed”.
+                </p>
+                <div className="flex flex-col gap-4">
+                  {DAYS.map((day) => (
+                    <Field key={day} label={day}>
+                      <TextInput
+                        value={hours[day]}
+                        onChange={(e) =>
+                          setHours((h) => ({ ...h, [day]: e.target.value }))
+                        }
+                        placeholder="9:00-17:30 or Closed"
+                        data-testid={`profile-hours-${day.toLowerCase()}`}
+                      />
+                    </Field>
+                  ))}
+                </div>
+              </fieldset>
+            )}
 
-          {errorFor('byAppointmentOnly') && (
-            <p
-              className="text-sm text-red-600"
-              data-testid="profile-hours-error"
-            >
-              {errorFor('byAppointmentOnly')}
-            </p>
-          )}
-        </fieldset>
-
-        <fieldset className="flex flex-col gap-3">
-          <legend className="text-sm font-semibold uppercase text-gray-500">
-            Polish (optional)
-          </legend>
-
-          <label className="flex flex-col text-sm">
-            Bio
-            <textarea
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              rows={3}
-              className="mt-1 rounded border px-2 py-1"
-              data-testid="profile-bio"
-            />
-          </label>
-          <div
-            className="flex flex-col gap-2"
-            data-testid="profile-photo-uploader"
-          >
-            <span className="text-sm">Profile photo (optional)</span>
-            {photoUrl ? (
-              <div className="flex items-center gap-3">
-                <img
-                  src={photoUrl}
-                  alt="Current profile photo"
-                  className="h-20 w-20 rounded-full object-cover"
-                  data-testid="profile-photo-preview"
-                />
-                <button
-                  type="button"
-                  className="text-sm underline"
-                  onClick={onRemovePhoto}
-                  data-testid="profile-photo-remove"
-                >
-                  Remove photo
-                </button>
+            {errorFor('byAppointmentOnly') && (
+              <div data-testid="profile-hours-error">
+                <Alert tone="error" title={errorFor('byAppointmentOnly')} />
               </div>
-            ) : (
-              <p className="text-sm text-gray-600">No photo uploaded yet.</p>
-            )}
-            <input
-              type="file"
-              accept={ALLOWED_MIME_TYPES.join(',')}
-              onChange={onPhotoChange}
-              data-testid="profile-photo-input"
-              disabled={photoUploadState.kind === 'uploading'}
-            />
-            {photoUploadState.kind === 'uploading' && (
-              <p
-                className="text-sm text-gray-600"
-                data-testid="profile-photo-uploading"
-              >
-                Checking photo…
-              </p>
-            )}
-            {photoUploadState.kind === 'failed' && (
-              <p
-                className="text-sm text-red-600"
-                data-testid="profile-photo-error"
-                data-outcome={photoUploadState.outcome}
-              >
-                {photoCheckMessage(photoUploadState.outcome)}
-              </p>
             )}
           </div>
-          <Field
-            label="Services (comma-separated)"
-            testId="profile-services"
-            value={servicesText}
-            onChange={setServicesText}
-            placeholder="Eye exam, Contact lens fitting"
-          />
-          <Field
-            label="Languages (comma-separated)"
-            testId="profile-languages"
-            value={languagesText}
-            onChange={setLanguagesText}
-            placeholder="English, French"
-          />
-          <label className="flex flex-col text-sm">
-            Accessibility notes
-            <textarea
-              value={accessibilityNotes}
-              onChange={(e) => setAccessibilityNotes(e.target.value)}
-              rows={2}
-              className="mt-1 rounded border px-2 py-1"
-              data-testid="profile-accessibility-notes"
-            />
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
+        </fieldset>
+
+        <fieldset className="m-0 border-0 p-0">
+          <legend className="mb-4 p-0 text-label font-bold tracking-caps text-text-muted uppercase">
+            Polish
+          </legend>
+
+          <div className="flex flex-col gap-5">
+            <Field
+              label="Bio"
+              requirement="optional"
+              help={`A plain description of your Practice and what you do. ${bio.trim().length} of ${LIMIT_FORMAT.format(PROFILE_FIELD_LIMITS.bio)} characters used.`}
+            >
+              <Textarea
+                rows={4}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                data-testid="profile-bio"
+              />
+            </Field>
+
+            <div
+              className="flex flex-col gap-4"
+              data-testid="profile-photo-uploader"
+            >
+              {photoUrl && (
+                <div className="flex items-center gap-4">
+                  <img
+                    src={photoUrl}
+                    alt="Your current profile photo"
+                    className="size-20 shrink-0 rounded-sm border border-border object-cover"
+                    data-testid="profile-photo-preview"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onRemovePhoto}
+                    data-testid="profile-photo-remove"
+                  >
+                    Remove photo
+                  </Button>
+                </div>
+              )}
+              <FileUpload
+                label="Profile photo"
+                guidance={PHOTO_SUBJECT_HELP}
+                help={PHOTO_CONSTRAINTS_HELP}
+                choose={
+                  photoUrl ? 'Choose a different photo' : 'Choose a photo'
+                }
+                accept={ALLOWED_MIME_TYPES.join(',')}
+                onFile={onPhotoChosen}
+                disabled={photoUploadState.kind === 'uploading'}
+                data-testid="profile-photo-input"
+              />
+              {photoUploadState.kind === 'uploading' && (
+                <p
+                  role="status"
+                  className="text-meta text-text-muted"
+                  data-testid="profile-photo-uploading"
+                >
+                  Checking your photo…
+                </p>
+              )}
+              {photoUploadState.kind === 'failed' && (
+                <div
+                  data-testid="profile-photo-error"
+                  data-outcome={photoUploadState.outcome}
+                >
+                  <Alert
+                    tone="error"
+                    title={photoCheckMessage(photoUploadState.outcome)}
+                  >
+                    Nothing was saved — your existing photo, if you have one, is
+                    untouched.
+                  </Alert>
+                </div>
+              )}
+            </div>
+
+            <Field
+              label="Services"
+              requirement="optional"
+              help="Separate them with commas."
+            >
+              <TextInput
+                value={servicesText}
+                onChange={(e) => setServicesText(e.target.value)}
+                placeholder="Eye exam, Contact lens fitting"
+                data-testid="profile-services"
+              />
+            </Field>
+
+            <Field
+              label="Languages"
+              requirement="optional"
+              help="Separate them with commas."
+            >
+              <TextInput
+                value={languagesText}
+                onChange={(e) => setLanguagesText(e.target.value)}
+                placeholder="English, French"
+                data-testid="profile-languages"
+              />
+            </Field>
+
+            <Field
+              label="Accessibility notes"
+              requirement="optional"
+              help={`Step-free access, hearing loops, parking — what a consumer needs to know before they arrive. ${upTo(PROFILE_FIELD_LIMITS.accessibilityNotes)}`}
+            >
+              <Textarea
+                rows={3}
+                value={accessibilityNotes}
+                onChange={(e) => setAccessibilityNotes(e.target.value)}
+                data-testid="profile-accessibility-notes"
+              />
+            </Field>
+
+            <Checkbox
+              label="Currently accepting new patients"
+              help="Shown on your listing. Turn it off when you are full."
               checked={acceptingNewPatients}
               onChange={(e) => setAcceptingNewPatients(e.target.checked)}
               data-testid="profile-accepting-new-patients"
             />
-            Currently accepting new patients
-          </label>
+          </div>
         </fieldset>
 
-        <button
+        <Button
           type="submit"
-          disabled={state.kind === 'submitting'}
-          className="self-start rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+          size="lg"
+          className="self-start"
+          loading={state.kind === 'submitting'}
+          loadingLabel="Saving…"
           data-testid="profile-save"
         >
-          {state.kind === 'submitting' ? 'Saving…' : 'Save profile'}
-        </button>
+          Save profile
+        </Button>
       </form>
-    </div>
+    </main>
   )
 }
 
@@ -616,42 +754,4 @@ async function fileToBase64(file: File): Promise<string> {
     binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize))
   }
   return btoa(binary)
-}
-
-function Field({
-  label,
-  testId,
-  value,
-  onChange,
-  placeholder,
-  error,
-}: {
-  label: string
-  testId: string
-  value: string
-  onChange: (next: string) => void
-  placeholder?: string
-  error?: string
-}) {
-  return (
-    <label className="flex flex-col text-sm">
-      {label}
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="mt-1 rounded border px-2 py-1"
-        data-testid={testId}
-      />
-      {error && (
-        <span
-          className="mt-1 text-xs text-red-600"
-          data-testid={`${testId}-error`}
-        >
-          {error}
-        </span>
-      )}
-    </label>
-  )
 }

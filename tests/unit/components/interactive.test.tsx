@@ -8,6 +8,7 @@ import {
   lengthInPx,
 } from '../support/rendered-styles'
 import { Button } from '../../../src/components/button'
+import { Checkbox } from '../../../src/components/checkbox'
 import { SegmentedRadio } from '../../../src/components/segmented-radio'
 import { Select } from '../../../src/components/select'
 import { TextInput } from '../../../src/components/text-input'
@@ -24,6 +25,11 @@ const CONTROLS: ReadonlyArray<{
   selector: string
 }> = [
   { name: 'Button', element: <Button>Save</Button>, selector: 'button' },
+  {
+    name: 'Checkbox',
+    element: <Checkbox label="Accepting new patients" />,
+    selector: 'label',
+  },
   {
     name: 'TextInput',
     element: <TextInput aria-label="Full name" />,
