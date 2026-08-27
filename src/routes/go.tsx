@@ -7,6 +7,7 @@
 import { createFileRoute, notFound, redirect } from '@tanstack/react-router'
 import { z } from 'zod'
 
+import { NoticePage, STANDALONE_LINK_CLASSES } from '#/components'
 import { followBookingLink } from '../server/click-tracking'
 
 // `p` is optional in the schema so a bare /go renders the friendly page
@@ -39,15 +40,21 @@ function GoRedirect() {
 
 function BookingLinkNotFound() {
   return (
-    <div className="mx-auto max-w-2xl p-8" data-testid="go-not-found">
-      <h1 className="mb-4 text-2xl font-bold">Booking link unavailable</h1>
-      <p className="mb-4">
+    <NoticePage
+      tone="problem"
+      eyebrow="Unavailable"
+      title="Booking link unavailable"
+      data-testid="go-not-found"
+    >
+      <p>
         We couldn&apos;t find a booking link for that practitioner. They may no
         longer be listed on MiCare.
       </p>
-      <a href="/search" className="underline">
-        Search for an optician
-      </a>
-    </div>
+      <p>
+        <a href="/search" className={STANDALONE_LINK_CLASSES}>
+          Search for an optician
+        </a>
+      </p>
+    </NoticePage>
   )
 }
