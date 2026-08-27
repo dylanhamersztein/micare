@@ -23,7 +23,7 @@ _Avoid_: validation, accreditation, certification.
 **Verification Status**:
 A Practitioner's current standing with their regulator, as known to MiCare. One of:
 
-- `pending` — signup scrape timed out; not yet confirmed. Rare. Not visible to consumers. Nothing scheduled revisits it (the weekly re-verification sweeps _visible_ Practitioners), so it is cleared by **Manual Re-verification**.
+- `pending` — signup scrape timed out or could not be read; not yet confirmed. Rare. Signup files the prospect as a Practitioner in this state itself, with no Stripe customer, so there is a row to act on and an email to act with (ADR-0025) — the only status signup writes. Not visible to consumers, and not billed. Nothing scheduled revisits it (the weekly re-verification sweeps _visible_ Practitioners), so it is cleared by **Manual Re-verification**; a prospect who comes back verified has this row adopted by checkout rather than replaced.
 - `verified` — confirmed present and active on the regulator's register. The only consumer-visible status.
 - `rejected` — signup scrape ran and the Practitioner was not on the register. Signup blocked, no charge.
 - `revoked` — was previously `verified`, but a re-check found them no longer on the register (e.g. struck off). Hidden from consumers; row preserved for refund and audit.
