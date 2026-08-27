@@ -2,9 +2,10 @@ import { describeRouteGuards } from './support/route-source'
 
 import type { GuardedRoute } from './support/route-source'
 
-// The consumer-facing routes Slice 32 brought onto the design system. The
-// guards themselves live in tests/unit/support/route-source.ts, shared with
-// the acquisition routes.
+// The consumer-facing routes the design system has claimed — the four Slice 32
+// converted, plus `/go`, whose Booking Link dead end followed later. The guards
+// themselves live in tests/unit/support/route-source.ts, shared with the
+// acquisition routes.
 
 const CONSUMER_ROUTES: ReadonlyArray<GuardedRoute> = [
   {
@@ -43,14 +44,22 @@ const CONSUMER_ROUTES: ReadonlyArray<GuardedRoute> = [
       'profile-not-listed',
       'profile-not-found',
     ],
+    framesNotices: true,
   },
   {
     file: 'notify-me/confirm.tsx',
     markers: ['notify-confirmed', 'notify-invalid'],
+    framesNotices: true,
   },
   {
     file: 'notify-me/unsubscribe.tsx',
     markers: ['notify-unsubscribed', 'notify-invalid'],
+    framesNotices: true,
+  },
+  {
+    file: 'go.tsx',
+    markers: ['go-not-found'],
+    framesNotices: true,
   },
 ]
 

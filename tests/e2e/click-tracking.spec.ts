@@ -35,6 +35,19 @@ test('shows a friendly error page for an unknown short_id', async ({
   await expect(page.getByTestId('go-not-found')).toBeVisible()
 })
 
+test('the friendly error page states the outcome above the heading', async ({
+  page,
+}) => {
+  await page.goto('/go?p=zzzzzzzz')
+
+  const notice = page.getByTestId('go-not-found')
+
+  await expect(notice).toContainText('Unavailable')
+  await expect(
+    notice.getByRole('heading', { level: 1, name: 'Booking link unavailable' }),
+  ).toBeVisible()
+})
+
 test('shows a friendly error page when the p parameter is missing', async ({
   page,
 }) => {
