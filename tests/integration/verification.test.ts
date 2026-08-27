@@ -71,4 +71,30 @@ describe('verify (GOC_MOCK path)', () => {
     expect(second).toEqual(first)
     expect(await countRows('99-000001')).toBe(1)
   })
+
+  it('goes back to the register for a retry of a result that was never an answer', async () => {
+    await verify('optician', 'Unreachable Register', '99-000004')
+
+    const retried = await verify(
+      'optician',
+      'Unreachable Register',
+      '99-000004',
+      { retry: true },
+    )
+
+    // A fresh attempt, not the cached one: an attempt writes a row, a cache
+    // hit does not (issue #67).
+    expect(retried.kind).toBe('error')
+    expect(await countRows('99-000004')).toBe(2)
+  })
+
+  it('serves a retry from cache once the register has given an answer', async () => {
+    await verify('optician', 'Nobody', '99-000002')
+
+    await verify('optician', 'Nobody', '99-000002', { retry: true })
+
+    // No amount of pressing changes a register that has already spoken, and
+    // the cache is what keeps MiCare's scrape volume down.
+    expect(await countRows('99-000002')).toBe(1)
+  })
 })

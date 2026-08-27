@@ -23,6 +23,7 @@ const ACQUISITION_ROUTES: ReadonlyArray<GuardedRoute> = [
       'signup-verified',
       'signup-rejected',
       'signup-pending',
+      'signup-retry',
       'signup-continue-to-payment',
       'checkout-error',
       'checkout-retry',

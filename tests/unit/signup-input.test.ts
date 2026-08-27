@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { signupInputSchema } from '../../src/signup-input'
+import { signupInputSchema, signupRequestSchema } from '../../src/signup-input'
 
 const valid = {
   fullName: 'Jane Smith',
@@ -51,6 +51,24 @@ describe('signupInputSchema', () => {
     expect(
       signupInputSchema.safeParse({ ...valid, professionCode: 'physio' })
         .success,
+    ).toBe(false)
+  })
+})
+
+describe('signupRequestSchema', () => {
+  it('accepts a submission that says it is a retry', () => {
+    expect(signupRequestSchema.parse({ ...valid, retry: true })).toMatchObject({
+      retry: true,
+    })
+  })
+
+  it('treats a first submission as not a retry', () => {
+    expect(signupRequestSchema.parse(valid).retry).toBeUndefined()
+  })
+
+  it('rejects a retry flag that is not a boolean', () => {
+    expect(
+      signupRequestSchema.safeParse({ ...valid, retry: 'yes' }).success,
     ).toBe(false)
   })
 })

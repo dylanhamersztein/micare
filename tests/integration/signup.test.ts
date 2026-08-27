@@ -33,6 +33,14 @@ type PractitionerRow = {
   last_verified_at: Date | null
 }
 
+async function verificationRowCount(gocNumber: string): Promise<number> {
+  const { rows } = await db.query<{ count: string }>(
+    'select count(*) as count from public.verifications where goc_number = $1',
+    [gocNumber],
+  )
+  return Number(rows[0].count)
+}
+
 async function practitionerRows(gocNumber: string) {
   const { rows } = await db.query<PractitionerRow>(
     `select full_name, email, verification_status, subscription_status,
@@ -96,6 +104,21 @@ describe('submitSignupImpl', () => {
     expect(outcome).toBe('pending')
     expect(await practitionerRows(AMBIGUOUS)).toHaveLength(1)
   })
+  it('re-runs the check when the prospect presses "Try the check again"', async () => {
+    await submitSignupImpl(prospect(UNREACHABLE))
+
+    const { outcome } = await submitSignupImpl(prospect(UNREACHABLE), {
+      retry: true,
+    })
+
+    // The attempt that produced the pending panel is what the 24h cache would
+    // otherwise replay, which made the button a no-op for a day (issue #67).
+    // A second row is the proof the register was actually asked again.
+    expect(outcome).toBe('pending')
+    expect(await verificationRowCount(UNREACHABLE)).toBe(2)
+    expect(await practitionerRows(UNREACHABLE)).toHaveLength(1)
+  })
+
   it('files nothing when the register says the number is not on it', async () => {
     const { outcome } = await submitSignupImpl(prospect(REJECTED))
 

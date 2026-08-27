@@ -15,3 +15,14 @@ export const signupInputSchema = z.object({
 })
 
 export type SignupInput = z.infer<typeof signupInputSchema>
+
+// What the /signup server function is actually posted. The retry flag is not
+// part of the prospect — it is what the pending panel's "Try the check again"
+// button says about *this* submission — so it rides alongside the details
+// rather than inside them, and only signupInputSchema's fields are ever
+// written to a Practitioner row.
+export const signupRequestSchema = signupInputSchema.extend({
+  retry: z.boolean().optional(),
+})
+
+export type SignupRequest = z.infer<typeof signupRequestSchema>

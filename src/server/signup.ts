@@ -6,12 +6,13 @@
 
 import { createServerFn } from '@tanstack/react-start'
 
-import { signupInputSchema } from '../signup-input'
+import { signupRequestSchema } from '../signup-input'
 import { submitSignupImpl } from './signup-impl'
 import type { VerificationOutcome } from '../verification'
 
 export const submitSignup = createServerFn({ method: 'POST' })
-  .inputValidator((raw: unknown) => signupInputSchema.parse(raw))
+  .inputValidator((raw: unknown) => signupRequestSchema.parse(raw))
   .handler(async ({ data }): Promise<{ outcome: VerificationOutcome }> => {
-    return submitSignupImpl(data)
+    const { retry, ...input } = data
+    return submitSignupImpl(input, { retry })
   })

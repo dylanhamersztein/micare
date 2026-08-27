@@ -148,6 +148,15 @@ export type VerifyOptions = {
   // weekly cron have no reason to re-ask a question answered hours ago, and
   // the cache is what keeps MiCare's scrape volume off the GOC's radar.
   force?: boolean
+  // A prospect pressing "Try the check again" on the signup pending panel.
+  // Weaker than `force`: it skips the cache only when the cached result was
+  // never an answer — an `ambiguous` or an `error`. Without it the button was
+  // a guaranteed no-op for 24 hours, because the attempt that produced the
+  // panel is itself what the cache replays (issue #67). A cached `verified`
+  // or `not-found` is an answer, and pressing a button does not change the
+  // register's mind, so those still come from the cache and the endpoint
+  // cannot be pressed into a scraping lever.
+  retry?: boolean
 }
 
 export async function verify(
@@ -157,7 +166,7 @@ export async function verify(
   options: VerifyOptions = {},
 ): Promise<VerificationResult> {
   const cached = options.force ? null : await findCachedVerification(regNumber)
-  if (cached) {
+  if (cached && !(options.retry && verificationOutcome(cached) === 'pending')) {
     return cached
   }
 
