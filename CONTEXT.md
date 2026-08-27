@@ -17,7 +17,7 @@ The physical location where a Practitioner operates — a real address with a UK
 _Avoid_: clinic, shop, business, surgery.
 
 **Verification**:
-The act of confirming a Practitioner is currently registered with their Profession's regulator (e.g. GOC for Optician). Performed synchronously at signup and re-checked on a recurring cadence.
+The act of confirming that a Practitioner is currently registered with their Profession's regulator (e.g. GOC for Optician) **and that the registration is theirs**. Both halves are checked: the registration number must resolve to an active entry, and the submitted name must match the registrant name the register publishes — on first and last name, with middle names, honorifics, accents and punctuation normalised away (ADR-0028). The register is public and searchable, so a number on its own identifies a registration, not a person. Performed synchronously at signup and re-checked on a recurring cadence.
 _Avoid_: validation, accreditation, certification.
 
 **Verification Status**:
@@ -25,7 +25,7 @@ A Practitioner's current standing with their regulator, as known to MiCare. One 
 
 - `pending` — signup scrape timed out or could not be read; not yet confirmed. Rare. Signup files the prospect as a Practitioner in this state itself, with no Stripe customer, so there is a row to act on and an email to act with (ADR-0025) — the only status signup writes. Not visible to consumers, and not billed. Nothing scheduled revisits it (the weekly re-verification sweeps _visible_ Practitioners), so it is cleared by **Manual Re-verification**, or by the prospect themselves pressing "Try the check again" on the pending panel — the one caller besides the operator that the 24h suppression cache steps aside for (ADR-0026). A prospect who comes back verified has this row adopted by checkout rather than replaced.
 - `verified` — confirmed present and active on the regulator's register. The only consumer-visible status.
-- `rejected` — signup scrape ran and the Practitioner was not on the register. Signup blocked, no charge.
+- `rejected` — signup scrape ran and gave an answer that is not a pass: the number was not on the register, or it was but the entry belongs to someone else by name (ADR-0028). Signup blocked, no charge.
 - `revoked` — was previously `verified`, but a re-check found them no longer on the register (e.g. struck off). Hidden from consumers; row preserved for refund and audit.
 
 _Avoid_: state, badge, level.
@@ -85,7 +85,7 @@ _Avoid_: override, manual approval, admin verify (all imply a human judging the 
 
 Three scheduled jobs run as Vercel Cron routes under `/api/cron/`, each guarded by a `CRON_SECRET` bearer token. The first two keep verification fresh after signup (ADR-0007).
 
-- **Weekly re-verification** (`0 3 * * 1`): re-runs `verify` against every visible **Practitioner** — visible by the same predicate the consumer surfaces use (ADR-0024), so the sweep and the listings can never cover different people. A still-active result bumps `last_verified_at`; a definitive not-found flips **Verification Status** to `revoked`, which is itself what hides the profile; a transient scraper error leaves the row untouched (it ages into the stale alert instead).
+- **Weekly re-verification** (`0 3 * * 1`): re-runs `verify` against every visible **Practitioner** — visible by the same predicate the consumer surfaces use (ADR-0024), so the sweep and the listings can never cover different people. A still-active result bumps `last_verified_at`; a definitive not-found flips **Verification Status** to `revoked`, which is itself what hides the profile; a transient scraper error leaves the row untouched (it ages into the stale alert instead). A name that no longer matches the register is left untouched too, not revoked — the registration is still live and it is the name that moved, which is a question for a person, not grounds for cancelling a subscription (ADR-0028).
 - **Daily stale alert** (`0 8 * * *`): emails the operator (`OPERATOR_ALERT_EMAIL`) and logs when visible **Practitioners** have gone un-reverified past `STALE_VERIFICATION_DAYS` (default 14) — an early signal that the weekly job or the GOC scraper is failing.
 - **Daily monthly summary** (`0 9 * * *`): emails each **Practitioner** whose **Billing Cycle** ends tomorrow their **Click-through** count for that cycle (ADR-0011).
 

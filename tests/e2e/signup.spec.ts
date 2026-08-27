@@ -80,6 +80,20 @@ test('a GOC number not on the register shows the rejected panel', async ({
   await expect(page.getByTestId('signup-rejected')).toContainText('no charge')
 })
 
+// Issue #68: 99-000005 is on the mock register and active, but it belongs to
+// Ethan Belson. fillAndSubmit signs up as "Test Optician", so the number
+// checks out and the name does not — which is a rejection, not a pass.
+test('a live registration claimed under the wrong name is rejected', async ({
+  page,
+}) => {
+  await fillAndSubmit(page, '99-000005')
+
+  await expect(page.getByTestId('signup-rejected')).toBeVisible()
+  await expect(page.getByTestId('signup-rejected')).toContainText(
+    'first and last name',
+  )
+})
+
 test('an unreadable register result shows the pending panel', async ({
   page,
 }) => {

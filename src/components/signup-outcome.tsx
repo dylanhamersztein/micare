@@ -66,7 +66,7 @@ const REJECTION_REASONS: ReadonlyArray<{ headline: string; detail: string }> = [
   },
   {
     headline: 'Your name differs from the one the register holds.',
-    detail: `We match on the name the ${REGISTER} has for you. If yours has changed and theirs has not, enter it as it appears on your certificate.`,
+    detail: `We match your first and last name against the ones the ${REGISTER} holds — middle names and titles are ignored. If yours has changed and theirs has not, enter it as it appears on your certificate.`,
   },
   {
     headline: 'You joined the register in the last few days.',
@@ -137,7 +137,7 @@ export function SignupOutcome({
           (firstName === undefined
             ? "You're on the register."
             : `You're on the register, ${firstName}.`)}
-        {outcome === 'rejected' && "We couldn't match that number."}
+        {outcome === 'rejected' && "We couldn't match those details."}
         {outcome === 'pending' && "The register didn't answer."}
       </h1>
 
@@ -163,7 +163,8 @@ export function SignupOutcome({
         {outcome === 'rejected' && (
           <>
             <p>
-              This is what we looked for. If any of it is wrong, correcting it
+              We check both the number and the name against the {REGISTER}, and
+              this is what we checked with. If any of it is wrong, correcting it
               is the fastest fix — you are not locked out, and there is no
               charge.
             </p>

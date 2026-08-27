@@ -60,6 +60,22 @@ describe('parseGocRegisterPage', () => {
     })
   })
 
+  // Issue #68: the registrant name is now half the check, so a card we cannot
+  // read a name out of is a card we cannot decide on. Escalating to ambiguous
+  // sends it to a human; returning found-active without a name would fail the
+  // name match and reject a registrant over our own parser.
+  it('returns ambiguous when the card carries no readable registrant name', () => {
+    const result = parseGocRegisterPage(
+      fixture('nameless-card.html'),
+      FOUND_ACTIVE_NUMBER,
+    )
+
+    expect(result).toEqual({
+      kind: 'ambiguous',
+      registrationNumber: FOUND_ACTIVE_NUMBER,
+    })
+  })
+
   it('returns ambiguous for a page that is neither a card nor a no-results page', () => {
     const result = parseGocRegisterPage(
       fixture('malformed-register.html'),

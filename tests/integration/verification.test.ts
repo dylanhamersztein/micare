@@ -88,6 +88,46 @@ describe('verify (GOC_MOCK path)', () => {
     expect(await countRows('99-000004')).toBe(2)
   })
 
+  // Issue #68: the register answers a number, not a person. 99-000005 is the
+  // mock fixture whose registrant is somebody in particular, so a submission
+  // under any other name is a name mismatch.
+  it('rejects a live registration claimed under the wrong name', async () => {
+    const result = await verify('optician', 'Somebody Else', '99-000005')
+
+    expect(result.kind).toBe('name-mismatch')
+    const row = await db.query<{ status: string }>(
+      'select status from public.verifications where goc_number = $1',
+      ['99-000005'],
+    )
+    expect(row.rows[0].status).toBe('rejected')
+  })
+
+  it('verifies the registrant the mock register actually holds', async () => {
+    const result = await verify('optician', 'Ethan Belson', '99-000005')
+
+    expect(result.kind).toBe('found-active')
+  })
+
+  it('will not let the 24h cache hand one prospect another registrant', async () => {
+    await verify('optician', 'Ethan Belson', '99-000005')
+
+    const impostor = await verify('optician', 'Somebody Else', '99-000005')
+
+    // Served from the cache — no second scrape — but adjudicated against the
+    // name this caller submitted, not the one that filled the cache.
+    expect(impostor.kind).toBe('name-mismatch')
+    expect(await countRows('99-000005')).toBe(1)
+  })
+
+  it('will not let the 24h cache lock the real registrant out either', async () => {
+    await verify('optician', 'Somebody Else', '99-000005')
+
+    const registrant = await verify('optician', 'Ethan Belson', '99-000005')
+
+    expect(registrant.kind).toBe('found-active')
+    expect(await countRows('99-000005')).toBe(1)
+  })
+
   it('serves a retry from cache once the register has given an answer', async () => {
     await verify('optician', 'Nobody', '99-000002')
 

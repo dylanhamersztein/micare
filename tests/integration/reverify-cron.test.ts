@@ -10,6 +10,7 @@ import {
 //   99-000001 -> found-active (stays verified)
 //   99-000002 -> not-found   (revoked)
 //   99-000004 -> error       (indeterminate; untouched)
+//   99-000005 -> found-active under a fixed registrant name (name mismatch)
 // Clean by GOC number, not just short_id: the reserved 99-000001/2/4 fixtures
 // are shared with the checkout suites, which seed them under a different
 // short_id/email. Clearing by goc_number removes any leftover from either
@@ -18,7 +19,7 @@ async function cleanup(): Promise<void> {
   await db.query(
     `delete from public.practitioners
       where short_id like 'rv-test-%'
-         or goc_number in ('99-000001', '99-000002', '99-000004')`,
+         or goc_number in ('99-000001', '99-000002', '99-000004', '99-000005')`,
   )
   await db.query(
     "delete from public.verifications where goc_number like '99-%'",
@@ -119,6 +120,28 @@ describe('runReVerification', () => {
       [id],
     )
     expect(ledger.rows[0].outcome).toBe('refunded')
+  })
+
+  // Issue #68: a name mismatch at re-verification is not evidence that the
+  // Practitioner left the register — the number is still there and still
+  // active. It usually means the name on the register changed. Revoking on it
+  // would cancel a live subscription and refund a genuine registrant over a
+  // marriage certificate, so the sweep leaves the row alone and lets it age
+  // into the stale alert for a human to look at (ADR-0007).
+  it('does not revoke a Practitioner whose register name no longer matches', async () => {
+    const id = await seedVisible('rv-test-renamed', '99-000005', 1)
+    const before = await lastVerifiedAt(id)
+
+    await runReVerification()
+
+    const { rows } = await db.query<{ verification_status: string }>(
+      'select verification_status from public.practitioners where id = $1',
+      [id],
+    )
+    expect(rows[0].verification_status).toBe('verified')
+    // Not confirmed either: the sweep did not establish that this row is the
+    // registrant, so it must not refresh the clock the stale alert reads.
+    expect(await lastVerifiedAt(id)).toEqual(before)
   })
 
   it('leaves a transient-error practitioner untouched', async () => {
