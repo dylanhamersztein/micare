@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { db } from '../../src/server/db'
 import { startCheckoutImpl } from '../../src/server/checkout-impl'
@@ -14,6 +14,12 @@ async function clearTestRows(): Promise<void> {
     "delete from public.practitioners where email like '%@example.co.uk'",
   )
 }
+
+// Checkout leaves behind a Practitioner with `subscription_status = 'active'`
+// and a synthetic stripe_subscription_id, which the monthly-summary sweep
+// treats as a live subscription. Clearing at beforeEach alone left that last
+// row for whichever file ran next, so clear on the way out too.
+afterAll(clearTestRows)
 
 describe('startCheckout (VITE_STRIPE_MOCK=true)', () => {
   beforeEach(clearTestRows)
