@@ -51,9 +51,9 @@ async function seedDue(): Promise<string> {
     `insert into public.practitioners
        (short_id, full_name, goc_number, profession_code, email,
         verification_status, subscription_status, stripe_customer_id,
-        stripe_subscription_id, visible, created_at)
+        stripe_subscription_id, created_at)
      values ('MSREAL01', 'Real Renewer', '99-000888', 'optician', $1,
-        'verified', 'active', 'cus_ms_real', 'sub_ms_real', true, $2)
+        'verified', 'active', 'cus_ms_real', 'sub_ms_real', $2)
      returning id`,
     [PRACTITIONER_EMAIL, CREATED_AT],
   )

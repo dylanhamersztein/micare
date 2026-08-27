@@ -30,8 +30,8 @@ async function seedPending(
   const { rows } = await db.query<{ id: string }>(
     `insert into public.practitioners
        (short_id, full_name, goc_number, profession_code, email,
-        verification_status, subscription_status, visible)
-     values ($1, $2, $3, 'optician', $4, 'pending', 'incomplete', false)
+        verification_status, subscription_status)
+     values ($1, $2, $3, 'optician', $4, 'pending', 'incomplete')
      returning id`,
     [shortId, `MV ${shortId}`, gocNumber, `${shortId}@example.com`],
   )
@@ -93,15 +93,13 @@ describe('runManualVerification', () => {
       newStatus: 'rejected',
     })
 
-    const { rows } = await db.query<{
-      verification_status: string
-      visible: boolean
-    }>(
-      'select verification_status, visible from public.practitioners where id = $1',
+    // 'rejected' is itself what hides them: the visibility predicate lets
+    // only 'verified' through (ADR-0024).
+    const { rows } = await db.query<{ verification_status: string }>(
+      'select verification_status from public.practitioners where id = $1',
       [id],
     )
     expect(rows[0].verification_status).toBe('rejected')
-    expect(rows[0].visible).toBe(false)
   })
 
   // A register that would not load says nothing about the Practitioner. The

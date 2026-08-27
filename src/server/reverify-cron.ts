@@ -3,11 +3,16 @@
 // transition itself. verify() owns the verifications-table write and the 24h
 // suppression cache; this module only updates the practitioners row.
 //
+// "Visible" is the isVisible() predicate applied to live row state, never a
+// stored flag (ADR-0024) — the sweep and the consumer surfaces therefore
+// cover exactly the same Practitioners.
+//
 //   found-active -> still active: bump last_verified_at.
-//   not-found    -> struck off:   verification_status = 'revoked', visible =
-//                                  false. The status flip + the verifications
-//                                  row is the signal the refund-on-revocation
-//                                  slice consumes (no new event bus).
+//   not-found    -> struck off:   verification_status = 'revoked', which is
+//                                  itself what hides them. The status flip +
+//                                  the verifications row is the signal the
+//                                  refund-on-revocation slice consumes (no
+//                                  new event bus).
 //   error/ambiguous -> transient: leave the row alone. The un-bumped
 //                                  last_verified_at ages it into the daily
 //                                  stale alert; we never hide a legitimate
@@ -15,6 +20,8 @@
 
 import { env } from '../env.server'
 import type { ProfessionCode } from '../verification'
+import type { SubscriptionStatus, VerificationStatus } from '../visibility'
+import { hasMinFields, isVisible } from '../visibility'
 import { cronAuthError } from './cron-auth'
 import { db } from './db'
 import { handleRevocationRefund } from './revocation-refund-impl'
@@ -27,18 +34,38 @@ export type ReVerificationSummary = {
   indeterminate: number
 }
 
-type VisibleRow = {
+type CandidateRow = {
   id: string
   goc_number: string
   full_name: string
   profession_code: string
+  practice_name: string | null
+  practice_address_line1: string | null
+  practice_postcode: string | null
+  booking_link_url: string | null
+  verification_status: VerificationStatus
+  subscription_status: SubscriptionStatus
 }
 
 export async function runReVerification(): Promise<ReVerificationSummary> {
-  const { rows } = await db.query<VisibleRow>(
-    `select id, goc_number, full_name, profession_code
-       from public.practitioners
-      where visible = true`,
+  const { rows } = await db.query<CandidateRow>(
+    `select id, goc_number, full_name, profession_code,
+            practice_name, practice_address_line1, practice_postcode,
+            booking_link_url, verification_status, subscription_status
+       from public.practitioners`,
+  )
+  const visible = rows.filter((row) =>
+    isVisible({
+      verificationStatus: row.verification_status,
+      subscriptionStatus: row.subscription_status,
+      minFieldsFilled: hasMinFields({
+        fullName: row.full_name,
+        practiceName: row.practice_name,
+        practiceAddressLine1: row.practice_address_line1,
+        practicePostcode: row.practice_postcode,
+        bookingLinkUrl: row.booking_link_url,
+      }),
+    }),
   )
 
   const summary: ReVerificationSummary = {
@@ -48,7 +75,7 @@ export async function runReVerification(): Promise<ReVerificationSummary> {
     indeterminate: 0,
   }
 
-  for (const p of rows) {
+  for (const p of visible) {
     summary.checked++
     const result = await verify(
       p.profession_code as ProfessionCode,
@@ -68,7 +95,6 @@ export async function runReVerification(): Promise<ReVerificationSummary> {
       await db.query(
         `update public.practitioners
             set verification_status = 'revoked',
-                visible = false,
                 updated_at = now()
           where id = $1`,
         [p.id],

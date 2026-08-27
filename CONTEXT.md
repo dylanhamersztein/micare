@@ -77,7 +77,7 @@ _Avoid_: override, manual approval, admin verify (all imply a human judging the 
 - A **Practitioner** has exactly one **Practice** in Phase 1 (expected to relax in Phase 2 to support mobile Practitioners and multi-Practitioner Practices such as Dental Hygienists working in dental surgeries).
 - A **Practitioner** has exactly one **Verification Status**.
 - A **Practitioner** has exactly one **Subscription Status**.
-- Only **Practitioners** with `Verification Status = verified` and a **Subscription Status** of `active`, `trialing`, or `past_due` are visible to consumers.
+- Only **Practitioners** with `Verification Status = verified` and a **Subscription Status** of `active`, `trialing`, or `past_due` are visible to consumers, and only once the minimum profile fields are filled. Visibility is computed from the row on every read, never stored on it (ADR-0024).
 - A consumer may hold several **Notify-Me Subscriptions**, one per postcode they are watching.
 - A **Practitioner** has at most one **Notify-Me Fire**, on first becoming visible.
 
@@ -85,7 +85,7 @@ _Avoid_: override, manual approval, admin verify (all imply a human judging the 
 
 Three scheduled jobs run as Vercel Cron routes under `/api/cron/`, each guarded by a `CRON_SECRET` bearer token. The first two keep verification fresh after signup (ADR-0007).
 
-- **Weekly re-verification** (`0 3 * * 1`): re-runs `verify` against every visible **Practitioner**. A still-active result bumps `last_verified_at`; a definitive not-found flips **Verification Status** to `revoked` and hides the profile; a transient scraper error leaves the row untouched (it ages into the stale alert instead).
+- **Weekly re-verification** (`0 3 * * 1`): re-runs `verify` against every visible **Practitioner** — visible by the same predicate the consumer surfaces use (ADR-0024), so the sweep and the listings can never cover different people. A still-active result bumps `last_verified_at`; a definitive not-found flips **Verification Status** to `revoked`, which is itself what hides the profile; a transient scraper error leaves the row untouched (it ages into the stale alert instead).
 - **Daily stale alert** (`0 8 * * *`): emails the operator (`OPERATOR_ALERT_EMAIL`) and logs when visible **Practitioners** have gone un-reverified past `STALE_VERIFICATION_DAYS` (default 14) — an early signal that the weekly job or the GOC scraper is failing.
 - **Daily monthly summary** (`0 9 * * *`): emails each **Practitioner** whose **Billing Cycle** ends tomorrow their **Click-through** count for that cycle (ADR-0011).
 

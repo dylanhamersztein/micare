@@ -45,9 +45,9 @@ async function seedActive(): Promise<string> {
     `insert into public.practitioners
        (short_id, full_name, goc_number, profession_code, email,
         verification_status, subscription_status, stripe_customer_id,
-        stripe_subscription_id, visible)
+        stripe_subscription_id)
      values ('RRREAL01', 'Real Revoked', '99-000777', 'optician', $1,
-        'revoked', 'active', 'cus_rr_real', 'sub_rr_real', false)
+        'revoked', 'active', 'cus_rr_real', 'sub_rr_real')
      returning id`,
     [PRACTITIONER_EMAIL],
   )

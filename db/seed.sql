@@ -19,8 +19,7 @@ insert into public.practitioners (
   practice_point,
   booking_link_url,
   verification_status,
-  subscription_status,
-  visible
+  subscription_status
 )
 values (
   'a1b2c3d4',
@@ -35,8 +34,7 @@ values (
   extensions.st_setsrid(extensions.st_makepoint(-0.0921, 51.5144), 4326)::extensions.geography,
   'https://smithoptical.example.co.uk/book',
   'verified',
-  'active',
-  true
+  'active'
 )
 on conflict (goc_number) do nothing;
 
@@ -53,8 +51,7 @@ insert into public.practitioners (
   practice_point,
   booking_link_url,
   verification_status,
-  subscription_status,
-  visible
+  subscription_status
 )
 values (
   'd4c3b2a1',
@@ -69,8 +66,7 @@ values (
   extensions.st_setsrid(extensions.st_makepoint(-2.2467, 53.4794), 4326)::extensions.geography,
   'https://doevision.example.co.uk/book',
   'pending',
-  'incomplete',
-  false
+  'incomplete'
 )
 on conflict (goc_number) do nothing;
 
@@ -88,8 +84,7 @@ insert into public.practitioners (
   practice_point,
   booking_link_url,
   verification_status,
-  subscription_status,
-  visible
+  subscription_status
 )
 values (
   'e1f2g3h4',
@@ -104,8 +99,7 @@ values (
   extensions.st_setsrid(extensions.st_makepoint(-0.0876, 51.5258), 4326)::extensions.geography,
   'https://cityeyes.example.co.uk/book',
   'verified',
-  'active',
-  true
+  'active'
 )
 on conflict (goc_number) do nothing;
 
@@ -123,8 +117,7 @@ insert into public.practitioners (
   practice_point,
   booking_link_url,
   verification_status,
-  subscription_status,
-  visible
+  subscription_status
 )
 values (
   'i5j6k7l8',
@@ -139,14 +132,14 @@ values (
   extensions.st_setsrid(extensions.st_makepoint(-0.3270, 51.4480), 4326)::extensions.geography,
   'https://meridianvision.example.co.uk/book',
   'verified',
-  'active',
-  true
+  'active'
 )
 on conflict (goc_number) do nothing;
 
 -- Same coordinates as City Eyes but with an unfilled profile and a past_due
--- subscription: must be excluded by the visibility predicate even though
--- the column-level `visible` flag is true.
+-- subscription: excluded by the visibility predicate for want of the
+-- minimum profile fields, even though the subscription is still in the
+-- dunning window.
 insert into public.practitioners (
   short_id,
   full_name,
@@ -158,8 +151,7 @@ insert into public.practitioners (
   practice_town,
   practice_point,
   verification_status,
-  subscription_status,
-  visible
+  subscription_status
 )
 values (
   'm9n0p1q2',
@@ -172,8 +164,7 @@ values (
   'London',
   extensions.st_setsrid(extensions.st_makepoint(-0.0876, 51.5258), 4326)::extensions.geography,
   'verified',
-  'past_due',
-  true
+  'past_due'
 )
 on conflict (goc_number) do nothing;
 
@@ -192,8 +183,7 @@ insert into public.practitioners (
   practice_point,
   booking_link_url,
   verification_status,
-  subscription_status,
-  visible
+  subscription_status
 )
 values (
   'n0r1w2c3',
@@ -208,8 +198,7 @@ values (
   extensions.st_setsrid(extensions.st_makepoint(1.2933, 52.6289), 4326)::extensions.geography,
   'https://castleeye.example.co.uk/book',
   'verified',
-  'active',
-  true
+  'active'
 )
 on conflict (goc_number) do nothing;
 
@@ -235,8 +224,7 @@ insert into public.practitioners (
   opening_hours,
   booking_link_url,
   verification_status,
-  subscription_status,
-  visible
+  subscription_status
 )
 values (
   's4l5u6g7',
@@ -257,8 +245,7 @@ values (
   '{"Monday":"9:00-17:30","Tuesday":"9:00-17:30","Wednesday":"9:00-17:30","Thursday":"9:00-19:00","Friday":"9:00-17:30","Saturday":"9:00-13:00","Sunday":"Closed"}',
   'https://clarkevision.example.co.uk/book',
   'verified',
-  'active',
-  true
+  'active'
 )
 on conflict (goc_number) do nothing;
 
@@ -278,8 +265,7 @@ insert into public.practitioners (
   practice_point,
   booking_link_url,
   verification_status,
-  subscription_status,
-  visible
+  subscription_status
 )
 values (
   'r4v5o6k7',
@@ -294,8 +280,7 @@ values (
   extensions.st_setsrid(extensions.st_makepoint(-1.5491, 53.7965), 4326)::extensions.geography,
   'https://reedeyecare.example.co.uk/book',
   'revoked',
-  'canceled',
-  false
+  'canceled'
 )
 on conflict (goc_number) do nothing;
 
