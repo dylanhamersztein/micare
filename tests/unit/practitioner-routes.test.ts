@@ -26,8 +26,6 @@ const PRACTITIONER_ROUTES: ReadonlyArray<GuardedRoute> = [
   {
     file: 'practitioner/profile-editor.tsx',
     markers: [
-      'profile-editor-no-short-id',
-      'profile-editor-unknown',
       'completeness-required-banner',
       'completeness-polish-banner',
       'profile-saved-visible',
@@ -137,6 +135,22 @@ describe('the profile editor', () => {
     const source = await routeSource('practitioner/profile-editor.tsx')
 
     expect(source).toContain('noValidate')
+  })
+
+  // ADR-0006: the sealed session cookie is how MiCare resolves a
+  // Practitioner. A short_id in the query string resolves whoever the visitor
+  // names — every one of which is public, in /p/<short_id>/<slug>.
+  it('resolves the Practitioner from the session, not from the query string', async () => {
+    const source = await routeSource('practitioner/profile-editor.tsx')
+
+    expect(source).not.toContain('short_id')
+    expect(source).not.toContain('validateSearch')
+  })
+
+  it('sends a visitor with no session to sign in, as the dashboard does', async () => {
+    const source = await routeSource('practitioner/profile-editor.tsx')
+
+    expect(source).toContain("redirect({ to: '/login' })")
   })
 
   it('builds its fields from the Field primitive', async () => {

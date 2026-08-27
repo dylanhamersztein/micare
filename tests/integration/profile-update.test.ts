@@ -79,7 +79,7 @@ describe('updateProfile', () => {
     await insertEmptyPractitioner()
     vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
 
-    const result = await updateProfile(TEST_SHORT_ID, VALID_INPUT)
+    const result = await updateProfile(TEST_EMAIL, VALID_INPUT)
 
     expect(result).toEqual({ kind: 'saved', visible: true })
     expect(fetch).toHaveBeenCalledWith(
@@ -129,7 +129,7 @@ describe('updateProfile', () => {
     )
     vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
 
-    const result = await updateProfile(TEST_SHORT_ID, VALID_INPUT)
+    const result = await updateProfile(TEST_EMAIL, VALID_INPUT)
 
     expect(result).toEqual({ kind: 'saved', visible: false })
     const row = await db.query<{ visible: boolean }>(
@@ -143,7 +143,7 @@ describe('updateProfile', () => {
     await insertEmptyPractitioner()
     vi.mocked(fetch).mockResolvedValueOnce(geocodeNotFound())
 
-    const result = await updateProfile(TEST_SHORT_ID, VALID_INPUT)
+    const result = await updateProfile(TEST_EMAIL, VALID_INPUT)
 
     expect(result).toEqual({ kind: 'postcode-not-found' })
     const row = await db.query<{
@@ -157,18 +157,44 @@ describe('updateProfile', () => {
     expect(row.rows[0].visible).toBe(false)
   })
 
-  it('returns unknown when no Practitioner row matches the short_id', async () => {
+  it('returns unknown when no Practitioner row matches the session email', async () => {
     vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
 
-    const result = await updateProfile('zzzzzzzz', VALID_INPUT)
+    const result = await updateProfile('nobody@example.co.uk', VALID_INPUT)
 
     expect(result).toEqual({ kind: 'unknown' })
+  })
+
+  // short_id is public — it is in every /p/<short_id>/<slug> URL and every
+  // /go?p=<short_id> link. A save must not be addressable by it, or any
+  // visitor could overwrite a verified Practitioner's booking_link_url.
+  it('refuses to write to a Practitioner addressed by their public short_id', async () => {
+    await insertEmptyPractitioner()
+    vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
+
+    const result = await updateProfile(TEST_SHORT_ID, VALID_INPUT)
+
+    expect(result).toEqual({ kind: 'unknown' })
+    const row = await db.query<{ practice_name: string | null }>(
+      `select practice_name from public.practitioners where short_id = $1`,
+      [TEST_SHORT_ID],
+    )
+    expect(row.rows[0].practice_name).toBeNull()
+  })
+
+  it('matches the email case-insensitively, as the login path does', async () => {
+    await insertEmptyPractitioner()
+    vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
+
+    const result = await updateProfile(TEST_EMAIL.toUpperCase(), VALID_INPUT)
+
+    expect(result).toEqual({ kind: 'saved', visible: true })
   })
 
   it('returns invalid with per-field errors and does not call fetch when Zod rejects', async () => {
     await insertEmptyPractitioner()
 
-    const result = await updateProfile(TEST_SHORT_ID, {
+    const result = await updateProfile(TEST_EMAIL, {
       ...VALID_INPUT,
       practiceName: '',
       bookingLinkUrl: 'not-a-url',
@@ -188,7 +214,7 @@ describe('updateProfile', () => {
     await insertEmptyPractitioner()
     vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
 
-    await updateProfile(TEST_SHORT_ID, VALID_INPUT)
+    await updateProfile(TEST_EMAIL, VALID_INPUT)
 
     const fired = await db.query<{ practitioner_id: string }>(
       `select f.practitioner_id
@@ -211,7 +237,7 @@ describe('updateProfile', () => {
     )
     vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
 
-    await updateProfile(TEST_SHORT_ID, VALID_INPUT)
+    await updateProfile(TEST_EMAIL, VALID_INPUT)
 
     const fired = await db.query(
       `select 1 from public.notify_fires f

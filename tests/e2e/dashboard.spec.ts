@@ -28,6 +28,11 @@ test('a Practitioner signs in via magic-link and sees all six readouts', async (
 }) => {
   const email = await signUpFreshPractitioner(page)
 
+  // Checkout now mints a session for the account it creates (ADR-0023), so
+  // the browser is signed in at this point. Drop the cookie to exercise the
+  // magic-link path from a genuinely signed-out visitor.
+  await page.context().clearCookies()
+
   // AC: unauthenticated visit to /dashboard redirects to the magic-link flow.
   await page.goto('/dashboard')
   await page.waitForURL(/\/login/)

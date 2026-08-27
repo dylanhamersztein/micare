@@ -28,7 +28,9 @@ describe('startCheckout (VITE_STRIPE_MOCK=true)', () => {
 
     expect(result.kind).toBe('mock')
     if (result.kind !== 'mock') throw new Error('expected mock result')
-    expect(result.redirectTo).toMatch(/^\/practitioner\/profile-editor/)
+    // No `?short_id=`: the editor resolves the Practitioner from the session
+    // (ADR-0006), and short_id is public enough to be in every profile URL.
+    expect(result.redirectTo).toBe('/practitioner/profile-editor')
 
     const row = await db.query<{
       verification_status: string

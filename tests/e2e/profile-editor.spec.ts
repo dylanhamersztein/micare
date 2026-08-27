@@ -50,7 +50,7 @@ async function signupVerifiedAndCheckout(
   await expect(page.getByTestId('signup-verified')).toBeVisible()
   await page.getByTestId('signup-continue-to-payment').click()
 
-  await page.waitForURL(/\/practitioner\/profile-editor\?short_id=/)
+  await page.waitForURL(/\/practitioner\/profile-editor$/)
   await page
     .locator('[data-testid="profile-editor"][data-hydrated="true"]')
     .waitFor()
@@ -143,4 +143,38 @@ test('saving with required fields missing shows field errors and keeps the Pract
   await expect(
     page.getByTestId('search-results').getByText('Editor Optician'),
   ).toHaveCount(0)
+})
+
+test('a visitor with no session is sent to sign in, not to an editor', async ({
+  page,
+}) => {
+  await page.goto('/practitioner/profile-editor')
+
+  await page.waitForURL(/\/login/)
+  await expect(page.getByTestId('profile-editor')).toHaveCount(0)
+})
+
+// short_id is public — it is in every /p/<short_id>/<slug> URL. Before the
+// editor read the session, quoting one in the query string was enough to open
+// (and overwrite) that Practitioner's profile.
+test('a short_id in the query string names nobody', async ({ page }) => {
+  await signupVerifiedAndCheckout(page)
+
+  const practiceName = `Own Practice ${String(Date.now()).slice(-6)}`
+  await page.getByTestId('profile-practice-name').fill(practiceName)
+  await page.getByTestId('profile-address-line1').fill('3 Editor Way')
+  await page.getByTestId('profile-postcode').fill('EC2V 6AA')
+  await page.getByTestId('profile-town').fill('London')
+  await page
+    .getByTestId('profile-booking-link')
+    .fill('https://own.example/book')
+  await page.getByTestId('profile-hours-monday').fill('9:00-17:30')
+  await page.getByTestId('profile-save').click()
+  await expect(page.getByTestId('profile-saved-visible')).toBeVisible()
+
+  await page.goto('/practitioner/profile-editor?short_id=zzzzzzzz')
+
+  await expect(page.getByTestId('profile-practice-name')).toHaveValue(
+    practiceName,
+  )
 })

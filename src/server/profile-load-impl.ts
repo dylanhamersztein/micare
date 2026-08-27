@@ -3,6 +3,10 @@
 // rows that are NOT yet visible (a verified+active row with no Practice
 // fields is the exact state being edited) and needs the editable columns
 // (e.g. `by_appointment_only`) the public resolver hides.
+//
+// Keyed on the login email the sealed session carries (ADR-0006), like
+// dashboard-impl and billing-portal-impl — never on short_id, which is
+// public in every /p/<short_id>/<slug> URL.
 
 import type { OpeningHours } from '../slug'
 import { db } from './db'
@@ -70,7 +74,7 @@ function mapRow(row: EditableProfileRow): EditableProfile {
 }
 
 export async function loadEditableProfile(
-  shortId: string,
+  email: string,
 ): Promise<EditableProfile | null> {
   const result = await db.query<EditableProfileRow>(
     `select
@@ -92,8 +96,9 @@ export async function loadEditableProfile(
        accessibility_notes,
        accepting_new_patients
      from public.practitioners
-     where short_id = $1`,
-    [shortId],
+     where lower(email) = lower($1)
+     limit 1`,
+    [email.trim()],
   )
   const row = result.rows.at(0)
   return row ? mapRow(row) : null

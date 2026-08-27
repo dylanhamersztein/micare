@@ -57,7 +57,7 @@ async function signupCheckoutAndFillRequired(
   await expect(page.getByTestId('signup-verified')).toBeVisible()
   await page.getByTestId('signup-continue-to-payment').click()
 
-  await page.waitForURL(/\/practitioner\/profile-editor\?short_id=/)
+  await page.waitForURL(/\/practitioner\/profile-editor$/)
   await page
     .locator('[data-testid="profile-editor"][data-hydrated="true"]')
     .waitFor()
@@ -97,10 +97,10 @@ test('uploading a valid photo previews it and shows it on the public profile', a
   await page.getByTestId('profile-save').click()
   await expect(page.getByTestId('profile-saved-visible')).toBeVisible()
 
-  const profileUrl = await page.evaluate(() => window.location.href)
-  const shortId = new URL(profileUrl).searchParams.get('short_id')
-  expect(shortId).not.toBeNull()
-  await page.goto(`/p/${shortId}/photo-practice`)
+  // The editor no longer carries a short_id; the dashboard is where a
+  // Practitioner is handed the public URL of their own listing.
+  await page.goto('/dashboard')
+  await page.getByTestId('dashboard-public-profile-link').click()
   await expect(page.getByTestId('profile-photo')).toBeVisible()
 })
 
