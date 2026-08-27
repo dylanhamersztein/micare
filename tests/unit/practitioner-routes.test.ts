@@ -19,6 +19,7 @@ const PRACTITIONER_ROUTES: ReadonlyArray<GuardedRoute> = [
       'dashboard-clickthrough-count',
       'dashboard-last-verified-at',
       'dashboard-public-profile-link',
+      'dashboard-profile-editor-link',
       'dashboard-billing-portal',
     ],
     hydrates: true,
@@ -99,6 +100,16 @@ describe('the dashboard', () => {
     )
 
     expect(clickthroughs).toContain('cycleStart')
+  })
+
+  // Story 32: the editor is somewhere a Practitioner returns to, not a page
+  // they pass through once on their way out of checkout. The dashboard is
+  // where a returning Practitioner lands, so the way in has to be here — the
+  // alternative is typing the URL from memory.
+  it('offers a way into the profile editor', async () => {
+    const source = await routeSource('dashboard.tsx')
+
+    expect(source).toContain('to="/practitioner/profile-editor"')
   })
 
   it('states both statuses with the shared badges, not with bare label strings', async () => {
