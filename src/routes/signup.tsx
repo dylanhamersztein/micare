@@ -59,10 +59,19 @@ function SignupPage() {
     setHydrated(true)
   }, [])
 
-  async function runCheck(input: SignupInput) {
+  // `retry` marks the press of "Try the check again" on the pending panel, as
+  // opposed to a first submit. The server needs to know which it is: without
+  // it the 24h suppression cache replays the very attempt that produced the
+  // panel, and the button cannot do anything for a day (issue #67).
+  async function runCheck(
+    input: SignupInput,
+    options: { retry?: boolean } = {},
+  ) {
     setState({ kind: 'submitting', gocNumber: input.gocNumber })
     try {
-      const { outcome } = await submitSignup({ data: input })
+      const { outcome } = await submitSignup({
+        data: { ...input, retry: options.retry },
+      })
       setState({ kind: 'result', outcome, input })
     } catch {
       setState({ kind: 'result', outcome: 'pending', input: null })
@@ -205,7 +214,11 @@ function SignupPage() {
         data-testid="signup-pending"
       >
         {input && (
-          <Button size="lg" onClick={() => runCheck(input)}>
+          <Button
+            size="lg"
+            onClick={() => runCheck(input, { retry: true })}
+            data-testid="signup-retry"
+          >
             Try the check again
           </Button>
         )}

@@ -82,13 +82,22 @@ async function fileProspectAsPending(data: SignupInput): Promise<void> {
   await linkVerificationsToPractitioner(data.gocNumber, practitionerId)
 }
 
+export type SignupOptions = {
+  // The prospect pressed "Try the check again" on the pending panel, rather
+  // than submitting the form for the first time. Passed straight to `verify`,
+  // which decides whether that is worth a fresh look at the register.
+  retry?: boolean
+}
+
 export async function submitSignupImpl(
   data: SignupInput,
+  options: SignupOptions = {},
 ): Promise<{ outcome: VerificationOutcome }> {
   const result = await verify(
     data.professionCode,
     data.fullName,
     data.gocNumber,
+    { retry: options.retry },
   )
   const outcome = verificationOutcome(result)
 

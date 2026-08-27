@@ -23,7 +23,7 @@ _Avoid_: validation, accreditation, certification.
 **Verification Status**:
 A Practitioner's current standing with their regulator, as known to MiCare. One of:
 
-- `pending` — signup scrape timed out or could not be read; not yet confirmed. Rare. Signup files the prospect as a Practitioner in this state itself, with no Stripe customer, so there is a row to act on and an email to act with (ADR-0025) — the only status signup writes. Not visible to consumers, and not billed. Nothing scheduled revisits it (the weekly re-verification sweeps _visible_ Practitioners), so it is cleared by **Manual Re-verification**; a prospect who comes back verified has this row adopted by checkout rather than replaced.
+- `pending` — signup scrape timed out or could not be read; not yet confirmed. Rare. Signup files the prospect as a Practitioner in this state itself, with no Stripe customer, so there is a row to act on and an email to act with (ADR-0025) — the only status signup writes. Not visible to consumers, and not billed. Nothing scheduled revisits it (the weekly re-verification sweeps _visible_ Practitioners), so it is cleared by **Manual Re-verification**, or by the prospect themselves pressing "Try the check again" on the pending panel — the one caller besides the operator that the 24h suppression cache steps aside for (ADR-0026). A prospect who comes back verified has this row adopted by checkout rather than replaced.
 - `verified` — confirmed present and active on the regulator's register. The only consumer-visible status.
 - `rejected` — signup scrape ran and the Practitioner was not on the register. Signup blocked, no charge.
 - `revoked` — was previously `verified`, but a re-check found them no longer on the register (e.g. struck off). Hidden from consumers; row preserved for refund and audit.
@@ -93,7 +93,7 @@ Three scheduled jobs run as Vercel Cron routes under `/api/cron/`, each guarded 
 
 One route, run by hand rather than on a schedule, guarded by `OPERATOR_SECRET` rather than `CRON_SECRET`.
 
-- **Manual Re-verification** (`POST /api/admin/verify-practitioner`): re-runs `verify` for one GOC number and applies the result, for a **Practitioner** stuck in `pending`. `{"force": true}` bypasses the verification module's 24h suppression cache when the operator needs a live answer. Every run — including the refusals — logs `[admin:verify-practitioner]` (ADR-0014).
+- **Manual Re-verification** (`POST /api/admin/verify-practitioner`): re-runs `verify` for one GOC number and applies the result, for a **Practitioner** stuck in `pending`. `{"force": true}` bypasses the verification module's 24h suppression cache when the operator needs a live answer. Every run — including the refusals — logs `[admin:verify-practitioner]` (ADR-0014). The cache has one other exemption: a prospect's own retry on the signup pending panel, narrowed to results that were never an answer so the public form cannot be pressed into a scraping lever (ADR-0026).
 
 ## Example dialogue
 
