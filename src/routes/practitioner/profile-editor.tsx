@@ -1,6 +1,5 @@
-import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
-import { z } from 'zod'
 
 import {
   Alert,
@@ -8,8 +7,6 @@ import {
   Checkbox,
   Field,
   FileUpload,
-  NoticePage,
-  STANDALONE_LINK_CLASSES,
   TextInput,
   Textarea,
 } from '#/components'
@@ -52,18 +49,15 @@ function upTo(limit: number): string {
   return `Up to ${LIMIT_FORMAT.format(limit)} characters.`
 }
 
-const searchSchema = z.object({
-  short_id: z.string().trim().min(1).optional(),
-})
-
 export const Route = createFileRoute('/practitioner/profile-editor')({
-  validateSearch: (raw) => searchSchema.parse(raw),
-  loaderDeps: ({ search }) => ({ shortId: search.short_id }),
-  loader: async ({ deps }) => {
-    if (!deps.shortId) return { kind: 'no-short-id' as const }
-    const profile = await loadProfile({ data: { shortId: deps.shortId } })
-    if (!profile) return { kind: 'unknown' as const, shortId: deps.shortId }
-    return { kind: 'ok' as const, profile }
+  // The Practitioner being edited is whoever the sealed session says it is
+  // (ADR-0006) — the editor takes no identifier from the visitor.
+  loader: async () => {
+    const result = await loadProfile()
+    if (result.kind === 'unauthenticated') {
+      throw redirect({ to: '/login' })
+    }
+    return result.profile
   },
   component: ProfileEditorPage,
 })
@@ -82,49 +76,7 @@ type PhotoUploadState =
   | { kind: 'failed'; outcome: Exclude<PhotoCheckOutcome, 'ok'> }
 
 function ProfileEditorPage() {
-  const loaderData = Route.useLoaderData()
-
-  if (loaderData.kind === 'no-short-id') {
-    return (
-      <NoticePage
-        tone="problem"
-        eyebrow="We can’t identify you"
-        title="We can’t find your account"
-        data-testid="profile-editor-no-short-id"
-      >
-        <p>
-          Open the link from your payment confirmation email, or finish signup
-          first so we can identify your profile.
-        </p>
-        <p>
-          <Link to="/signup" className={STANDALONE_LINK_CLASSES}>
-            Start signup
-          </Link>
-        </p>
-      </NoticePage>
-    )
-  }
-
-  if (loaderData.kind === 'unknown') {
-    return (
-      <NoticePage
-        tone="problem"
-        eyebrow="We can’t identify you"
-        title="We can’t find your account"
-        data-testid="profile-editor-unknown"
-      >
-        <p>
-          The profile{' '}
-          <code className="rounded-xs bg-surface-sunk px-1.5 py-0.5 font-mono text-meta">
-            {loaderData.shortId}
-          </code>{' '}
-          doesn’t match any Practitioner on MiCare. Double-check the link.
-        </p>
-      </NoticePage>
-    )
-  }
-
-  return <EditorForm profile={loaderData.profile} />
+  return <EditorForm profile={Route.useLoaderData()} />
 }
 
 function emptyHours(): Record<Day, string> {
@@ -263,9 +215,11 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
 
     setState({ kind: 'submitting' })
     try {
-      const result = await submitProfileUpdate({
-        data: { shortId: profile.shortId, input: collected },
-      })
+      const result = await submitProfileUpdate({ data: { input: collected } })
+      if (result.kind === 'unauthenticated') {
+        await router.navigate({ to: '/login' })
+        return
+      }
       if (result.kind === 'saved') {
         setState({ kind: 'saved', visible: result.visible })
         await router.invalidate()
@@ -306,12 +260,12 @@ function EditorForm({ profile }: { profile: EditableProfile }) {
     try {
       const fileBase64 = await fileToBase64(file)
       const result = await submitProfilePhoto({
-        data: {
-          shortId: profile.shortId,
-          fileBase64,
-          filename: file.name,
-        },
+        data: { fileBase64, filename: file.name },
       })
+      if (result.kind === 'unauthenticated') {
+        await router.navigate({ to: '/login' })
+        return
+      }
       if (result.kind === 'ok') {
         setPhotoUrl(result.photoUrl)
         setPhotoUploadState({ kind: 'idle' })

@@ -45,10 +45,10 @@ describe('loadEditableProfile', () => {
   })
   afterEach(clearTestRows)
 
-  it('returns every editable field for an existing short_id', async () => {
+  it('returns every editable field for the session’s email', async () => {
     await insertFixture()
 
-    const profile = await loadEditableProfile(TEST_SHORT_ID)
+    const profile = await loadEditableProfile(TEST_EMAIL)
 
     expect(profile).not.toBeNull()
     expect(profile).toMatchObject({
@@ -69,8 +69,24 @@ describe('loadEditableProfile', () => {
     })
   })
 
-  it('returns null for an unknown short_id', async () => {
-    expect(await loadEditableProfile('zzzzzzzz')).toBeNull()
+  it('matches the email case-insensitively, as the login path does', async () => {
+    await insertFixture()
+
+    const profile = await loadEditableProfile(TEST_EMAIL.toUpperCase())
+
+    expect(profile?.shortId).toBe(TEST_SHORT_ID)
+  })
+
+  // short_id is public — it is in every /p/<short_id>/<slug> URL and every
+  // /go?p=<short_id> link. The editor must not be reachable by it.
+  it('does not resolve a Practitioner by their public short_id', async () => {
+    await insertFixture()
+
+    expect(await loadEditableProfile(TEST_SHORT_ID)).toBeNull()
+  })
+
+  it('returns null for an email with no Practitioner', async () => {
+    expect(await loadEditableProfile('nobody@example.co.uk')).toBeNull()
   })
 
   it('returns sensible defaults for a row with null nullable fields', async () => {
@@ -82,7 +98,7 @@ describe('loadEditableProfile', () => {
       [TEST_SHORT_ID, TEST_GOC, TEST_EMAIL],
     )
 
-    const profile = await loadEditableProfile(TEST_SHORT_ID)
+    const profile = await loadEditableProfile(TEST_EMAIL)
 
     expect(profile).not.toBeNull()
     expect(profile?.practiceName).toBeNull()

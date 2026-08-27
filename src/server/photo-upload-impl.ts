@@ -1,8 +1,13 @@
-// Server-only orchestrator for profile photo upload. Runs the byte-size
-// check first (cheapest), then sharp metadata to sniff the format and
-// dimensions, then face-api detection. Only writes practitioners.photo_url
+// Server-only orchestrator for profile photo upload. Resolves the
+// Practitioner, then runs the byte-size check (cheapest), then sharp
+// metadata to sniff the format and dimensions, then face-api detection. Only writes practitioners.photo_url
 // on a pass. Never touches the visible column — AC #4 says the photo is
 // optional and independent of required-field completeness.
+//
+// The Practitioner comes from the login email the sealed session carries
+// (ADR-0006) — never from short_id, which is public in every
+// /p/<short_id>/<slug> URL. short_id is still what names the stored object,
+// so the row is resolved before any bytes are uploaded.
 //
 // MIME type is detected from the file bytes, not trusted from the client.
 // Browsers on some platforms (notably Linux/WSL without xdg-mime) hand us
@@ -17,9 +22,10 @@ import type { PhotoCheckOutcome } from '../photo-check-result'
 import { db } from './db'
 import { detectFaces } from './photo-detect'
 import { uploadProfilePhoto } from './photo-storage'
+import { findPractitionerByEmail } from './practitioner-account'
 
 export type PhotoUploadInput = {
-  shortId: string
+  email: string
   fileBase64: string
   filename: string
 }
@@ -39,6 +45,9 @@ const FORMAT_TO_MIME: Record<string, AllowedMimeType> = {
 export async function uploadPractitionerPhoto(
   input: PhotoUploadInput,
 ): Promise<PhotoUploadResult> {
+  const account = await findPractitionerByEmail(input.email)
+  if (!account) return { kind: 'unknown' }
+
   const buffer = Buffer.from(input.fileBase64, 'base64')
   if (!isWithinByteSize(buffer.byteLength)) {
     return { kind: 'too-large' }
@@ -70,21 +79,17 @@ export async function uploadPractitionerPhoto(
   if (faceCount > 1) return { kind: 'multi-face' }
 
   const photoUrl = await uploadProfilePhoto({
-    shortId: input.shortId,
+    shortId: account.shortId,
     buffer,
     mimeType,
   })
 
-  const updated = await db.query<{ short_id: string }>(
+  await db.query(
     `update public.practitioners
         set photo_url = $2, updated_at = now()
-      where short_id = $1
-      returning short_id`,
-    [input.shortId, photoUrl],
+      where id = $1`,
+    [account.id, photoUrl],
   )
-  if (updated.rowCount === 0) {
-    return { kind: 'unknown' }
-  }
 
   return { kind: 'ok', photoUrl }
 }

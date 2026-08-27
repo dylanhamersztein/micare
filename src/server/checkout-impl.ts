@@ -102,10 +102,9 @@ export async function startCheckoutImpl(
       subscriptionStatus: 'active',
     })
     await backfillVerificationPractitionerId(data.gocNumber, practitioner.id)
-    return {
-      kind: 'mock',
-      redirectTo: `${PROFILE_EDITOR_PATH}?short_id=${practitioner.shortId}`,
-    }
+    // No short_id on the hand-off: the editor resolves the Practitioner from
+    // the sealed session (ADR-0006), which src/server/checkout.ts mints.
+    return { kind: 'mock', redirectTo: PROFILE_EDITOR_PATH }
   }
 
   const stripe = getStripe()

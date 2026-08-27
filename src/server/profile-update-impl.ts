@@ -1,8 +1,13 @@
-// Server-only write path for the profile editor. The single source of truth
-// for the visibility flip described in AC #4 + #7 of issue #11. The legacy
-// `practitioners.visible` column (still used by src/server/practitioners.ts,
-// which feeds `/`) is recomputed and persisted here so callers that lean on
-// the column stay consistent with the isVisible() predicate.
+// Server-only write path for the profile editor, and the single source of
+// truth for the visibility flip described in AC #4 + #7 of issue #11. The
+// legacy `practitioners.visible` column (still used by
+// src/server/practitioners.ts, which feeds `/`) is recomputed and persisted
+// here so callers that lean on the column stay consistent with the
+// isVisible() predicate.
+//
+// Keyed on the login email the sealed session carries (ADR-0006) — never on
+// short_id, which is public in every /p/<short_id>/<slug> URL and so names
+// whoever the caller pleases.
 
 import type { z } from 'zod'
 
@@ -30,7 +35,7 @@ function flattenFieldErrors(error: z.ZodError): Record<string, string> {
 }
 
 export async function updateProfile(
-  shortId: string,
+  email: string,
   rawInput: unknown,
 ): Promise<ProfileUpdateResult> {
   const parsed = profileEditorInputSchema.safeParse(rawInput)
@@ -85,10 +90,10 @@ export async function updateProfile(
             accepting_new_patients  = $18,
             visible                 = $19,
             updated_at              = now()
-      where short_id = $1
+      where lower(email) = lower($1)
       returning id, verification_status, subscription_status, full_name`,
     [
-      shortId,
+      email.trim(),
       input.practiceName,
       input.practiceAddressLine1,
       input.practiceAddressLine2,
@@ -129,8 +134,8 @@ export async function updateProfile(
 
   if (visible !== minFieldsFilled) {
     await db.query(
-      `update public.practitioners set visible = $2 where short_id = $1`,
-      [shortId, visible],
+      `update public.practitioners set visible = $2 where id = $1`,
+      [row.id, visible],
     )
   }
 

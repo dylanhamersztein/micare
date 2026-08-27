@@ -55,7 +55,7 @@ describe('uploadPractitionerPhoto', () => {
   it('saves the photo URL and returns ok for a passing image', async () => {
     const buffer = await makePngBuffer(800, 800)
     const result = await uploadPractitionerPhoto({
-      shortId: TEST_SHORT_ID,
+      email: TEST_EMAIL,
       fileBase64: asBase64(buffer),
       filename: 'headshot.png',
     })
@@ -73,7 +73,7 @@ describe('uploadPractitionerPhoto', () => {
 
   it('returns unsupported-type for image/gif and does not touch photo_url', async () => {
     const result = await uploadPractitionerPhoto({
-      shortId: TEST_SHORT_ID,
+      email: TEST_EMAIL,
       fileBase64: asBase64(Buffer.from([0x47, 0x49, 0x46])),
       filename: 'animated.gif',
     })
@@ -91,7 +91,7 @@ describe('uploadPractitionerPhoto', () => {
     // check fails before sharp is even asked to decode.
     const buffer = Buffer.alloc(5.5 * 1024 * 1024, 0)
     const result = await uploadPractitionerPhoto({
-      shortId: TEST_SHORT_ID,
+      email: TEST_EMAIL,
       fileBase64: asBase64(buffer),
       filename: 'huge.png',
     })
@@ -102,7 +102,7 @@ describe('uploadPractitionerPhoto', () => {
   it('returns too-small for a 100×100 png', async () => {
     const buffer = await makePngBuffer(100, 100)
     const result = await uploadPractitionerPhoto({
-      shortId: TEST_SHORT_ID,
+      email: TEST_EMAIL,
       fileBase64: asBase64(buffer),
       filename: 'tiny.png',
     })
@@ -113,7 +113,7 @@ describe('uploadPractitionerPhoto', () => {
   it('returns no-face via the mock when the filename suffix triggers it', async () => {
     const buffer = await makePngBuffer(800, 800)
     const result = await uploadPractitionerPhoto({
-      shortId: TEST_SHORT_ID,
+      email: TEST_EMAIL,
       fileBase64: asBase64(buffer),
       filename: 'sample-noface.png',
     })
@@ -129,7 +129,7 @@ describe('uploadPractitionerPhoto', () => {
   it('returns multi-face via the mock when the filename suffix triggers it', async () => {
     const buffer = await makePngBuffer(800, 800)
     const result = await uploadPractitionerPhoto({
-      shortId: TEST_SHORT_ID,
+      email: TEST_EMAIL,
       fileBase64: asBase64(buffer),
       filename: 'group-multiface.png',
     })
@@ -137,15 +137,34 @@ describe('uploadPractitionerPhoto', () => {
     expect(result).toEqual({ kind: 'multi-face' })
   })
 
-  it('returns unknown when no Practitioner row matches the short_id', async () => {
+  it('returns unknown when no Practitioner row matches the session email', async () => {
     const buffer = await makePngBuffer(800, 800)
     const result = await uploadPractitionerPhoto({
-      shortId: 'nopenope',
+      email: 'nobody@example.co.uk',
       fileBase64: asBase64(buffer),
       filename: 'headshot.png',
     })
 
     expect(result).toEqual({ kind: 'unknown' })
+  })
+
+  // short_id is public — it is in every /p/<short_id>/<slug> URL and every
+  // /go?p=<short_id> link. A visitor must not be able to put a photo on a
+  // verified Practitioner's listing by quoting it.
+  it('refuses a Practitioner addressed by their public short_id', async () => {
+    const buffer = await makePngBuffer(800, 800)
+    const result = await uploadPractitionerPhoto({
+      email: TEST_SHORT_ID,
+      fileBase64: asBase64(buffer),
+      filename: 'headshot.png',
+    })
+
+    expect(result).toEqual({ kind: 'unknown' })
+    const row = await db.query<{ photo_url: string | null }>(
+      `select photo_url from public.practitioners where short_id = $1`,
+      [TEST_SHORT_ID],
+    )
+    expect(row.rows[0].photo_url).toBeNull()
   })
 
   it('does not change visible when the photo is saved (AC #4: optional)', async () => {
@@ -155,7 +174,7 @@ describe('uploadPractitionerPhoto', () => {
     )
     const buffer = await makePngBuffer(800, 800)
     await uploadPractitionerPhoto({
-      shortId: TEST_SHORT_ID,
+      email: TEST_EMAIL,
       fileBase64: asBase64(buffer),
       filename: 'headshot.png',
     })
