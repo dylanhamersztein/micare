@@ -90,3 +90,22 @@ test('an invalid magic-link lands on /login with an error', async ({
   await page.waitForURL(/\/login/)
   await expect(page.getByTestId('login-link-error')).toBeVisible()
 })
+
+test('a returning Practitioner reaches their profile editor from the dashboard', async ({
+  page,
+}) => {
+  await signUpFreshPractitioner(page)
+
+  // The state a Practitioner comes back in: signed in (checkout mints the
+  // session, ADR-0023) and landing on the dashboard rather than on the editor
+  // link checkout handed them once.
+  await page.goto('/dashboard')
+  await page
+    .locator('[data-testid="dashboard"][data-hydrated="true"]')
+    .waitFor()
+
+  await page.getByTestId('dashboard-profile-editor-link').click()
+
+  await page.waitForURL(/\/practitioner\/profile-editor$/)
+  await expect(page.getByTestId('profile-editor')).toBeVisible()
+})

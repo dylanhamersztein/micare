@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 
 import {
   Button,
+  buttonClasses,
   STANDALONE_LINK_CLASSES,
   StatusReadout,
   SubscriptionBadge,
@@ -163,6 +164,16 @@ function DashboardPage() {
           Your listing and your billing
         </h2>
         <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-3">
+          {/* The action a returning Practitioner came back for (Story 32).
+              Checkout hands them the editor once; from then on this is the
+              only way in that does not involve remembering a URL. */}
+          <Link
+            to="/practitioner/profile-editor"
+            className={buttonClasses({ variant: 'secondary' })}
+            data-testid="dashboard-profile-editor-link"
+          >
+            Edit your profile
+          </Link>
           <Link
             to={data.publicProfileUrl}
             className={STANDALONE_LINK_CLASSES}
