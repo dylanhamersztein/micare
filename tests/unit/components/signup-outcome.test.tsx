@@ -128,6 +128,26 @@ describe('the rejected outcome', () => {
     expect(container.textContent).toContain(GOC_NUMBER_HELP)
   })
 
+  // Issue #68: the check now compares the submitted name to the registrant
+  // name the register holds, so the panel may be here because the number was
+  // wrong or because the name was. Blaming the number in the heading names a
+  // cause the check did not establish.
+  it('does not pin the failure on the number, which is only half the check', () => {
+    renderOutcome('rejected')
+
+    expect(screen.getByRole('heading', { level: 1 }).textContent).not.toMatch(
+      /that number/i,
+    )
+  })
+
+  it('states the matching rule the check actually applies', () => {
+    const { container } = renderOutcome('rejected')
+
+    // ADR-0019: copy that describes a check is checked like one. The rule is
+    // first and last name, so that is what the reason may promise.
+    expect(container.textContent).toMatch(/first and last name/i)
+  })
+
   it('says plainly that nothing was charged', () => {
     const { container } = renderOutcome('rejected')
 

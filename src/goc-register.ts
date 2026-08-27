@@ -10,6 +10,10 @@
 //  [aria-label="Registration Status"] → `<span><i>…</i>Registered</span>`,
 //  the registrant name appears in the card-body's `h1#detail-title`).
 //
+// The heading name is not decoration: `verify` matches it against the name the
+// prospect submitted (issue #68), so a card whose heading we cannot read is
+// escalated to `ambiguous` rather than returned as a nameless found-active.
+//
 // If the live register changes status wording, adjust ACTIVE_STATUS_PATTERN.
 // The aria-label keys are also the page's accessibility names, so they are
 // the most stable hooks available short of the GOC publishing an API.
@@ -80,13 +84,18 @@ export function parseGocRegisterPage(
   // <h1 id="detail-title"><strong>Ethan Belson </strong> <br/><strong>D-17909</strong></h1>.
   // Take the first <strong> whose text is not the GOC number.
   const target = normalizeNumber(regNumber)
-  const nameFromHeading =
-    card
-      .querySelectorAll('#detail-title strong, h1 strong')
-      .map((node) => node.text.trim())
-      .find(
-        (text) => text.length > 0 && !normalizeNumber(text).includes(target),
-      ) ?? ''
+  const nameFromHeading = card
+    .querySelectorAll('#detail-title strong, h1 strong')
+    .map((node) => node.text.trim())
+    .find((text) => text.length > 0 && !normalizeNumber(text).includes(target))
+
+  if (nameFromHeading === undefined) {
+    // The name is half the check (issue #68), so a card we cannot read a name
+    // out of is a card we cannot decide on. Escalate rather than return a
+    // nameless found-active: that would fail the name match and reject a
+    // genuine registrant over a change in the GOC's markup.
+    return { kind: 'ambiguous', registrationNumber: regNumber }
+  }
 
   return {
     kind: 'found-active',

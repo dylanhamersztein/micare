@@ -9,7 +9,11 @@
 
 import { env } from '../env.server'
 import { parseGocRegisterPage } from '../goc-register'
-import { mockVerify, verificationOutcome } from '../verification'
+import {
+  applyNameMatch,
+  mockVerify,
+  verificationOutcome,
+} from '../verification'
 import type { ProfessionCode, VerificationResult } from '../verification'
 import { db } from './db'
 
@@ -167,20 +171,24 @@ export async function verify(
 ): Promise<VerificationResult> {
   const cached = options.force ? null : await findCachedVerification(regNumber)
   if (cached && !(options.retry && verificationOutcome(cached) === 'pending')) {
-    return cached
+    // The cache is keyed on the GOC number alone, so a cached answer says
+    // what the register holds — not who asked. Re-adjudicate it against this
+    // caller's name or the cache becomes a way around the check (issue #68).
+    return applyNameMatch(cached, fullName)
   }
 
   const performed = env.GOC_MOCK
-    ? { result: mockVerify(regNumber), rawHtml: null }
+    ? { result: mockVerify(regNumber, fullName), rawHtml: null }
     : await scrapeGocRegister(regNumber)
+  const result = applyNameMatch(performed.result, fullName)
 
   await recordVerification({
     profession,
     fullName,
     regNumber,
-    result: performed.result,
+    result,
     rawHtml: performed.rawHtml,
   })
 
-  return performed.result
+  return result
 }

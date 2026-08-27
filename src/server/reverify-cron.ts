@@ -109,7 +109,12 @@ export async function runReVerification(): Promise<ReVerificationSummary> {
         console.error('[cron:re-verify] revocation refund failed', p.id, error)
       }
     } else {
-      // error | ambiguous — leave untouched.
+      // error | ambiguous | name-mismatch — leave untouched. The first two are
+      // a register we could not read; the third is a register that still holds
+      // this number under a name that has moved (issue #68). None of them is
+      // evidence the Practitioner left the register, and revoking cancels a
+      // subscription and issues a refund, so all three age into the stale
+      // alert for a human instead.
       summary.indeterminate++
     }
   }
