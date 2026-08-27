@@ -64,6 +64,23 @@ async function recordVerification(input: {
   )
 }
 
+// Signup-time verification rows are written before any practitioners row
+// exists (migration 0002), so whoever creates the Practitioner claims them
+// afterwards — checkout for a verified prospect, signup itself for a pending
+// one. Keyed by GOC number, and only ever fills a null.
+export async function linkVerificationsToPractitioner(
+  gocNumber: string,
+  practitionerId: string,
+): Promise<void> {
+  await db.query(
+    `update public.verifications
+        set practitioner_id = $1
+      where goc_number = $2
+        and practitioner_id is null`,
+    [practitionerId, gocNumber],
+  )
+}
+
 // Scrapes the GOC public register for one registration number. Every retry
 // shares a single 10s deadline via one AbortController; a timeout or an
 // exhausted retry budget resolves to an `error` result (never throws) so the

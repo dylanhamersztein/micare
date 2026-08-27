@@ -1,8 +1,9 @@
 // Server-only implementation of the `checkout` orchestrator. Turns a
 // verified-prospect SignupInput into a paying Practitioner: re-verifies via
 // the 24h cache (so a client cannot skip verification by calling this
-// directly), inserts the practitioners row with the small set of fields
-// signup supplies, back-fills the matching verifications.practitioner_id,
+// directly), writes the practitioners row with the small set of fields signup
+// supplies — adopting the `pending` row signup filed if there is one —
+// back-fills the matching verifications.practitioner_id,
 // then EITHER (mock) synthesises stripe IDs and flips subscription_status
 // to active, OR (real) creates a Stripe Customer and Checkout Session and
 // returns its url. Integration tests call startCheckoutImpl directly;
@@ -11,7 +12,7 @@
 import { env } from '../env.server'
 import type { SignupInput } from '../signup-input'
 import { generateShortId } from '../slug'
-import { verify } from './verification-impl'
+import { linkVerificationsToPractitioner, verify } from './verification-impl'
 import { db } from './db'
 import { getStripe } from './stripe'
 
@@ -22,12 +23,53 @@ export type StartCheckoutResult =
 const MAX_SHORT_ID_ATTEMPTS = 5
 const PROFILE_EDITOR_PATH = '/practitioner/profile-editor'
 
-async function insertPractitioner(args: {
+type PractitionerWrite = {
   input: SignupInput
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
   subscriptionStatus: 'incomplete' | 'active'
-}): Promise<{ id: string; shortId: string }> {
+}
+
+// The prospect whose signup-time scrape came back unreadable already has a
+// row, filed as `pending` by the signup orchestrator (ADR-0014, issue #66).
+// Now the register has answered, so that row becomes the paying Practitioner
+// — it keeps its id and short_id, and with them the verifications already
+// linked to it. Details are re-taken from the payload checkout was called
+// with, including the email the session in checkout.ts resolves by.
+async function adoptPendingPractitioner(
+  args: PractitionerWrite,
+): Promise<{ id: string; shortId: string } | null> {
+  const result = await db.query<{ id: string; short_id: string }>(
+    `update public.practitioners
+        set full_name = $2,
+            profession_code = $3,
+            email = $4,
+            verification_status = 'verified',
+            last_verified_at = now(),
+            subscription_status = $5,
+            stripe_customer_id = $6,
+            stripe_subscription_id = $7,
+            updated_at = now()
+      where goc_number = $1
+        and verification_status = 'pending'
+      returning id, short_id`,
+    [
+      args.input.gocNumber,
+      args.input.fullName,
+      args.input.professionCode,
+      args.input.email,
+      args.subscriptionStatus,
+      args.stripeCustomerId,
+      args.stripeSubscriptionId,
+    ],
+  )
+  const row = result.rows.at(0)
+  return row ? { id: row.id, shortId: row.short_id } : null
+}
+
+async function insertPractitioner(
+  args: PractitionerWrite,
+): Promise<{ id: string; shortId: string }> {
   for (let attempt = 1; attempt <= MAX_SHORT_ID_ATTEMPTS; attempt++) {
     const shortId = generateShortId()
     try {
@@ -65,17 +107,10 @@ async function insertPractitioner(args: {
   throw new Error('Failed to allocate a unique short_id after retries')
 }
 
-async function backfillVerificationPractitionerId(
-  gocNumber: string,
-  practitionerId: string,
-): Promise<void> {
-  await db.query(
-    `update public.verifications
-        set practitioner_id = $1
-      where goc_number = $2
-        and practitioner_id is null`,
-    [practitionerId, gocNumber],
-  )
+async function recordPractitioner(
+  args: PractitionerWrite,
+): Promise<{ id: string; shortId: string }> {
+  return (await adoptPendingPractitioner(args)) ?? insertPractitioner(args)
 }
 
 export async function startCheckoutImpl(
@@ -95,13 +130,13 @@ export async function startCheckoutImpl(
   if (env.VITE_STRIPE_MOCK) {
     const customerId = `cus_mock_${generateShortId(12)}`
     const subscriptionId = `sub_mock_${generateShortId(12)}`
-    const practitioner = await insertPractitioner({
+    const practitioner = await recordPractitioner({
       input: data,
       stripeCustomerId: customerId,
       stripeSubscriptionId: subscriptionId,
       subscriptionStatus: 'active',
     })
-    await backfillVerificationPractitionerId(data.gocNumber, practitioner.id)
+    await linkVerificationsToPractitioner(data.gocNumber, practitioner.id)
     // No short_id on the hand-off: the editor resolves the Practitioner from
     // the sealed session (ADR-0006), which src/server/checkout.ts mints.
     return { kind: 'mock', redirectTo: PROFILE_EDITOR_PATH }
@@ -114,13 +149,13 @@ export async function startCheckoutImpl(
     metadata: { goc_number: data.gocNumber },
   })
 
-  const practitioner = await insertPractitioner({
+  const practitioner = await recordPractitioner({
     input: data,
     stripeCustomerId: customer.id,
     stripeSubscriptionId: null,
     subscriptionStatus: 'incomplete',
   })
-  await backfillVerificationPractitionerId(data.gocNumber, practitioner.id)
+  await linkVerificationsToPractitioner(data.gocNumber, practitioner.id)
 
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',

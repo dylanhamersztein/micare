@@ -77,4 +77,51 @@ describe('startCheckout (VITE_STRIPE_MOCK=true)', () => {
     expect(result.rows).toHaveLength(1)
     expect(result.rows[0].practitioner_id).not.toBeNull()
   })
+  // Issue #66: signup files an unreadable-register prospect as a `pending`
+  // Practitioner so Manual Re-verification has a row to act on. When that
+  // prospect comes back and the register answers, checkout must take over the
+  // row it already has — inserting a second one collides on goc_number, and
+  // the session minted in checkout.ts resolves by email.
+  it('adopts the pending Practitioner signup filed, rather than inserting a second row', async () => {
+    const seeded = await db.query<{ id: string }>(
+      `insert into public.practitioners
+         (short_id, full_name, goc_number, profession_code, email,
+          verification_status, subscription_status)
+       values ('co-test-pending', 'Pending Prospect', $1, 'optician', $2,
+               'pending', 'incomplete')
+       returning id`,
+      [MOCK_GOC_NUMBER, MOCK_EMAIL],
+    )
+
+    await startCheckoutImpl({
+      fullName: 'Mock Optician',
+      professionCode: 'optician',
+      gocNumber: MOCK_GOC_NUMBER,
+      email: MOCK_EMAIL,
+    })
+
+    const { rows } = await db.query<{
+      id: string
+      full_name: string
+      verification_status: string
+      subscription_status: string
+      stripe_customer_id: string | null
+      last_verified_at: Date | null
+    }>(
+      `select id, full_name, verification_status, subscription_status,
+              stripe_customer_id, last_verified_at
+         from public.practitioners
+        where goc_number = $1`,
+      [MOCK_GOC_NUMBER],
+    )
+    expect(rows).toHaveLength(1)
+    expect(rows[0].id).toBe(seeded.rows[0].id)
+    expect(rows[0]).toMatchObject({
+      full_name: 'Mock Optician',
+      verification_status: 'verified',
+      subscription_status: 'active',
+    })
+    expect(rows[0].stripe_customer_id).toMatch(/^cus_mock_/)
+    expect(rows[0].last_verified_at).not.toBeNull()
+  })
 })
