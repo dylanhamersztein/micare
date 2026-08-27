@@ -1,9 +1,8 @@
-// Server-only write path for the profile editor, and the single source of
-// truth for the visibility flip described in AC #4 + #7 of issue #11. The
-// legacy `practitioners.visible` column (still used by
-// src/server/practitioners.ts, which feeds `/`) is recomputed and persisted
-// here so callers that lean on the column stay consistent with the
-// isVisible() predicate.
+// Server-only write path for the profile editor, and the place the
+// visibility flip described in AC #4 + #7 of issue #11 is observed. Nothing
+// stores that flip: visibility is recomputed from the saved row by
+// isVisible() (ADR-0024), and this module only reports the answer back to
+// the editor and uses it to fire the Notify-Me hook.
 //
 // Keyed on the login email the sealed session carries (ADR-0006) — never on
 // short_id, which is public in every /p/<short_id>/<slug> URL and so names
@@ -55,14 +54,6 @@ export async function updateProfile(
     throw error
   }
 
-  const minFieldsFilled = hasMinFields({
-    fullName: 'placeholder',
-    practiceName: input.practiceName,
-    practiceAddressLine1: input.practiceAddressLine1,
-    practicePostcode: input.practicePostcode,
-    bookingLinkUrl: input.bookingLinkUrl,
-  })
-
   const result = await db.query<{
     id: string
     verification_status: VerificationStatus
@@ -88,7 +79,6 @@ export async function updateProfile(
             languages               = $16,
             accessibility_notes     = $17,
             accepting_new_patients  = $18,
-            visible                 = $19,
             updated_at              = now()
       where lower(email) = lower($1)
       returning id, verification_status, subscription_status, full_name`,
@@ -111,7 +101,6 @@ export async function updateProfile(
       input.languages,
       input.accessibilityNotes,
       input.acceptingNewPatients,
-      minFieldsFilled,
     ],
   )
 
@@ -131,13 +120,6 @@ export async function updateProfile(
       bookingLinkUrl: input.bookingLinkUrl,
     }),
   })
-
-  if (visible !== minFieldsFilled) {
-    await db.query(
-      `update public.practitioners set visible = $2 where id = $1`,
-      [row.id, visible],
-    )
-  }
 
   // The "Practitioner becomes visible" moment (issue #18). The hook is
   // fire-once by its own ledger, so calling it on every visible save is safe;

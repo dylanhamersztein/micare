@@ -10,6 +10,7 @@ import {
 } from 'vitest'
 
 import type { searchPractitioners as searchFn } from '../../src/server/search-impl'
+import type { findStalePractitioners as findStaleFn } from '../../src/server/stale-alert-cron'
 
 import type { handleStripeWebhook as handleFn } from '../../src/server/webhook-handler'
 import type { db as dbApi } from '../../src/server/db'
@@ -27,6 +28,7 @@ let handleStripeWebhook: typeof handleFn
 let db: typeof dbApi
 let getStripe: typeof getStripeFn
 let searchPractitioners: typeof searchFn
+let findStalePractitioners: typeof findStaleFn
 
 const CUSTOMER_ID = 'cus_webhook_test'
 const SUBSCRIPTION_ID = 'sub_webhook_test'
@@ -208,6 +210,8 @@ beforeAll(async () => {
   getStripe = (await import('../../src/server/stripe')).getStripe
   searchPractitioners = (await import('../../src/server/search-impl'))
     .searchPractitioners
+  findStalePractitioners = (await import('../../src/server/stale-alert-cron'))
+    .findStalePractitioners
 })
 
 beforeEach(async () => {
@@ -278,6 +282,19 @@ describe('handleStripeWebhook', () => {
       ['evt_test_sub_created'],
     )
     expect(ledger.rowCount).toBe(1)
+  })
+
+  // Issue #65. The real Stripe path seeds the row at `incomplete`, so a
+  // Practitioner is activated by this webhook and by nothing else. If the
+  // maintenance jobs read a flag the webhook does not maintain, this
+  // Practitioner is listed to consumers but never swept again — ADR-0002's
+  // invariant ("every visible profile is currently verified") quietly breaks.
+  it('leaves a newly-activated practitioner within reach of the maintenance jobs', async () => {
+    await handleStripeWebhook(signedRequest(subscriptionCreatedEvent()))
+
+    expect(await appearsInSearch()).toBe(true)
+    const stale = await findStalePractitioners(0)
+    expect(stale.map((p) => p.short_id)).toContain('WEBHK001')
   })
 
   it('is idempotent: a replay of the same event leaves the row unchanged and writes no new ledger row', async () => {

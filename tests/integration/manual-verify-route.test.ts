@@ -25,8 +25,8 @@ async function seedPending(
   const { rows } = await db.query<{ id: string }>(
     `insert into public.practitioners
        (short_id, full_name, goc_number, profession_code, email,
-        verification_status, subscription_status, visible)
-     values ($1, $2, $3, 'optician', $4, 'pending', 'incomplete', false)
+        verification_status, subscription_status)
+     values ($1, $2, $3, 'optician', $4, 'pending', 'incomplete')
      returning id`,
     [shortId, `MVR ${shortId}`, gocNumber, `${shortId}@example.com`],
   )

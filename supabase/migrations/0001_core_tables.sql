@@ -8,6 +8,8 @@
 -- verification_status, subscription_status, and a min-fields-filled
 -- check; until those state machines exist, a hand-set flag lets the
 -- smoke fixtures cover the visible/hidden split.
+-- Superseded: those state machines arrived and the flag drifted from
+-- them, so 0009 drops the column. See ADR-0024.
 
 create extension if not exists pgcrypto;
 

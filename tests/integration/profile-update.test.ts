@@ -55,11 +55,9 @@ async function insertEmptyPractitioner(): Promise<void> {
   await db.query(
     `insert into public.practitioners (
        short_id, full_name, goc_number, profession_code, email,
-       verification_status, last_verified_at, subscription_status,
-       visible
+       verification_status, last_verified_at, subscription_status
      ) values ($1, 'Update Tester', $2, 'optician', $3,
-               'verified', now(), 'active',
-               false)`,
+               'verified', now(), 'active')`,
     [TEST_SHORT_ID, TEST_GOC, TEST_EMAIL],
   )
 }
@@ -75,7 +73,7 @@ describe('updateProfile', () => {
     await clearTestRows()
   })
 
-  it('writes every editable field, geocodes the postcode into practice_point, and flips visible=true', async () => {
+  it('writes every editable field, geocodes the postcode into practice_point, and reports the Practitioner as visible', async () => {
     await insertEmptyPractitioner()
     vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
 
@@ -95,12 +93,11 @@ describe('updateProfile', () => {
       booking_link_url: string
       opening_hours: Record<string, string> | null
       by_appointment_only: boolean
-      visible: boolean
       practice_point: string | null
     }>(
       `select practice_name, practice_address_line1, practice_postcode,
               practice_town, booking_link_url, opening_hours,
-              by_appointment_only, visible, practice_point::text as practice_point
+              by_appointment_only, practice_point::text as practice_point
          from public.practitioners
         where short_id = $1`,
       [TEST_SHORT_ID],
@@ -113,18 +110,17 @@ describe('updateProfile', () => {
       booking_link_url: 'https://update.example/book',
       opening_hours: { Monday: '9:00-17:30' },
       by_appointment_only: false,
-      visible: true,
     })
     expect(row.rows[0].practice_point).not.toBeNull()
   })
 
-  it('keeps visible=false when required fields are present but subscription is canceled', async () => {
+  it('reports the Practitioner as not visible when required fields are present but subscription is canceled', async () => {
     await db.query(
       `insert into public.practitioners (
          short_id, full_name, goc_number, profession_code, email,
-         verification_status, last_verified_at, subscription_status, visible
+         verification_status, last_verified_at, subscription_status
        ) values ($1, 'Canceled Tester', $2, 'optician', $3,
-                 'verified', now(), 'canceled', false)`,
+                 'verified', now(), 'canceled')`,
       [TEST_SHORT_ID, TEST_GOC, TEST_EMAIL],
     )
     vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())
@@ -132,11 +128,6 @@ describe('updateProfile', () => {
     const result = await updateProfile(TEST_EMAIL, VALID_INPUT)
 
     expect(result).toEqual({ kind: 'saved', visible: false })
-    const row = await db.query<{ visible: boolean }>(
-      `select visible from public.practitioners where short_id = $1`,
-      [TEST_SHORT_ID],
-    )
-    expect(row.rows[0].visible).toBe(false)
   })
 
   it('returns postcode-not-found and does not touch the row when geocode 404s', async () => {
@@ -146,15 +137,11 @@ describe('updateProfile', () => {
     const result = await updateProfile(TEST_EMAIL, VALID_INPUT)
 
     expect(result).toEqual({ kind: 'postcode-not-found' })
-    const row = await db.query<{
-      practice_name: string | null
-      visible: boolean
-    }>(
-      `select practice_name, visible from public.practitioners where short_id = $1`,
+    const row = await db.query<{ practice_name: string | null }>(
+      `select practice_name from public.practitioners where short_id = $1`,
       [TEST_SHORT_ID],
     )
     expect(row.rows[0].practice_name).toBeNull()
-    expect(row.rows[0].visible).toBe(false)
   })
 
   it('returns unknown when no Practitioner row matches the session email', async () => {
@@ -230,9 +217,9 @@ describe('updateProfile', () => {
     await db.query(
       `insert into public.practitioners (
          short_id, full_name, goc_number, profession_code, email,
-         verification_status, last_verified_at, subscription_status, visible
+         verification_status, last_verified_at, subscription_status
        ) values ($1, 'Canceled Tester', $2, 'optician', $3,
-                 'verified', now(), 'canceled', false)`,
+                 'verified', now(), 'canceled')`,
       [TEST_SHORT_ID, TEST_GOC, TEST_EMAIL],
     )
     vi.mocked(fetch).mockResolvedValueOnce(geocodeOk())

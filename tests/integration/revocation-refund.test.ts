@@ -23,9 +23,9 @@ async function seed(args: {
     `insert into public.practitioners
        (short_id, full_name, goc_number, profession_code, email,
         verification_status, subscription_status, stripe_customer_id,
-        stripe_subscription_id, visible)
+        stripe_subscription_id)
      values ($1, $2, $3, 'optician', $4,
-        'revoked', $5, 'cus_rr_test', $6, false)
+        'revoked', $5, 'cus_rr_test', $6)
      returning id`,
     [
       args.shortId,

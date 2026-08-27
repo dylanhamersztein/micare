@@ -12,15 +12,24 @@ async function cleanup(): Promise<void> {
   )
 }
 
+// Seeds a row the visibility predicate includes: verified, on a dunning-
+// tolerant subscription, with every minimum profile field filled. The alert
+// reports on that population and nothing else — see ADR-0024.
 async function seedVisible(
   shortId: string,
   lastVerifiedDaysAgo: number | null,
+  overrides: { subscriptionStatus?: string; practiceName?: string | null } = {},
 ): Promise<string> {
   const result = await db.query<{ id: string }>(
     `insert into public.practitioners
        (short_id, full_name, goc_number, profession_code, email,
-        verification_status, subscription_status, visible, last_verified_at)
-     values ($1, $2, $3, 'optician', $4, 'verified', 'active', true,
+        practice_name, practice_address_line1, practice_postcode,
+        booking_link_url,
+        verification_status, subscription_status, last_verified_at)
+     values ($1, $2, $3, 'optician', $4,
+        $6, '1 Register Street', 'EC2V 6AA',
+        'https://example.co.uk/book',
+        'verified', $7,
         case when $5::int is null then null
              else now() - make_interval(days => $5::int) end)
      returning id`,
@@ -30,6 +39,10 @@ async function seedVisible(
       `99-${shortId}`,
       `${shortId}@example.com`,
       lastVerifiedDaysAgo,
+      overrides.practiceName === undefined
+        ? `SA Practice ${shortId}`
+        : overrides.practiceName,
+      overrides.subscriptionStatus ?? 'active',
     ],
   )
   return result.rows[0].id
@@ -53,6 +66,21 @@ describe('findStalePractitioners', () => {
     expect(ids).toContain(staleId)
     expect(ids).toContain(neverId)
     expect(stale.find((p) => p.short_id === 'sa-test-fresh')).toBeUndefined()
+  })
+
+  // The alert is an early warning that listed profiles are going unchecked.
+  // A Practitioner the visibility predicate excludes is not listed, so an
+  // ageing last_verified_at on their row is not a trust problem to report.
+  it('leaves out practitioners the visibility predicate excludes', async () => {
+    await seedVisible('sa-test-canceled', 30, {
+      subscriptionStatus: 'canceled',
+    })
+    await seedVisible('sa-test-incomplete', 30, { practiceName: null })
+
+    const shortIds = (await findStalePractitioners(14)).map((p) => p.short_id)
+
+    expect(shortIds).not.toContain('sa-test-canceled')
+    expect(shortIds).not.toContain('sa-test-incomplete')
   })
 })
 

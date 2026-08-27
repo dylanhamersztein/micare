@@ -25,18 +25,26 @@ async function cleanup(): Promise<void> {
   )
 }
 
+// Seeds a row the visibility predicate includes: verified, on a dunning-
+// tolerant subscription, with every minimum profile field filled. The sweep
+// population is defined by that predicate and nothing else — see ADR-0024.
 async function seedVisible(
   shortId: string,
   gocNumber: string,
   lastVerifiedDaysAgo: number,
+  overrides: { subscriptionStatus?: string; practiceName?: string | null } = {},
 ): Promise<string> {
   const result = await db.query<{ id: string }>(
     `insert into public.practitioners
        (short_id, full_name, goc_number, profession_code, email,
+        practice_name, practice_address_line1, practice_postcode,
+        booking_link_url,
         verification_status, subscription_status, stripe_customer_id,
-        stripe_subscription_id, visible, last_verified_at)
+        stripe_subscription_id, last_verified_at)
      values ($1, $2, $3, 'optician', $4,
-        'verified', 'active', 'cus_rv_test', $5, true,
+        $7, '1 Register Street', 'EC2V 6AA',
+        'https://example.co.uk/book',
+        'verified', $8, 'cus_rv_test', $5,
         now() - make_interval(days => $6))
      returning id`,
     [
@@ -46,9 +54,21 @@ async function seedVisible(
       `${shortId}@example.com`,
       `sub_rv_${shortId}`,
       lastVerifiedDaysAgo,
+      overrides.practiceName === undefined
+        ? `RV Practice ${shortId}`
+        : overrides.practiceName,
+      overrides.subscriptionStatus ?? 'active',
     ],
   )
   return result.rows[0].id
+}
+
+async function lastVerifiedAt(id: string): Promise<Date | null> {
+  const { rows } = await db.query<{ last_verified_at: Date | null }>(
+    'select last_verified_at from public.practitioners where id = $1',
+    [id],
+  )
+  return rows[0].last_verified_at
 }
 
 // Reserved 99- GOC numbers collide with the checkout suites; clean up after
@@ -66,20 +86,18 @@ describe('runReVerification', () => {
     expect(summary.stillVerified).toBeGreaterThanOrEqual(1)
     const row = await db.query<{
       verification_status: string
-      visible: boolean
       last_verified_at: Date
     }>(
-      'select verification_status, visible, last_verified_at from public.practitioners where id = $1',
+      'select verification_status, last_verified_at from public.practitioners where id = $1',
       [id],
     )
     expect(row.rows[0].verification_status).toBe('verified')
-    expect(row.rows[0].visible).toBe(true)
     expect(row.rows[0].last_verified_at.getTime()).toBeGreaterThan(
       Date.now() - 60_000,
     )
   })
 
-  it('revokes, hides, cancels billing and records a refund for a struck-off practitioner', async () => {
+  it('revokes, cancels billing and records a refund for a struck-off practitioner', async () => {
     const id = await seedVisible('rv-test-struck', '99-000002', 1)
 
     const summary = await runReVerification()
@@ -87,15 +105,13 @@ describe('runReVerification', () => {
     expect(summary.revoked).toBeGreaterThanOrEqual(1)
     const row = await db.query<{
       verification_status: string
-      visible: boolean
       subscription_status: string
     }>(
-      `select verification_status, visible, subscription_status
+      `select verification_status, subscription_status
          from public.practitioners where id = $1`,
       [id],
     )
     expect(row.rows[0].verification_status).toBe('revoked')
-    expect(row.rows[0].visible).toBe(false)
     expect(row.rows[0].subscription_status).toBe('canceled')
 
     const ledger = await db.query<{ outcome: string }>(
@@ -111,15 +127,36 @@ describe('runReVerification', () => {
     const summary = await runReVerification()
 
     expect(summary.indeterminate).toBeGreaterThanOrEqual(1)
-    const row = await db.query<{
-      verification_status: string
-      visible: boolean
-    }>(
-      'select verification_status, visible from public.practitioners where id = $1',
+    const row = await db.query<{ verification_status: string }>(
+      'select verification_status from public.practitioners where id = $1',
       [id],
     )
     expect(row.rows[0].verification_status).toBe('verified')
-    expect(row.rows[0].visible).toBe(true)
+  })
+
+  // The sweep exists to keep ADR-0002's invariant true for the profiles a
+  // consumer can actually reach. A Practitioner the predicate excludes is
+  // not listed, so re-checking them against the register is wasted scraping.
+  it('skips a practitioner whose subscription has been canceled', async () => {
+    const id = await seedVisible('rv-test-canceled', '99-000001', 30, {
+      subscriptionStatus: 'canceled',
+    })
+    const before = await lastVerifiedAt(id)
+
+    await runReVerification()
+
+    expect((await lastVerifiedAt(id))?.getTime()).toBe(before?.getTime())
+  })
+
+  it('skips a practitioner whose profile is missing the minimum fields', async () => {
+    const id = await seedVisible('rv-test-incomplete', '99-000001', 30, {
+      practiceName: null,
+    })
+    const before = await lastVerifiedAt(id)
+
+    await runReVerification()
+
+    expect((await lastVerifiedAt(id))?.getTime()).toBe(before?.getTime())
   })
 })
 

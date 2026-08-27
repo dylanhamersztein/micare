@@ -3,6 +3,11 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { db } from '../../src/server/db'
 import { uploadPractitionerPhoto } from '../../src/server/photo-upload-impl'
+import { hasMinFields, isVisible } from '../../src/visibility'
+import type {
+  SubscriptionStatus,
+  VerificationStatus,
+} from '../../src/visibility'
 
 const TEST_GOC = '99-300001'
 const TEST_EMAIL = 'photo-test@example.co.uk'
@@ -18,9 +23,9 @@ async function insertPractitioner(): Promise<void> {
   await db.query(
     `insert into public.practitioners (
        short_id, full_name, goc_number, profession_code, email,
-       verification_status, subscription_status, visible
+       verification_status, subscription_status
      ) values ($1, 'Photo Tester', $2, 'optician', $3,
-               'verified', 'active', true)`,
+               'verified', 'active')`,
     [TEST_SHORT_ID, TEST_GOC, TEST_EMAIL],
   )
 }
@@ -40,6 +45,38 @@ async function makePngBuffer(width: number, height: number): Promise<Buffer> {
 
 function asBase64(buffer: Buffer): string {
   return buffer.toString('base64')
+}
+
+// Visibility is computed, never stored (ADR-0024), so the test asks the same
+// predicate the consumer surfaces ask.
+async function isPractitionerVisible(): Promise<boolean> {
+  const { rows } = await db.query<{
+    full_name: string
+    practice_name: string | null
+    practice_address_line1: string | null
+    practice_postcode: string | null
+    booking_link_url: string | null
+    verification_status: VerificationStatus
+    subscription_status: SubscriptionStatus
+  }>(
+    `select full_name, practice_name, practice_address_line1,
+            practice_postcode, booking_link_url,
+            verification_status, subscription_status
+       from public.practitioners where short_id = $1`,
+    [TEST_SHORT_ID],
+  )
+  const row = rows[0]
+  return isVisible({
+    verificationStatus: row.verification_status,
+    subscriptionStatus: row.subscription_status,
+    minFieldsFilled: hasMinFields({
+      fullName: row.full_name,
+      practiceName: row.practice_name,
+      practiceAddressLine1: row.practice_address_line1,
+      practicePostcode: row.practice_postcode,
+      bookingLinkUrl: row.booking_link_url,
+    }),
+  })
 }
 
 describe('uploadPractitionerPhoto', () => {
@@ -167,11 +204,21 @@ describe('uploadPractitionerPhoto', () => {
     expect(row.rows[0].photo_url).toBeNull()
   })
 
-  it('does not change visible when the photo is saved (AC #4: optional)', async () => {
+  // AC #4: the photo is optional. Uploading one must not change whether the
+  // Practitioner is listed — visibility reads verification, subscription and
+  // the minimum profile fields, and a headshot is none of those.
+  it('leaves a listed Practitioner listed when the photo is saved (AC #4: optional)', async () => {
     await db.query(
-      `update public.practitioners set visible = true where short_id = $1`,
+      `update public.practitioners
+          set practice_name          = 'Photo Practice',
+              practice_address_line1 = '1 Camera Lane',
+              practice_postcode      = 'NR1 3DD',
+              booking_link_url       = 'https://example.test/book'
+        where short_id = $1`,
       [TEST_SHORT_ID],
     )
+    expect(await isPractitionerVisible()).toBe(true)
+
     const buffer = await makePngBuffer(800, 800)
     await uploadPractitionerPhoto({
       email: TEST_EMAIL,
@@ -179,10 +226,6 @@ describe('uploadPractitionerPhoto', () => {
       filename: 'headshot.png',
     })
 
-    const row = await db.query<{ visible: boolean }>(
-      `select visible from public.practitioners where short_id = $1`,
-      [TEST_SHORT_ID],
-    )
-    expect(row.rows[0].visible).toBe(true)
+    expect(await isPractitionerVisible()).toBe(true)
   })
 })

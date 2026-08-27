@@ -80,14 +80,14 @@ async function insertVisiblePractitioner(): Promise<string> {
        short_id, full_name, goc_number, profession_code, email,
        practice_name, practice_address_line1, practice_postcode, practice_town,
        booking_link_url, practice_point,
-       verification_status, subscription_status, visible
+       verification_status, subscription_status
      ) values ($1, 'Nadia Okafor', $2, 'optician', $3,
        'Norwich Eyecare', '1 Castle Meadow', 'NR2 1RF', 'Norwich',
        'https://example.test/book',
        extensions.st_setsrid(
          extensions.st_makepoint($4, $5), 4326
        )::extensions.geography,
-       'verified', 'active', true)
+       'verified', 'active')
      returning id`,
     [TEST_SHORT_ID, TEST_GOC, TEST_EMAIL, NORWICH.longitude, NORWICH.latitude],
   )
