@@ -1,7 +1,27 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { Client } from 'pg'
-import sharp from 'sharp'
+
+import {
+  MULTI_FACE_PHOTO,
+  NO_FACE_PHOTO,
+  SINGLE_FACE_PHOTO,
+  photoFixturePath,
+} from '../fixtures/photos'
+
+// Every assertion below that waits on an upload is waiting on a server that
+// may be running face detection. With PHOTO_CHECK_MOCK=false the first upload
+// in a fresh process pays to load the ~6MB SSD-MobileNet-v1 weights, and
+// tfjs-node inference is CPU-bound on the same thread that serves every other
+// request — so with workers in parallel a round trip queued behind that load
+// runs well past Playwright's 5s default. Under the mocked default these
+// resolve immediately and the longer ceiling costs nothing.
+const expectUpload = expect.configure({ timeout: 30_000 })
+
+// A single assertion here can spend 30s waiting, which does not fit inside
+// Playwright's 30s default budget for a whole test that also signs a
+// Practitioner up first.
+test.describe.configure({ timeout: 120_000 })
 
 const DATABASE_URL =
   process.env.DATABASE_URL ??
@@ -23,19 +43,6 @@ test.afterEach(async () => {
     createdEmails.length = 0
   }
 })
-
-async function makePng(width: number, height: number): Promise<Buffer> {
-  return sharp({
-    create: {
-      width,
-      height,
-      channels: 3,
-      background: { r: 200, g: 200, b: 200 },
-    },
-  })
-    .png()
-    .toBuffer()
-}
 
 async function signupCheckoutAndFillRequired(
   page: Page,
@@ -85,17 +92,14 @@ test('uploading a valid photo previews it and shows it on the public profile', a
 }) => {
   await signupCheckoutAndFillRequired(page)
 
-  const buffer = await makePng(800, 800)
-  await page.getByTestId('profile-photo-input').setInputFiles({
-    name: 'headshot.png',
-    mimeType: 'image/png',
-    buffer,
-  })
+  await page
+    .getByTestId('profile-photo-input')
+    .setInputFiles(photoFixturePath(SINGLE_FACE_PHOTO))
 
-  await expect(page.getByTestId('profile-photo-preview')).toBeVisible()
+  await expectUpload(page.getByTestId('profile-photo-preview')).toBeVisible()
 
   await page.getByTestId('profile-save').click()
-  await expect(page.getByTestId('profile-saved-visible')).toBeVisible()
+  await expectUpload(page.getByTestId('profile-saved-visible')).toBeVisible()
 
   // The editor no longer carries a short_id; the dashboard is where a
   // Practitioner is handed the public URL of their own listing.
@@ -109,32 +113,26 @@ test('a no-face photo shows the no-face error and does not preview', async ({
 }) => {
   await signupCheckoutAndFillRequired(page)
 
-  const buffer = await makePng(800, 800)
-  await page.getByTestId('profile-photo-input').setInputFiles({
-    name: 'landscape-noface.png',
-    mimeType: 'image/png',
-    buffer,
-  })
+  await page
+    .getByTestId('profile-photo-input')
+    .setInputFiles(photoFixturePath(NO_FACE_PHOTO))
 
   const error = page.getByTestId('profile-photo-error')
-  await expect(error).toBeVisible()
-  await expect(error).toHaveAttribute('data-outcome', 'no-face')
+  await expectUpload(error).toBeVisible()
+  await expectUpload(error).toHaveAttribute('data-outcome', 'no-face')
   await expect(page.getByTestId('profile-photo-preview')).toHaveCount(0)
 })
 
 test('a multi-face photo shows the multi-face error', async ({ page }) => {
   await signupCheckoutAndFillRequired(page)
 
-  const buffer = await makePng(800, 800)
-  await page.getByTestId('profile-photo-input').setInputFiles({
-    name: 'group-multiface.png',
-    mimeType: 'image/png',
-    buffer,
-  })
+  await page
+    .getByTestId('profile-photo-input')
+    .setInputFiles(photoFixturePath(MULTI_FACE_PHOTO))
 
   const error = page.getByTestId('profile-photo-error')
-  await expect(error).toBeVisible()
-  await expect(error).toHaveAttribute('data-outcome', 'multi-face')
+  await expectUpload(error).toBeVisible()
+  await expectUpload(error).toHaveAttribute('data-outcome', 'multi-face')
 })
 
 test('a gif upload shows unsupported-type before hitting the server', async ({
