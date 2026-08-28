@@ -78,4 +78,13 @@ describe('hasMinFields', () => {
   it('is false when a required field is an empty string', () => {
     expect(hasMinFields({ ...complete, practicePostcode: '' })).toBe(false)
   })
+
+  // The full name is the one required field the profile editor cannot set —
+  // it is fixed at signup, so no caller varies it and every call site reads it
+  // back off the row. That is exactly why the requirement was easy to lose
+  // (issue #44): nothing else in the suite pins it down.
+  it('is false when the full name is missing', () => {
+    expect(hasMinFields({ ...complete, fullName: null })).toBe(false)
+    expect(hasMinFields({ ...complete, fullName: '' })).toBe(false)
+  })
 })
