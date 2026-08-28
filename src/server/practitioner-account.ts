@@ -18,6 +18,7 @@ export type PractitionerAccount = {
   lastVerifiedAt: Date | null
   subscriptionStatus: SubscriptionStatus
   stripeCustomerId: string | null
+  stripeSubscriptionId: string | null
   createdAt: Date
 }
 
@@ -32,6 +33,7 @@ type AccountRow = {
   last_verified_at: Date | null
   subscription_status: SubscriptionStatus
   stripe_customer_id: string | null
+  stripe_subscription_id: string | null
   created_at: Date
 }
 
@@ -47,6 +49,7 @@ function mapRow(row: AccountRow): PractitionerAccount {
     lastVerifiedAt: row.last_verified_at,
     subscriptionStatus: row.subscription_status,
     stripeCustomerId: row.stripe_customer_id,
+    stripeSubscriptionId: row.stripe_subscription_id,
     createdAt: row.created_at,
   }
 }
@@ -57,7 +60,7 @@ export async function findPractitionerByEmail(
   const result = await db.query<AccountRow>(
     `select id, short_id, email, full_name, practice_name, practice_town,
             verification_status, last_verified_at, subscription_status,
-            stripe_customer_id, created_at
+            stripe_customer_id, stripe_subscription_id, created_at
        from public.practitioners
       where lower(email) = lower($1)
       limit 1`,

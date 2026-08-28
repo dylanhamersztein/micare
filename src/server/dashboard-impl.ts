@@ -1,11 +1,13 @@
 // Read model for /dashboard. Aggregates the six readouts the slice-10 issue
 // lists, including the click-through count filtered to the current billing
-// cycle (computed locally from created_at via src/billing-cycle.ts — no live
-// Stripe call). `now` is injectable so integration tests are deterministic.
+// cycle. The cycle comes from `currentBillingPeriod` — the same reader the
+// monthly summary email uses — so Stripe owns the bounds (ADR-0011) and the
+// two never disagree about which window a count covers. `now` is injectable
+// so integration tests are deterministic.
 
-import { currentBillingCycle } from '../billing-cycle'
 import { generateProfileUrl } from '../slug'
 import type { SubscriptionStatus, VerificationStatus } from '../visibility'
+import { currentBillingPeriod } from './billing-period'
 import { countClickthroughs } from './clickthrough-count'
 import { findPractitionerByEmail } from './practitioner-account'
 
@@ -27,7 +29,13 @@ export async function loadDashboardImpl(
   const account = await findPractitionerByEmail(email)
   if (!account) return null
 
-  const cycle = currentBillingCycle(account.createdAt, now)
+  const cycle = await currentBillingPeriod(
+    {
+      stripeSubscriptionId: account.stripeSubscriptionId,
+      createdAt: account.createdAt,
+    },
+    now,
+  )
 
   const clickthroughCount = await countClickthroughs(account.id, cycle)
 
