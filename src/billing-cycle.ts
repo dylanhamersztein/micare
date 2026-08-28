@@ -1,9 +1,9 @@
 // Pure billing-cycle math. Given a subscription anchor instant and a
 // reference 'now', returns the monthly cycle [start, end) that contains now,
 // with the cycle boundary falling on the anchor's day-of-month (clamped into
-// short months). Anchored on practitioners.created_at by the dashboard so no
-// live Stripe call is needed; see the slice-10 plan's key-decisions note for
-// the future "prefer Stripe's stored period bounds" refinement.
+// short months). Stripe owns the real bounds (ADR-0011), so both readers of
+// the cycle go through src/server/billing-period.ts; this math is only the
+// offline fallback that reader uses when there is no subscription to read.
 
 export type BillingCycle = { start: Date; end: Date }
 
