@@ -23,11 +23,21 @@ pnpm build
 
 ## Testing
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+This project uses [Vitest](https://vitest.dev/) for unit and integration tests
+and [Playwright](https://playwright.dev/) for end-to-end tests. `pnpm test`
+runs all three in order:
 
 ```bash
-pnpm test
+pnpm setup:local   # Compose stack, migrations, seed, face-api weights
+pnpm test          # or: pnpm test:unit / test:integration / test:e2e
 ```
+
+The integration and E2E suites need the local stack from `pnpm setup:local`,
+which is also what puts the face-detection weights in `public/face-api-models/`.
+Everything else a suite needs is committed, including the photographs the
+profile-photo tests upload — see
+[`tests/fixtures/photos/README.md`](tests/fixtures/photos/README.md) for where
+those came from and how to change them.
 
 ## Styling
 
